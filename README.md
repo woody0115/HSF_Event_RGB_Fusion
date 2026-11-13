@@ -12,31 +12,34 @@
 
 mAP50-95（%），評估設定同 Ultralytics validator。詳細版本與分光線結果見 `VERSIONS.md`。
 
-| 模型 | 論文 | 我們 | 比自家 Add 的提升（論文／我們） |
-|---|---|---|---|
-| RGB 單流 | 44.4 | **53.9** | – |
-| Event 單流（GEAR） | 24.8 | 32.9 | – |
-| Add | 43.3 | 53.0 | 0 ／ 0 |
-| TFS only | 44.2 | 尚未訓練 | +0.9 ／ – |
-| AF | 44.5 | 53.5 | +1.2 ／ +0.5 |
-| 完整 HSF（TFS + AF） | **45.6** | 53.1 | +2.3 ／ +0.1 |
+| 模型 | 論文 | 我們：lr 1e-3、5 epoch（test 挑權重） | 我們：論文設定（驗證集挑權重） | 比自家 Add 的提升（論文／論文設定） |
+|---|---|---|---|---|
+| RGB 單流 | 44.4 | **53.9** | – | – |
+| Event 單流（GEAR） | 24.8 | 32.9 | – | – |
+| Add | 43.3 | 53.0 | 52.3 | 0 ／ 0 |
+| TFS only | 44.2 | – | 50.4 | +0.9 ／ −1.9 |
+| AF | 44.5 | 53.5 | 52.4 | +1.2 ／ +0.1 |
+| 完整 HSF（TFS + AF） | **45.6** | 53.1 | 48.7 | +2.3 ／ −3.6 |
 
 - 我們的 RGB 基準比論文高約 9 點，原因不明（論文未詳述資料與評估細節），因此以「相對自家基準的提升」比較。
-- 目前所有融合模型都略低於 RGB 單流，論文中 TFS 帶來的提升沒有重現。
-- 雙流的數字是 5 epoch、lr 1e-3 的版本；論文的訓練設定（40 epoch、lr 0.005、batch 8）在修正 event 輸入格式之後還沒跑過。
+- 目前所有融合模型都低於 RGB 單流，論文中 TFS 帶來的提升沒有重現；加了 TFS 的兩組反而最低。
+- 論文設定（40 epoch、lr 0.005、batch 8、seed 0，2026-11-12 在實驗室伺服器上跑）：四組的驗證分數都在第 1–2 個 epoch 最高，之後一路下降（例如 add 64.8 → 55.3），test 用的權重都是第 1–2 個 epoch。分光線結果見 `runs/eval_conditions.md`（`*_paper`）。
 
 ## 下一步
 
-1. 照論文設定（`train_dual.py` 的預設值：40 epoch、lr 0.005、batch 8、warmup 3）重跑 add ／ tfs ／ af ／ hsf，補齊論文 Table II 的消融。
+1. 論文設定（40 epoch、lr 0.005）在我們這邊驗證分數一路下降，下一輪要找出原因：較小的 lr ／ 較少的 epoch、TFS 與 HSF 每個 epoch 都評估（目前每 2 個 epoch 一次，沒評估到第 1 個 epoch）。
 2. 一律用 `--split val`：在驗證集挑權重，test 只在最後評估一次。
-3. 每組 2–3 個 seed（`train_dual.py` 目前沒有 `--seed` 參數，要先加上）；結果依光線（白天／偏暗／夜間）分開報告。
+3. 每組 2–3 個 seed（`train_dual.py --seed`）；結果依光線（白天／偏暗／夜間）分開報告。
 
-```bat
-.venv\Scripts\python.exe tools\train_dual.py --fusion add --name dual_add_paper
-.venv\Scripts\python.exe tools\train_dual.py --fusion tfs --name dual_tfs_paper
-.venv\Scripts\python.exe tools\train_dual.py --fusion af  --name dual_af_paper
-.venv\Scripts\python.exe tools\train_dual.py --fusion hsf --name dual_hsf_paper
+照論文設定跑四組（`GPUS` 有幾張就同時用幾張，每張 GPU 依序跑分到的組別；共用的實驗室伺服器最多用 2 張）：
+
+```bash
+SEED=0 GPUS="0 3" setsid nohup bash tools/run_paper_schedule.sh > runs/paper_schedule_seed0.log 2>&1 < /dev/null &
 ```
+
+兩條骨幹從單流模型初始化：`runs/step3/rgb_yolov8s/weights/best.pt`、`runs/step3/event_yolov8s/weights/best.pt`
+（權重見 `VERSIONS.md` 的 Release，v01、v02）。資料路徑和 `configs/paths.yaml` 不同的機器，另建
+`configs/paths.local.yaml`（不進版控）覆寫，例如 `processed_root: /home/user/data/DSEC_train`。
 
 ## 流程
 

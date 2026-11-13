@@ -8,6 +8,9 @@ turned off because their channels are not colours.
 
 Run:  .venv\\Scripts\\python.exe tools\\train_single.py --modality rgb   [--epochs 10] [--tag _smoke]
       .venv\\Scripts\\python.exe tools\\train_single.py --modality event
+      python tools/train_single.py --modality rgb --tag _val     (since 2026-11-14: train on train_core,
+            select on the whole-drive val split; needs `tools/build_yolo_view.py --split val` first.
+            Versions #1-#10 trained on all 47 sequences and selected on test.)
 Results: runs/step3/<modality>_yolov8s<tag>/ (weights/best.pt, results.csv, plots)
 """
 import argparse

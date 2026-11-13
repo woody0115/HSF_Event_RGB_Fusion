@@ -25,6 +25,10 @@ from hsf.data.gear import GEAR
 
 ROOT = osp.abspath(osp.join(osp.dirname(__file__), '..', '..'))
 CFG = yaml.safe_load(open(osp.join(ROOT, 'configs', 'paths.yaml')))
+# machine-specific overrides (e.g. the lab server's data paths); untracked, see .gitignore
+_LOCAL = osp.join(ROOT, 'configs', 'paths.local.yaml')
+if osp.isfile(_LOCAL):
+    CFG.update(yaml.safe_load(open(_LOCAL)) or {})
 SPLITS = yaml.safe_load(open(osp.join(ROOT, 'configs', 'splits.yaml')))
 VAL_SEQUENCES = set(SPLITS['val_sequences'])
 RGB_FILL = (114, 114, 114)

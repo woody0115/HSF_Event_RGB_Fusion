@@ -9,11 +9,17 @@ Run:  .venv\\Scripts\\python.exe tools\\train_dual.py --fusion add --epochs 20  
             TFS + AF, trained on clips of --clip-len consecutive frames, evaluated by streaming)
       .venv\Scripts\python.exe tools\train_dual.py --fusion iaf_add --epochs 5 --lr 1e-3 --warmup 1
             (step 8: illumination-aware gate on add / af, see IllumGate in hsf/models/fusion.py)
+      python tools/train_dual.py --fusion rel_add --epochs 5 --lr 1e-3 --warmup 1
+            (step 11: reliability-weighted fusion, docs/fusion_model.md; relp_add = physical prior only)
       add --smoke for a quick pipeline check
 """
 import argparse
 import os.path as osp
+import random
 import sys
+
+import numpy as np
+import torch
 
 ROOT = osp.abspath(osp.join(osp.dirname(__file__), '..'))
 sys.path.insert(0, ROOT)
@@ -42,11 +48,23 @@ def main():
                     help='val: train on train_core, select checkpoints on the validation sequences '
                          '(configs/splits.yaml), report test once; legacy: train on all 47, select on test (#1-#12)')
     ap.add_argument('--resume', action='store_true', help='continue from <run>/resume.pt')
+    ap.add_argument('--seed', type=int, default=None,
+                    help='seed python / numpy / torch RNGs (fusion init, data order, augmentation); '
+                         'None = unseeded as in versions #1-#10. cuDNN stays non-deterministic')
+    ap.add_argument('--eval-every', type=int, default=1,
+                    help='TFS/HSF: validate every N epochs (was 2 for > 6 epochs until 2026-11-14, which skipped '
+                         'epoch 1 while add/af validated every epoch)')
     ap.add_argument('--smoke', action='store_true', help='2 short epochs on a few sequences')
     a = ap.parse_args()
+    if a.seed is not None:
+        random.seed(a.seed)
+        np.random.seed(a.seed)
+        torch.manual_seed(a.seed)
+        torch.cuda.manual_seed_all(a.seed)
 
     name = a.name or f'dual_{a.fusion}' + ('_smoke' if a.smoke else '')
-    step = 'step4' if a.fusion == 'add' else ('step8_iaf' if a.fusion.startswith('iaf_') else 'step5_6')
+    step = ('step4' if a.fusion == 'add' else 'step8_iaf' if a.fusion.startswith('iaf_') else
+            'step11_rel' if a.fusion.startswith(('rel_', 'relp_')) else 'step5_6')
     run_dir = osp.join(ROOT, 'runs', step, name)
     start_logging(run_dir, ROOT)
     for k, path in (('rgb', a.rgb_init), ('event', a.evt_init)):
@@ -64,7 +82,7 @@ def main():
     smoke.update(splits, resume=a.resume)
     if model.stateful:      # TFS / full HSF: clips of consecutive frames, streaming evaluation
         train_temporal(model, run_dir, clips=a.clips, clip_len=a.clip_len, lr=a.lr, workers=a.workers,
-                       eval_every=1 if (a.smoke or a.epochs <= 6) else 2, warmup_epochs=a.warmup, **smoke)
+                       eval_every=a.eval_every, warmup_epochs=a.warmup, **smoke)
     else:
         train(model, run_dir, batch=a.batch, lr=a.lr, workers=a.workers, warmup_epochs=a.warmup, **smoke)
 

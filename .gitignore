@@ -17,3 +17,4 @@ runs/PAUSE
 
 # never publish credentials (IP camera URL contains a password)
 camera_url.txt
+configs/paths.local.yaml
