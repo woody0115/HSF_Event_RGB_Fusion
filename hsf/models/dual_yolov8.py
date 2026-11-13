@@ -19,7 +19,7 @@ import torch
 import torch.nn as nn
 from ultralytics.nn.tasks import DetectionModel
 
-from hsf.models.fusion import build_fusion, illum_descriptor
+from hsf.models.fusion import build_fusion, illum_descriptor, reliability_signals
 
 FUSE_AT = (4, 6, 9)            # backbone layer indices of C3 / C4 / C5 outputs (P3, P4, P5)
 
@@ -54,6 +54,7 @@ class DualYOLOv8(nn.Module):
         self.fusion_type = fusion
         self.stateful = bool(getattr(self.fusion[0], 'stateful', False))   # needs consecutive frames
         self.illum = fusion.startswith('iaf_')
+        self.reliability = fusion.startswith(('rel_', 'relp_'))   # docs/fusion_model.md
         self.modality_drop = modality_drop
         self.nc = nc
         self.stride = self.model[-1].stride
@@ -80,6 +81,8 @@ class DualYOLOv8(nn.Module):
             extra['illum'] = illum_descriptor(rgb)
             if self.training and self.modality_drop > 0:
                 extra['keep'] = (torch.rand(rgb.shape[0], device=rgb.device) >= self.modality_drop).float()
+        if self.reliability:    # physical reliability signals of the raw inputs (no gradient)
+            extra['sig'] = reliability_signals(rgb, evt)
         k = 0
         for i in range(10):
             x_r, x_e = self.rgb[i](x_r), self.evt[i](x_e)

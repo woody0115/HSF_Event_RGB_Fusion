@@ -400,6 +400,9 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
                   f'P {res["precision"]:.3f} R {res["recall"]:.3f}', flush=True)
             print('   per-class AP50-95: ' + ', '.join(f'{k} {v:.3f}' for k, v in res['per_class'].items()),
                   flush=True)
+            for f in ema.ema.fusion:                # gate parameters / statistics of the last val batch
+                if hasattr(f, 'describe'):
+                    print('   gate ' + f.describe(), flush=True)
         with open(csv_path, 'a', newline='') as f:
             csv.writer(f).writerow([epoch + 1, *[round(float(v), 4) for v in mloss.tolist()],
                                     *[round(float(res[k]), 5) for k in ('precision', 'recall', 'mAP50', 'mAP50-95')],

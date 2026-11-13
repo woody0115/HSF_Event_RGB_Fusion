@@ -1,0 +1,14 @@
+2784 frames -> /home/jovyan/work/HSF_Event_RGB_Fusion/runs/diag/fusion_signal_stats_test.json
+bucket frames   lum  sat% ev_act% ev/act  n_bg Gsat_h% Gsat_f% Gsat_n% |  boxes  CNR_r  SNR_e
+day      2438  68.3  0.05    37.7   4.43 1.585    0.00    0.00   0.000 |  15595   4.48   0.27
+dim       203  52.8  0.00    31.5   4.08 1.340    0.00    0.00   0.000 |   1578   3.77   0.46
+night     143  20.2  0.06    62.9   5.67 3.242    0.00    0.00   0.002 |    569   4.37   2.21
+
+per class (all buckets): median CNR_r / SNR_e / area
+  pedestrian    6245   3.63 /  0.53 /     372
+  rider          684   4.73 /  0.55 /    2036
+  car           9348   5.17 /  0.06 /     735
+  bus            276   5.90 /  0.98 /    3717
+  truck          352   4.29 / -0.23 /    1827
+  bicycle        737   3.81 /  0.59 /    1820
+  motorcycle     100   4.45 /  1.22 /     754
