@@ -454,7 +454,70 @@ class SoftmaxModalityGate(nn.Module):
         return f'scale {self.scale:g}' + ''.join(f'  {k} {v:.4f}' for k, v in t.items())
 
 
-FUSIONS = {'add': AddFusion, 'af': AFFusion, 'tfs': TFSFusion, 'hsf': HSFFusion}
+def adain(content, style, eps=1e-5):
+    """Parameter-free AdaIN (FRN retinanet/AdaIN.py): content re-normalised to the per-channel mean / std of style."""
+    c, st = content.float(), style.float()
+    cm, cs = c.mean((2, 3), keepdim=True), (c.var((2, 3), keepdim=True) + eps).sqrt()
+    sm, ss = st.mean((2, 3), keepdim=True), (st.var((2, 3), keepdim=True) + eps).sqrt()
+    return ((c - cm) / cs * ss + sm).to(content.dtype)
+
+
+class CrossAttentionBlock(nn.Module):
+    """FRN retinanet/Attention.py: non-local block whose attention map comes from the guide x_g (its spatial
+    self-similarity, HW x HW, single head, no 1/sqrt(d) scaling as in the original) and whose values come from
+    x_v; the result is projected back to C channels and used as the AdaIN style for x_v. Computed with
+    scaled_dot_product_attention (scale=1), so the HW x HW map is never stored (P3 at 640: 6400 tokens)."""
+
+    def __init__(self, c):
+        super().__init__()
+        d = max(c // 8, 8)
+        self.g, self.theta, self.phi = nn.Conv2d(c, d, 1), nn.Conv2d(c, d, 1), nn.Conv2d(c, d, 1)
+        self.W = nn.Conv2d(d, c, 1)
+        for m in (self.g, self.theta, self.phi, self.W):        # c2_xavier_fill as in FRN
+            nn.init.kaiming_uniform_(m.weight, a=1)
+            nn.init.zeros_(m.bias)
+
+    def forward(self, x_v, x_g):
+        b, c, h, w = x_v.shape
+        q = self.phi(x_g).flatten(2).transpose(1, 2)[:, None]       # (B, 1, HW, d)
+        k = self.theta(x_g).flatten(2).transpose(1, 2)[:, None]
+        v = self.g(x_v).flatten(2).transpose(1, 2)[:, None]
+        y = F.scaled_dot_product_attention(q, k, v, scale=1.0)[:, 0]
+        y = y.transpose(1, 2).reshape(b, -1, h, w)
+        return adain(x_v, self.W(y))
+
+
+class CAFRFusion(nn.Module):
+    """CAFR / REFusion of FRN (retinanet/fusion.py) at one scale:
+        e0, r0 = Conv1x1(evt), Conv1x1(rgb);  m = e0 * r0;  e1, r1 = e0 + m, r0 + m        (BCI: Mul&Add)
+        e' = AdaIN(e1, W(attn(map from r1, values e1))),  r' = AdaIN(r1, W(attn(map from e1, values r1)))
+        out = Concat(e', r')  (2C channels; FRN feeds it to the FPN)
+    As in FRN the two backbone streams continue unchanged (no feedback). Our neck takes C channels:
+        residual=True  ('cafr'):  neck = evt + rgb + lambda_out * Conv1x1(out), lambda_out = 0 at init
+                                  (equals add at init, like our AF)
+        residual=False ('cafrx'): neck = Conv1x1(out)   (closest to FRN; the pretrained neck starts from new features)
+    Not ported: FRN's training-time RGB dropout (p = 0.15)."""
+
+    def __init__(self, c, residual=True):
+        super().__init__()
+        self.conv0_e, self.conv0_r = nn.Conv2d(c, c, 1), nn.Conv2d(c, c, 1)
+        self.att_e, self.att_r = CrossAttentionBlock(c), CrossAttentionBlock(c)
+        self.out = Conv(2 * c, c, 1)                          # Conv + BN + SiLU (Ultralytics)
+        self.residual = residual
+        self.lambda_out = nn.Parameter(torch.zeros(1)) if residual else None
+
+    def forward(self, evt, rgb, h=None):
+        e0, r0 = self.conv0_e(evt), self.conv0_r(rgb)
+        m = e0 * r0
+        e1, r1 = e0 + m, r0 + m
+        e2, r2 = self.att_e(e1, r1), self.att_r(r1, e1)
+        fused = self.out(torch.cat([e2, r2], 1))
+        neck = evt + rgb + self.lambda_out * fused if self.residual else fused
+        return evt, rgb, neck, None
+
+
+FUSIONS = {'add': AddFusion, 'af': AFFusion, 'tfs': TFSFusion, 'hsf': HSFFusion,
+           'cafr': lambda c: CAFRFusion(c, residual=True), 'cafrx': lambda c: CAFRFusion(c, residual=False)}
 
 
 def build_fusion(name, c, scale_idx=0):

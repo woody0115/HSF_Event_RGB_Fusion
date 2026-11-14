@@ -15,7 +15,7 @@ run() {     # run <gpu> <fusion> <name> [extra...]
     CUDA_VISIBLE_DEVICES=$gpu python tools/train_dual.py --fusion "$f" --name "$name" $COMMON "$@" > "runs/${name}.out" 2>&1
     log "end $name (exit $?)"
 }
-dir_of() { case $1 in add) echo step4;; rel*) echo step11_rel;; sw*) echo step12_sw;; iaf_*) echo step8_iaf;; *) echo step5_6;; esac; }
+dir_of() { case $1 in add) echo step4;; rel*) echo step11_rel;; sw*) echo step12_sw;; cafr*) echo step13_cafr;; iaf_*) echo step8_iaf;; *) echo step5_6;; esac; }
 rm -f runs/rel_iter_$TAG.done
 SPEC_A=$4; SPEC_B=${5:-}
 EXTRA=()

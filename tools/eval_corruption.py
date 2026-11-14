@@ -36,6 +36,8 @@ MODELS['add_s5'] = ('dual', 'step4/dual_add_s5_cleaninit/best.pt', 'add')
 MODELS['relp2_add'] = ('dual', 'step11_rel/dual_relp2_add_v2/best.pt', 'relp2_add')
 MODELS['sw_add'] = ('dual', 'step12_sw/dual_sw_add_s5/best.pt', 'sw_add')
 MODELS['sw2_add'] = ('dual', 'step12_sw/dual_sw2_add_s5/best.pt', 'sw2_add')
+MODELS['cafr'] = ('dual', 'step13_cafr/dual_cafr_s5/best.pt', 'cafr')
+MODELS['cafrx'] = ('dual', 'step13_cafr/dual_cafrx_s5/best.pt', 'cafrx')
 
 
 def summ(dm):
