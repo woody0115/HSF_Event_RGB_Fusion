@@ -1,0 +1,25 @@
+#!/bin/bash
+# Scheme A then scheme B (2026-11-14), never more than 2 GPUs (0 and 3):
+#   wait for the softmax-gate runs (rel_iter_sw1.done)
+#   A: RGB corruption robustness of rgb_val / event_val / add_s5 (GPU 0) and relp2_add / sw_add / sw2_add (GPU 3)
+#   B: train cafr (GPU 0) and cafrx (GPU 3), per-lighting eval, then their corruption robustness
+cd ~/work/HSF_Event_RGB_Fusion && source ~/work/hsf_env.sh
+log() { echo "[$(date '+%F %T')] $*"; }
+log "waiting for rel_iter_sw1.done"
+while [ ! -f runs/rel_iter_sw1.done ]; do sleep 60; done
+log "A: corruption evaluation"
+CUDA_VISIBLE_DEVICES=0 python tools/eval_corruption.py --models rgb_val event_val add_s5 > runs/eval_corruption_g0.log 2>&1 &
+sleep 30
+CUDA_VISIBLE_DEVICES=3 python tools/eval_corruption.py --models relp2_add sw_add sw2_add > runs/eval_corruption_g3.log 2>&1 &
+wait
+log "A done"
+touch runs/scheme_a.done
+log "B: CAFR training"
+bash runs/rel_iter2.sh cafr1 0 3 "cafr dual_cafr_s5" "cafrx dual_cafrx_s5" > runs/rel_iter_cafr1.log 2>&1
+log "B: corruption evaluation of cafr / cafrx"
+CUDA_VISIBLE_DEVICES=0 python tools/eval_corruption.py --models cafr > runs/eval_corruption_cafr.log 2>&1 &
+sleep 30
+CUDA_VISIBLE_DEVICES=3 python tools/eval_corruption.py --models cafrx > runs/eval_corruption_cafrx.log 2>&1 &
+wait
+log "B done"
+touch runs/scheme_b.done
