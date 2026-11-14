@@ -363,6 +363,9 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
 
     for epoch in range(start, epochs):
         model.train()
+        if getattr(model, 'aux0', 0) > 0:           # auxiliary per-branch losses: aux0 -> 0 linearly
+            model.aux_weight = model.aux0 * (1 - epoch / epochs)
+            print(f'aux weight {model.aux_weight:.3f} ({", ".join(model.aux_branches)})', flush=True)
         t0 = time.time()
         mloss = torch.zeros(3, device=device)
         opt.zero_grad()
@@ -380,6 +383,8 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
                 out = model(rgb, evt)
                 preds = out[0] if isinstance(out, tuple) and isinstance(out[0], list) else out
                 loss, items = crit(preds, b)
+                for aux in getattr(model, 'aux_outputs', []):
+                    loss = loss + model.aux_weight * crit(aux, b)[0]
             scaler.scale(loss.sum()).backward()
             if (it + 1) % accumulate == 0:
                 scaler.unscale_(opt)

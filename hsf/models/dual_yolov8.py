@@ -56,6 +56,10 @@ class DualYOLOv8(nn.Module):
         self.illum = fusion.startswith('iaf_')
         self.reliability = fusion.startswith(('rel_', 'relp_', 'rel2_', 'relp2_'))   # docs/fusion_model.md
         self.modality_drop = modality_drop
+        # auxiliary per-branch losses (docs/fusion_model.md Sec. 4): the shared neck + head also run on the
+        # RGB term and on the event term of the neck input alone; hsf/engine.py train() adds
+        # aux_weight * (L_rgb + L_evt) and decays aux_weight linearly from aux0 to 0 over the epochs.
+        self.aux0, self.aux_weight, self.aux_branches, self.aux_outputs = 0.0, 0.0, ('rgb', 'evt'), []
         self.nc = nc
         self.stride = self.model[-1].stride
         self.names = rgb_model.names
@@ -91,7 +95,16 @@ class DualYOLOv8(nn.Module):
                 x_e, x_r, neck_inputs[i], h_new = self.fusion[k](x_e, x_r, h, **extra)
                 new_state.append(h_new)
                 k += 1
-        # replay the Ultralytics neck graph; it only reads layers 4, 6, 9 from the backbone
+        x = self._neck(neck_inputs)
+        self.aux_outputs = []
+        if self.training and self.aux_weight > 0 and all(getattr(f, 'last_branches', None) for f in self.fusion):
+            for k, br in enumerate(('rgb', 'evt')):
+                if br in self.aux_branches:
+                    self.aux_outputs.append(self._neck({i: f.last_branches[k] for i, f in zip(FUSE_AT, self.fusion)}))
+        return (x, new_state) if self.stateful else x
+
+    def _neck(self, neck_inputs):
+        """Replay the Ultralytics neck graph; it only reads layers 4, 6, 9 from the backbone."""
         y = [None] * 10
         for i in FUSE_AT:
             y[i] = neck_inputs[i]
@@ -101,4 +114,4 @@ class DualYOLOv8(nn.Module):
                 x = y[m.f] if isinstance(m.f, int) else [x if j == -1 else y[j] for j in m.f]
             x = m(x)
             y.append(x)
-        return (x, new_state) if self.stateful else x
+        return x

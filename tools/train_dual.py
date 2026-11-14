@@ -13,6 +13,7 @@ Run:  .venv\\Scripts\\python.exe tools\\train_dual.py --fusion add --epochs 20  
             (step 11: reliability-weighted fusion, docs/fusion_model.md; relp_add = physical prior only)
       python tools/train_dual.py --fusion rel2_add --epochs 5 --lr 1e-3 --warmup 1
             (v2: reliability-gated additive fusion; relp2_add = without the learned residual)
+            add --aux 0.5 for the auxiliary per-branch losses (v3), --aux-branches evt for the event branch only
       add --smoke for a quick pipeline check
 """
 import argparse
@@ -56,6 +57,10 @@ def main():
     ap.add_argument('--eval-every', type=int, default=1,
                     help='TFS/HSF: validate every N epochs (was 2 for > 6 epochs until 2026-11-14, which skipped '
                          'epoch 1 while add/af validated every epoch)')
+    ap.add_argument('--aux', type=float, default=0.0,
+                    help='rel2_/relp2_ fusions: initial weight of the auxiliary per-branch detection losses '
+                         '(decays linearly to 0; docs/fusion_model.md Sec. 4)')
+    ap.add_argument('--aux-branches', default='rgb,evt', help='branches with an auxiliary loss: rgb,evt | evt | rgb')
     ap.add_argument('--smoke', action='store_true', help='2 short epochs on a few sequences')
     a = ap.parse_args()
     if a.seed is not None:
@@ -76,6 +81,7 @@ def main():
                        rgb_init=a.rgb_init if osp.isfile(a.rgb_init) else None,
                        evt_init=a.evt_init if osp.isfile(a.evt_init) else None,
                        modality_drop=a.modality_drop)
+    model.aux0, model.aux_branches = a.aux, tuple(a.aux_branches.split(','))
     print(f'config: {vars(a)}', flush=True)
     smoke = dict(epochs=2, sequences_train=['zurich_city_16_a', 'zurich_city_17_a'], sequences_val=['thun_02_a'],
                  max_train_batches=150) if a.smoke else dict(epochs=a.epochs)

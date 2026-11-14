@@ -365,6 +365,7 @@ class ReliabilityGateV2(nn.Module):
             nn.init.zeros_(self.delta[-1].bias)
         self.last_gate = None
         self.last_terms = None
+        self.last_branches = None
 
     def log_terms(self, sig, size):
         pool = lambda x: F.adaptive_avg_pool2d(x, size)     # noqa: E731
@@ -395,8 +396,10 @@ class ReliabilityGateV2(nn.Module):
             r, e = g_r[vm], g_e[vm]
             self.last_terms = {'g_r_mean': r.mean().item(), 'g_r_lt50': (r < 0.5).float().mean().item(),
                                'g_e_mean': e.mean().item(), 'g_e_lt50': (e < 0.5).float().mean().item()}
-        neck = g_r.to(rgb.dtype) * rgb + g_e.to(rgb.dtype) * self.proj(neck_base - rgb)
-        return evt2, rgb2, neck, h
+        rgb_part, evt_part = g_r.to(rgb.dtype) * rgb, g_e.to(rgb.dtype) * self.proj(neck_base - rgb)
+        # branch terms of the neck input, read by DualYOLOv8 for the auxiliary per-branch losses
+        self.last_branches = (rgb_part, evt_part) if self.training else None
+        return evt2, rgb2, rgb_part + evt_part, h
 
     def describe(self):
         t = self.last_terms or {}
