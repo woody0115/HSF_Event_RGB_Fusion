@@ -408,6 +408,52 @@ class ReliabilityGateV2(nn.Module):
                 + ''.join(f'  {k} {v:.4f}' for k, v in t.items()))
 
 
+class SoftmaxModalityGate(nn.Module):
+    """Scene-adaptive modality weights from the features (2026-11-14, user proposal):
+        d          = [GAP(F_rgb), GMP(F_rgb), GAP(F_evt), GMP(F_evt)]      (B, 4C) per image
+        [w_R, w_E] = scale * softmax(MLP(d))                                 (B, 2)
+        neck       = w_R * F_rgb + w_E * P(neck_base - F_rgb)               (add: neck_base - F_rgb = F_evt)
+    scale = 1 ('sw_'): convex weights as proposed (w_R + w_E = 1; at init 0.5 / 0.5 = half of add).
+    scale = 2 ('sw2_'): w_R + w_E = 2, so at init (1, 1) the module equals the add baseline and the
+    pretrained neck sees the feature scale it was trained with. The MLP's last layer is zero-initialised
+    (equal weights). The MLP reads backbone features, not raw event counts, so it can learn that many
+    events from ego-motion or background change do not mean a reliable event stream.
+    last_gate: per-image w_E / scale (event share, read by tools/eval_conditions.py per lighting)."""
+
+    def __init__(self, base, c, scale=1.0):
+        super().__init__()
+        self.base = base
+        self.stateful = bool(getattr(base, 'stateful', False))
+        self.scale = scale
+        hidden = max(c // 4, 32)
+        self.mlp = nn.Sequential(nn.Linear(4 * c, hidden), nn.SiLU(), nn.Linear(hidden, 2))
+        nn.init.zeros_(self.mlp[-1].weight)
+        nn.init.zeros_(self.mlp[-1].bias)
+        self.proj = nn.Conv2d(c, c, 1)
+        nn.init.zeros_(self.proj.bias)
+        with torch.no_grad():
+            self.proj.weight.copy_(torch.eye(c).view(c, c, 1, 1))
+        self.last_gate = None
+        self.last_terms = None
+
+    def forward(self, evt, rgb, h=None, **_):
+        evt2, rgb2, neck_base, h = self.base(evt, rgb, h)
+        d = torch.cat([rgb.mean((2, 3)), rgb.amax((2, 3)), evt.mean((2, 3)), evt.amax((2, 3))], 1).float()
+        w = torch.softmax(self.mlp(d), 1) * self.scale                         # (B, 2): [w_R, w_E]
+        self.last_gate = (w[:, 1] / self.scale).detach()
+        if not self.training:
+            e = w[:, 1] / self.scale
+            self.last_terms = {'evt_share_mean': e.mean().item(), 'evt_share_min': e.min().item(),
+                               'evt_share_max': e.max().item()}
+        w = w.to(rgb.dtype)[:, :, None, None, None]
+        neck = w[:, 0] * rgb + w[:, 1] * self.proj(neck_base - rgb)
+        return evt2, rgb2, neck, h
+
+    def describe(self):
+        t = self.last_terms or {}
+        return f'scale {self.scale:g}' + ''.join(f'  {k} {v:.4f}' for k, v in t.items())
+
+
 FUSIONS = {'add': AddFusion, 'af': AFFusion, 'tfs': TFSFusion, 'hsf': HSFFusion}
 
 
@@ -415,15 +461,16 @@ def build_fusion(name, c, scale_idx=0):
     """'iaf_<base>' = <base> fusion wrapped in the illumination-aware gate (e.g. iaf_add, iaf_af);
     'rel_<base>' = <base> wrapped in the reliability-weighted gate v1 (docs/fusion_model.md);
     'relp_<base>' = same with the physical prior only (no learned residual delta);
-    'rel2_<base>' / 'relp2_<base>' = reliability-gated additive fusion v2 (with / without delta)."""
-    for prefix in ('iaf_', 'relp2_', 'rel2_', 'relp_', 'rel_'):
+    'rel2_<base>' / 'relp2_<base>' = reliability-gated additive fusion v2 (with / without delta);
+    'sw_<base>' / 'sw2_<base>' = softmax modality weights from the features, sum 1 / sum 2."""
+    for prefix in ('iaf_', 'relp2_', 'rel2_', 'relp_', 'rel_', 'sw2_', 'sw_'):
         if name.startswith(prefix):
             base = name[len(prefix):]
             break
     else:
         prefix, base = '', name
     if base not in FUSIONS:
-        raise ValueError(f'unknown fusion "{name}" (available: {list(FUSIONS)}, iaf_/rel_/relp_/rel2_/relp2_<name>)')
+        raise ValueError(f'unknown fusion "{name}" (available: {list(FUSIONS)}, iaf_/rel_/relp_/rel2_/relp2_/sw_/sw2_<name>)')
     m = FUSIONS[base](c)
     if prefix == 'iaf_':
         return IllumGate(m, c)
@@ -431,4 +478,6 @@ def build_fusion(name, c, scale_idx=0):
         return ReliabilityGate(m, c, scale_idx, learn_delta=prefix == 'rel_')
     if prefix in ('rel2_', 'relp2_'):
         return ReliabilityGateV2(m, c, scale_idx, learn_delta=prefix == 'rel2_')
+    if prefix in ('sw_', 'sw2_'):
+        return SoftmaxModalityGate(m, c, scale=2.0 if prefix == 'sw2_' else 1.0)
     return m

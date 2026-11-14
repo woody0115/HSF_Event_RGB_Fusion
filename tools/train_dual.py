@@ -14,6 +14,8 @@ Run:  .venv\\Scripts\\python.exe tools\\train_dual.py --fusion add --epochs 20  
       python tools/train_dual.py --fusion rel2_add --epochs 5 --lr 1e-3 --warmup 1
             (v2: reliability-gated additive fusion; relp2_add = without the learned residual)
             add --aux 0.5 for the auxiliary per-branch losses (v3), --aux-branches evt for the event branch only
+      python tools/train_dual.py --fusion sw2_add --epochs 5 --lr 1e-3 --warmup 1
+            (step 12: softmax modality weights from the features; sw_ = sum 1, sw2_ = sum 2)
       add --smoke for a quick pipeline check
 """
 import argparse
@@ -71,7 +73,8 @@ def main():
 
     name = a.name or f'dual_{a.fusion}' + ('_smoke' if a.smoke else '')
     step = ('step4' if a.fusion == 'add' else 'step8_iaf' if a.fusion.startswith('iaf_') else
-            'step11_rel' if a.fusion.startswith('rel') else 'step5_6')
+            'step11_rel' if a.fusion.startswith('rel') else
+            'step12_sw' if a.fusion.startswith('sw') else 'step5_6')
     run_dir = osp.join(ROOT, 'runs', step, name)
     start_logging(run_dir, ROOT)
     for k, path in (('rgb', a.rgb_init), ('event', a.evt_init)):
