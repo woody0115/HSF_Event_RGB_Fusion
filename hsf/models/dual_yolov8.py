@@ -54,7 +54,7 @@ class DualYOLOv8(nn.Module):
         self.fusion_type = fusion
         self.stateful = bool(getattr(self.fusion[0], 'stateful', False))   # needs consecutive frames
         self.illum = fusion.startswith('iaf_')
-        self.reliability = fusion.startswith(('rel_', 'relp_'))   # docs/fusion_model.md
+        self.reliability = fusion.startswith(('rel_', 'relp_', 'rel2_', 'relp2_'))   # docs/fusion_model.md
         self.modality_drop = modality_drop
         self.nc = nc
         self.stride = self.model[-1].stride

@@ -232,7 +232,8 @@ def reliability_signals(rgb, evt):
     num = tanh(n * c / 255) with n events per pixel in the frame's window.
     Returns y (B,1,S,S) luma, n (B,1,S,S) events/pixel (0 in the padding), valid (B,1,S,S) mask,
     sigma_n (B,1,1,1) RGB noise std (Immerkaer 1996: Laplacian-difference MAD), n_bg (B,1,1,1)
-    mean events/pixel over valid pixels (background rate: objects cover a small share of the frame)."""
+    mean events/pixel over valid pixels (v1 background rate), n_floor (B,1,1,1) noise floor of the
+    event count (v2)."""
     rgb, evt = rgb.float(), evt.float()
     valid = ((evt - PAD).abs().amax(1, keepdim=True) > 2e-3).float()          # padding: all channels = 114
     y = 0.299 * rgb[:, 0:1] + 0.587 * rgb[:, 1:2] + 0.114 * rgb[:, 2:3]
@@ -241,7 +242,13 @@ def reliability_signals(rgb, evt):
     sigma_n = (math.sqrt(math.pi / 2) / 6) * lap.sum((2, 3), keepdim=True) / valid.sum((2, 3), keepdim=True).clamp(min=1)
     n = torch.atanh(evt[:, 0:1].clamp(0, 0.999)) * (255.0 / GEAR_C) * valid
     n_bg = n.sum((2, 3), keepdim=True) / valid.sum((2, 3), keepdim=True).clamp(min=1)
-    return {'y': y, 'n': n, 'valid': valid, 'sigma_n': sigma_n.clamp(min=1e-3), 'n_bg': n_bg}
+    # v2: noise floor = 10th percentile of the 16x16-cell means over fully valid cells. Cells without
+    # moving edges hold only noise events, so a low percentile estimates the noise rate; the frame mean
+    # n_bg also counts the scene edges that ego-motion turns into events (signal, not noise).
+    nc, vc = F.avg_pool2d(n, 16), F.avg_pool2d(valid, 16)
+    nc = torch.where(vc > 0.999, nc, torch.full_like(nc, float('nan'))).flatten(1)
+    n_floor = torch.nanquantile(nc, 0.10, dim=1).nan_to_num(0.0).view(-1, 1, 1, 1)
+    return {'y': y, 'n': n, 'valid': valid, 'sigma_n': sigma_n.clamp(min=1e-3), 'n_bg': n_bg, 'n_floor': n_floor}
 
 
 class ReliabilityGate(nn.Module):
@@ -320,24 +327,105 @@ class ReliabilityGate(nn.Module):
                 + ''.join(f'  {k} {v:.4f}' for k, v in t.items()))
 
 
+class ReliabilityGateV2(nn.Module):
+    """Reliability-gated additive fusion, v2 (2026-11-14; docs/fusion_model.md, Sec. 10).
+    Iteration 1 showed that the convex weighting of v1 (w * rgb + (1 - w) * evt, event weight 4-5 %)
+    falls back to RGB-only accuracy while plain addition gains in day and night: the two streams are
+    complementary, not two readings of the same quantity. v2 keeps both and shrinks each one by its
+    own Wiener gain rho^2 / (rho^2 + 1), rho = s * ratio (ratio per pixel, s x s pixels per cell):
+        g_r = sigmoid(a * log(CNR_r + e) + c * log(1 - sat + e) + 2 log s + d_r + delta_r)
+        g_e = sigmoid(b * log(SNR_e + e) + 2 log s + d_e + delta_e)
+        SNR_e = relu(n - n_floor) / sqrt(n + 0.01)       n_floor: noise floor, not the frame mean
+        neck = g_r * rgb + g_e * P(neck_base - rgb)      (g_r = g_e = 1: the add baseline)
+    Prior a = b = 2, c = 1, d_r = d_e = 0. The scalars are named lambda_* (no weight decay) and trained
+    with gate_lr_mult times the base learning rate (hsf/engine.py build_optimizer): in v1 they moved
+    by 0.02 in 5 epochs. delta = zero-initialised conv on both features (None for relp2_).
+    Padding cells get g_r = g_e = 1. last_gate: per-image mean of g_e over valid cells."""
+    gate_lr_mult = 30.0
+
+    def __init__(self, base, c, scale_idx, prior=(2.0, 2.0, 1.0, 0.0, 0.0), eps=0.05, learn_delta=True):
+        super().__init__()
+        self.base = base
+        self.stateful = bool(getattr(base, 'stateful', False))
+        self.stride = STRIDES[scale_idx]
+        self.eps = eps
+        self.log_s2 = 2 * math.log(self.stride)
+        a, b, cc, dr, de = prior
+        self.lambda_cnr, self.lambda_snr = nn.Parameter(torch.tensor(a)), nn.Parameter(torch.tensor(b))
+        self.lambda_sat = nn.Parameter(torch.tensor(cc))
+        self.lambda_bias_r, self.lambda_bias_e = nn.Parameter(torch.tensor(dr)), nn.Parameter(torch.tensor(de))
+        self.proj = nn.Conv2d(c, c, 1)
+        nn.init.zeros_(self.proj.bias)
+        with torch.no_grad():
+            self.proj.weight.copy_(torch.eye(c).view(c, c, 1, 1))
+        self.delta = None
+        if learn_delta:
+            self.delta = nn.Sequential(nn.Conv2d(2 * c, c // 4, 1), nn.SiLU(), nn.Conv2d(c // 4, 2, 3, padding=1))
+            nn.init.zeros_(self.delta[-1].weight)
+            nn.init.zeros_(self.delta[-1].bias)
+        self.last_gate = None
+        self.last_terms = None
+
+    def log_terms(self, sig, size):
+        pool = lambda x: F.adaptive_avg_pool2d(x, size)     # noqa: E731
+        v = pool(sig['valid'])
+        vs = v.clamp(min=1e-3)
+        mu = pool(sig['y'] * sig['valid']) / vs
+        var = (pool(sig['y'] ** 2 * sig['valid']) / vs - mu ** 2).clamp(min=0)
+        cnr = var.sqrt() / sig['sigma_n']
+        sat = pool((sig['y'] > 0.98).float() * sig['valid']) / vs
+        n = pool(sig['n']) / vs
+        snr = F.relu(n - sig['n_floor']) / (n + 1e-2).sqrt()
+        e = self.eps
+        return torch.log(cnr + e), torch.log(snr + e), torch.log(1 - sat + e), v
+
+    def forward(self, evt, rgb, h=None, sig=None):
+        evt2, rgb2, neck_base, h = self.base(evt, rgb, h)
+        lc, ls, lsat, v = self.log_terms(sig, rgb.shape[-2:])
+        logit_r = self.lambda_cnr * lc + self.lambda_sat * lsat + self.log_s2 + self.lambda_bias_r
+        logit_e = self.lambda_snr * ls + self.log_s2 + self.lambda_bias_e
+        if self.delta is not None:
+            d = self.delta(torch.cat([rgb, evt], 1)).float()
+            logit_r, logit_e = logit_r + d[:, 0:1], logit_e + d[:, 1:2]
+        vm = v > 0
+        g_r = torch.where(vm, torch.sigmoid(logit_r), torch.ones_like(logit_r))
+        g_e = torch.where(vm, torch.sigmoid(logit_e), torch.ones_like(logit_e))
+        self.last_gate = ((g_e * vm).sum((1, 2, 3)) / vm.sum((1, 2, 3)).clamp(min=1)).detach()
+        if not self.training:                    # gain statistics over valid cells
+            r, e = g_r[vm], g_e[vm]
+            self.last_terms = {'g_r_mean': r.mean().item(), 'g_r_lt50': (r < 0.5).float().mean().item(),
+                               'g_e_mean': e.mean().item(), 'g_e_lt50': (e < 0.5).float().mean().item()}
+        neck = g_r.to(rgb.dtype) * rgb + g_e.to(rgb.dtype) * self.proj(neck_base - rgb)
+        return evt2, rgb2, neck, h
+
+    def describe(self):
+        t = self.last_terms or {}
+        return (f's{self.stride}: a {self.lambda_cnr.item():.2f} b {self.lambda_snr.item():.2f} '
+                f'c {self.lambda_sat.item():.2f} d_r {self.lambda_bias_r.item():.2f} d_e {self.lambda_bias_e.item():.2f}'
+                + ''.join(f'  {k} {v:.4f}' for k, v in t.items()))
+
+
 FUSIONS = {'add': AddFusion, 'af': AFFusion, 'tfs': TFSFusion, 'hsf': HSFFusion}
 
 
 def build_fusion(name, c, scale_idx=0):
     """'iaf_<base>' = <base> fusion wrapped in the illumination-aware gate (e.g. iaf_add, iaf_af);
-    'rel_<base>' = <base> wrapped in the reliability-weighted gate (docs/fusion_model.md);
-    'relp_<base>' = same with the physical prior only (no learned residual delta)."""
-    for prefix in ('iaf_', 'relp_', 'rel_'):
+    'rel_<base>' = <base> wrapped in the reliability-weighted gate v1 (docs/fusion_model.md);
+    'relp_<base>' = same with the physical prior only (no learned residual delta);
+    'rel2_<base>' / 'relp2_<base>' = reliability-gated additive fusion v2 (with / without delta)."""
+    for prefix in ('iaf_', 'relp2_', 'rel2_', 'relp_', 'rel_'):
         if name.startswith(prefix):
             base = name[len(prefix):]
             break
     else:
         prefix, base = '', name
     if base not in FUSIONS:
-        raise ValueError(f'unknown fusion "{name}" (available: {list(FUSIONS)}, iaf_/rel_/relp_<name>)')
+        raise ValueError(f'unknown fusion "{name}" (available: {list(FUSIONS)}, iaf_/rel_/relp_/rel2_/relp2_<name>)')
     m = FUSIONS[base](c)
     if prefix == 'iaf_':
         return IllumGate(m, c)
     if prefix in ('rel_', 'relp_'):
         return ReliabilityGate(m, c, scale_idx, learn_delta=prefix == 'rel_')
+    if prefix in ('rel2_', 'relp2_'):
+        return ReliabilityGateV2(m, c, scale_idx, learn_delta=prefix == 'rel2_')
     return m

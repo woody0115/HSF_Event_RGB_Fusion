@@ -96,13 +96,16 @@ def start_logging(run_dir, root):
 
 
 def build_optimizer(model, lr, momentum, weight_decay):
-    g_bn, g_w, g_b = [], [], []
+    g_bn, g_w, g_b, g_gate, mult = [], [], [], [], 1.0
     bn_types = tuple(v for k, v in nn.__dict__.items() if 'Norm' in k)
     for module in model.modules():
         for name, p in module.named_parameters(recurse=False):
             if not p.requires_grad:
                 continue
-            if name == 'bias':
+            if 'lambda' in name and getattr(module, 'gate_lr_mult', 1.0) != 1.0:
+                g_gate.append(p)                # gate scalars with their own learning-rate multiplier
+                mult = module.gate_lr_mult
+            elif name == 'bias':
                 g_b.append(p)
             elif isinstance(module, bn_types) or 'lambda' in name or 'logit' in name:
                 g_bn.append(p)                  # norm weights and learnable scalars: no decay
@@ -111,6 +114,8 @@ def build_optimizer(model, lr, momentum, weight_decay):
     opt = torch.optim.SGD(g_b, lr=lr, momentum=momentum, nesterov=True)
     opt.add_param_group({'params': g_w, 'weight_decay': weight_decay})
     opt.add_param_group({'params': g_bn, 'weight_decay': 0.0})
+    if g_gate:                                  # the training loops multiply this group's lr by lr_mult
+        opt.add_param_group({'params': g_gate, 'weight_decay': 0.0, 'lr_mult': mult})
     return opt
 
 
@@ -240,7 +245,7 @@ def train_temporal(model, run_dir, epochs=20, clips=4, clip_len=4, lr=0.005, lrf
             if it <= n_warm:
                 accumulate = max(1, round(np.interp(it, [0, n_warm], [1, nbs / imgs])))
                 for j, g in enumerate(opt.param_groups):
-                    g['lr'] = np.interp(it, [0, n_warm], [0.1 if j == 0 else 0.0, lr * lf(epoch)])
+                    g['lr'] = np.interp(it, [0, n_warm], [0.1 if j == 0 else 0.0, lr * lf(epoch)]) * g.get('lr_mult', 1.0)
                     g['momentum'] = np.interp(it, [0, n_warm], [0.8, momentum])
             state, total, items_sum, n_lab = None, 0.0, torch.zeros(3, device=device), 0
             with torch.autocast('cuda', enabled=device.type == 'cuda'):
@@ -272,7 +277,7 @@ def train_temporal(model, run_dir, epochs=20, clips=4, clip_len=4, lr=0.005, lrf
                       f'{(time.time() - t0) / 60:.1f} min  mem {torch.cuda.memory_reserved() / 1e9:.1f} GB',
                       flush=True)
         for g in opt.param_groups:
-            g['lr'] = lr * lf(epoch + 1)
+            g['lr'] = lr * lf(epoch + 1) * g.get('lr_mult', 1.0)
 
         res = {'precision': 0, 'recall': 0, 'mAP50': 0, 'mAP50-95': 0}
         if (epoch + 1) % eval_every == 0 or epoch + 1 == epochs:
@@ -368,7 +373,7 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
             if it <= n_warm:
                 accumulate = max(1, round(np.interp(it, [0, n_warm], [1, nbs / batch])))
                 for j, g in enumerate(opt.param_groups):
-                    g['lr'] = np.interp(it, [0, n_warm], [0.1 if j == 0 else 0.0, lr * lf(epoch)])
+                    g['lr'] = np.interp(it, [0, n_warm], [0.1 if j == 0 else 0.0, lr * lf(epoch)]) * g.get('lr_mult', 1.0)
                     g['momentum'] = np.interp(it, [0, n_warm], [0.8, momentum])
             rgb, evt = b['rgb'].to(device, non_blocking=True), b['evt'].to(device, non_blocking=True)
             with torch.autocast('cuda', enabled=device.type == 'cuda'):
@@ -391,7 +396,7 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
                       f'{(time.time() - t0) / 60:.1f} min  mem {torch.cuda.memory_reserved() / 1e9:.1f} GB',
                       flush=True)
         for g in opt.param_groups:                  # epoch-level linear decay after warmup
-            g['lr'] = lr * lf(epoch + 1)
+            g['lr'] = lr * lf(epoch + 1) * g.get('lr_mult', 1.0)
 
         res = {'precision': 0, 'recall': 0, 'mAP50': 0, 'mAP50-95': 0}
         if (epoch + 1) % eval_every == 0 or epoch + 1 == epochs:

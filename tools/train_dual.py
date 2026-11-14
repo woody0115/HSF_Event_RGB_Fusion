@@ -11,6 +11,8 @@ Run:  .venv\\Scripts\\python.exe tools\\train_dual.py --fusion add --epochs 20  
             (step 8: illumination-aware gate on add / af, see IllumGate in hsf/models/fusion.py)
       python tools/train_dual.py --fusion rel_add --epochs 5 --lr 1e-3 --warmup 1
             (step 11: reliability-weighted fusion, docs/fusion_model.md; relp_add = physical prior only)
+      python tools/train_dual.py --fusion rel2_add --epochs 5 --lr 1e-3 --warmup 1
+            (v2: reliability-gated additive fusion; relp2_add = without the learned residual)
       add --smoke for a quick pipeline check
 """
 import argparse
@@ -64,7 +66,7 @@ def main():
 
     name = a.name or f'dual_{a.fusion}' + ('_smoke' if a.smoke else '')
     step = ('step4' if a.fusion == 'add' else 'step8_iaf' if a.fusion.startswith('iaf_') else
-            'step11_rel' if a.fusion.startswith(('rel_', 'relp_')) else 'step5_6')
+            'step11_rel' if a.fusion.startswith('rel') else 'step5_6')
     run_dir = osp.join(ROOT, 'runs', step, name)
     start_logging(run_dir, ROOT)
     for k, path in (('rgb', a.rgb_init), ('event', a.evt_init)):
