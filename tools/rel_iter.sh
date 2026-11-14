@@ -1,0 +1,33 @@
+#!/bin/bash
+# One iteration of the reliability-fusion experiments: two train_dual runs in parallel (one per GPU, never
+# more than 2 GPUs), then the per-lighting evaluation of both. Short schedule: 5 epochs, lr 1e-3, warmup 1,
+# seed 0, clean initialisation (step-3 models trained on train_core), checkpoints selected on the val split.
+# Usage (copy to runs/ on the lab server): bash runs/rel_iter.sh <tag> <gpuA> <gpuB> "<fusionA> <nameA> [extra args]" "<fusionB> <nameB> [extra args]"
+# Writes runs/rel_iter_<tag>.done when finished.
+cd ~/work/HSF_Event_RGB_Fusion && source ~/work/hsf_env.sh
+TAG=$1; GA=$2; GB=$3
+S3=runs/step3
+COMMON="--epochs 5 --lr 1e-3 --warmup 1 --seed 0 --rgb-init $S3/rgb_yolov8s_val/weights/best.pt --evt-init $S3/event_yolov8s_val/weights/best.pt"
+log() { echo "[$(date '+%F %T')] $*"; }
+run() {     # run <gpu> <fusion> <name> [extra...]
+    local gpu=$1 f=$2 name=$3; shift 3
+    log "start $name ($f $*) on GPU $gpu"
+    CUDA_VISIBLE_DEVICES=$gpu python tools/train_dual.py --fusion "$f" --name "$name" $COMMON "$@" > "runs/${name}.out" 2>&1
+    log "end $name (exit $?)"
+}
+dir_of() { case $1 in add) echo step4;; rel*) echo step11_rel;; iaf_*) echo step8_iaf;; *) echo step5_6;; esac; }
+rm -f runs/rel_iter_$TAG.done
+SPEC_A=$4; SPEC_B=${5:-}
+EXTRA=()
+for spec in "$SPEC_A" "$SPEC_B"; do
+    [ -z "$spec" ] && continue
+    read -r f name _ <<< "$spec"
+    EXTRA+=("$name=$(dir_of $f)/$name/best.pt:$f")
+done
+run $GA $SPEC_A &
+if [ -n "$SPEC_B" ]; then sleep 45; run $GB $SPEC_B & fi
+wait
+log "per-lighting evaluation: ${EXTRA[*]}"
+CUDA_VISIBLE_DEVICES=$GA python tools/eval_conditions.py --models --extra "${EXTRA[@]}" > runs/rel_iter_${TAG}_eval.log 2>&1
+log done
+touch runs/rel_iter_$TAG.done
