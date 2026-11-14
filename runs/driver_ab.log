@@ -1,0 +1,6 @@
+[2026-11-14 15:13:10] waiting for rel_iter_sw1.done
+[2026-11-14 15:28:10] A: corruption evaluation
+[2026-11-14 16:47:10] A done
+[2026-11-14 16:47:10] B: CAFR training
+[2026-11-14 20:04:34] B: corruption evaluation of cafr / cafrx
+[2026-11-14 21:27:09] B done

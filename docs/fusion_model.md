@@ -284,3 +284,38 @@ plasma fractal，另加 ImageNet-C 沒有的「低光」：曝光乘 k（0.5–0
 4. 低光強度 1–3（曝光 × 0.5–0.2）幾乎不影響 RGB 單流（48.2 → 41.9），和第 2 節「DSEC 夜間 RGB 仍可用」一致；
    強度 4–5 才明顯下降。
 
+## 13. CAFR 融合（方案 B，2026-11-15，分支 `cafr-fusion`）
+
+來源：Cao et al., "Embracing Events and Frames with Hierarchical Feature Refinement Network for Object Detection",
+ECCV 2024（FRN，程式 github.com/HuCaoFighting/FRN，MIT）。依官方程式移植 CAFR（`CAFRFusion`，每個尺度一個）：
+
+1. 兩路各一個 1×1 conv：e0、r0。
+2. Mul&Add（雙向互補）：m = e0·r0，e1 = e0 + m，r1 = r0 + m。
+3. Cross-attention：注意力圖來自「另一個模態」的空間自相似度（HW × HW，單頭，照原始程式不除以 √d），值來自自己；
+   投影回 C 通道後當作 AdaIN 的 style，重新正規化自己的特徵（無參數 AdaIN）。用 `scaled_dot_product_attention`
+   計算，不存 HW × HW 的矩陣（P3 有 6400 個位置）。
+4. 兩路串接（2C）後 1×1 Conv + BN + SiLU 回到 C 通道給 neck。和 FRN 一樣，兩條 backbone 照原樣往下走、不回饋。
+
+兩種接法：`cafr` 為 neck = evt + rgb + λ·CAFR，λ 初始 0（初始等於 add，像我們的 AF）；`cafrx` 為 neck = CAFR（最接近 FRN，
+預訓練的 neck 一開始就要接新的特徵）。17.9 M 參數。未移植 FRN 訓練時以 15% 機率把 RGB 輸入歸零的做法。
+
+**結果**（短排程 5 epoch、lr 1e-3、seed 0；mAP50-95）：
+
+| 模型 | 驗證集 | test | 白天 | 偏暗 | 夜間 | RGB 破壞 mPC ／ rPC |
+|---|---|---|---|---|---|---|
+| add | **42.7** | 51.1 | 51.6 | 59.3 | 38.1 | 22.5 ／ 0.44 |
+| `cafr` | 42.4 | 51.1 | 51.5 | 59.1 | 39.0 | **23.1 ／ 0.45** |
+| `cafrx` | 38.8 | 50.7 | 50.8 | 59.5 | **39.8** | 22.2 ／ 0.44 |
+
+驗證集每個 epoch：`cafr` 42.3、41.7、41.0、41.7、42.4；`cafrx` 36.4、38.3、38.3、38.5、38.8。和其他融合（第 1 個 epoch 最高）
+不同，兩者第 5 個 epoch 都還在上升。
+
+**檢討**：
+
+1. 依驗證集沒有超過 add。`cafrx` 從新的特徵重新適應預訓練 neck，5 epoch 不夠，低 3.9 分；`cafr` 仍在上升，較長的排程可能有幫助。
+2. `cafr` 學到的殘差係數 λ 只有 0.003 ／ −0.012 ／ −0.015（P3–P5），CAFR 分支的貢獻很小，模型實際上接近 add；
+   它在 RGB 破壞下多出的 0.6 mPC 可能只是 seed 差異。λ 沒有額外的學習率倍數，可以比照閘門純量用 `lr_mult`。
+3. `cafrx` 在雜訊組（9.4）與模糊組（21.6）最高、霧組（23.2）最低：cross-attention 的注意力圖來自 event 時，
+   RGB 雜訊對它影響較小；霧使整張 RGB 的分布偏移，AdaIN 的 style 統計量也跟著偏。
+4. FRN 的 RGB 歸零沒有移植；它正是讓融合學會在 RGB 失效時倚賴 event 的訓練訊號（第 11 節的推測），下一步可以加上。
+
