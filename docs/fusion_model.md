@@ -319,3 +319,42 @@ ECCV 2024（FRN，程式 github.com/HuCaoFighting/FRN，MIT）。依官方程式
    RGB 雜訊對它影響較小；霧使整張 RGB 的分布偏移，AdaIN 的 style 統計量也跟著偏。
 4. FRN 的 RGB 歸零沒有移植；它正是讓融合學會在 RGB 失效時倚賴 event 的訓練訊號（第 11 節的推測），下一步可以加上。
 
+## 14. 為什麼不同序列的結果差很多（診斷，2026-11-15，分支 `diagnose-conditions`）
+
+問題：同一個融合方法在某些序列比 RGB 單流高很多、某些低很多（例如 interlaken_00_a：add 51.8、`cafrx` 73.0、RGB 63.7）。
+工具 `tools/diagnose_conditions.py`：
+
+- `dump`：對 test 每一張存下預測框、GT 與每個尺度的 event 依賴度 r_e = ‖neck 輸入 − F_rgb‖ ／ ‖F_rgb‖；`--ablate evt0`
+  另跑一次把 event 換成「沒有事件」的值（通道 0 = 0、通道 1–2 = 128/255），看拿掉 event 會怎樣。
+- `analyze`：每個序列的 mAP50-95 與 50 張一段的 block bootstrap 95% 區間（100 次）、比 RGB 的差 Δ 與其區間；
+  每段 50 張的 Δ 和場景訊號（亮度、暗部比例、飽和、事件量、背景事件、RGB CNR、框內 event SNR、框大小、r_e）的
+  Spearman 相關；每個序列每類的 AP 與 GT 框數；分數 ≥ 0.3 的錯誤分解（找到／定位錯／類別錯／漏掉／背景誤報）；
+  每個模型輸最多的 50 張段落畫成圖（`runs/diag/worst/`，不進版控）。結果在 `runs/diag/diagnose.md` ／ `.json`。
+
+**發現**：
+
+1. **大部分大幅差異是評估方式的假象**。每個序列的 mAP 是各類 AP 的平均，只有幾個框的類別和上千個 car 框一樣重。
+   interlaken_00_a 的 GT 是 car 1644、bus **2**、truck 36：car AP 所有模型都在 85–86，分數 ≥ 0.3 時各模型都找到約 94% 的框，
+   序列 mAP 40.5–73.0 的差距完全來自 2 個 bus 框的 AP（RGB 52.7、add 18.9、`relp2_add` 16.7、`cafr` 13.3、`sw_add` 51.9、
+   `rel2_add` 65.5、`cafrx` 79.5）。thun_01_a（bicycle 13 框，AP 4–15）、thun_01_b（bicycle 21 框，5.8–22.4）同理。
+   這些序列的 bootstrap 區間也很寬（interlaken_00_a 的 RGB 為 [44, 80]），add 的 Δ −11.9 區間 [−14, +1]，不顯著。
+   先前推測「相機運動造成的背景事件拖累 interlaken_00_a」是錯的。
+2. **統計上顯著的差異（Δ 的 95% 區間不含 0）都只有 1–3 分**：thun_02_a（最大的序列，3861 張）add +1.9、`relp2_add` +1.2、
+   `sw_add` +2.2，進步在 rider、truck、bicycle；zurich_city_13_a `rel2_add` +2.6、`sw_add` +1.6；偏暗的 interlaken_01_a
+   `rel2_add` ／ `relp2_add` ／ `sw_add` 約 −2.4（行人與 car 都降）；zurich_city_15_a add −1.0、`relp2_add` −1.1。
+3. **夜間行人是真正的弱點**：zurich_city_12_a 的行人（168 框）RGB 33.7，融合只有 15.7–28.4；夜間 event 圖幾乎都是雜訊，
+   行人又小。序列層級的 Δ 沒有達到顯著，但這一類掉得很一致。
+4. **場景訊號解釋不了多少**：所有相關係數 |ρ| ≤ 0.3（event 單流除外），按訊號分四等份的平均 Δ 都在 ±1.5 以內（多數 ±0.5）。
+   比較一致的是 r_e：越倚賴 event 的段落相對 RGB 越差（add −0.19、`rel2_add` −0.22、`cafr` −0.28），以及偏暗 −0.18 ～ −0.19、
+   RGB CNR +0.2。背景事件量與框內 event SNR 都沒有明顯關係。
+5. **模型確實有在用 event**：拿掉 event 後 add、`rel2_add`、`relp2_add`、`cafr` 多數序列掉 2–7 分（zurich_city_15_a 約 −6 ～ −7），
+   add 在分數 ≥ 0.3 找到的框從 72.4% 降到約 66%；interlaken_00_a 的 bus AP 掉到 2–10。`sw_add` 掉得最少（r_e 0.21，多數序列變化 < 1 分），
+   等於沒在用 event，和第 11、12 節一致。
+6. **融合比較保守**：分數 ≥ 0.3 時 add 找到 72.4%（RGB 73.9%），背景誤報 0.34 ／ 張（RGB 0.39）。
+7. **訓練隨機性**：同一個 add 架構換訓練設定，interlaken_00_a 就差到 11 分，和第 1 點一致。
+
+**結論**：目前「哪個融合比較好」的比較大多落在雜訊範圍內，真正由場景造成的差異只有幾分。之後：
+
+1. 序列層級改看框數足夠的類別（例如 ≥ 50 框）或以框數加權的 mAP，並一律附上 bootstrap 區間。
+2. 主要方法各跑 3 個 seed 再比較。
+3. 夜間行人：FRN 式的 RGB 歸零／RGB 破壞訓練增強、或夜間 event 雜訊門檻，再用本工具確認。

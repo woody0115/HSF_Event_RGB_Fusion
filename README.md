@@ -68,8 +68,22 @@ mPC = 所有破壞與強度的平均，rPC = mPC ／ 乾淨。`python tools/eval
 - Softmax 權重固定押在 RGB（0.8 ／ 0.2），乾淨時最高、破壞時最差；破壞加重時 event 權重沒有上升。
 - CAFR（分支 `cafr-fusion`，`docs/fusion_model.md` 第 13 節）：`cafr` mPC 最高（23.1），但學到的殘差係數很小，實際上接近 Add；`cafrx` 驗證集只有 38.8。
 
+### 為什麼不同序列差很多（診斷，2026-11-15，分支 `diagnose-conditions`）
+
+`python tools/diagnose_conditions.py dump ...` ／ `analyze ...`，結果在 `runs/diag/diagnose.md`，推導與數字見
+`docs/fusion_model.md` 第 14 節。
+
+- **大幅差異大多是假象**：每個序列的 mAP 是各類 AP 的平均，只有幾個框的類別和上千個 car 框一樣重。interlaken_00_a
+  只有 2 個 bus 框，bus AP 從 13 到 80，序列 mAP 就從 40.5 跳到 73.0；car AP 所有模型都在 85–86。
+- **顯著的差異只有 1–3 分**：thun_02_a 融合 +1.2 ～ +2.2，偏暗的 interlaken_01_a 約 −2.4。
+- **真正的弱點**：夜間行人（zurich_city_12_a：RGB 33.7，融合 15.7–28.4）。
+- 亮度、背景事件、event SNR 等場景訊號都解釋不了差異（|ρ| ≤ 0.3）。拿掉 event 後 add ／ `relp2_add` ／ `cafr` 掉 2–7 分，
+  `sw_add` 掉得最少。
+- 單一 seed 下，各融合方法之間的差距大多在雜訊範圍內。
+
 ## 下一步
 
+0. 比較方式（第 14 節診斷）：主要方法（add、`relp2_add`、`sw2_add`、`cafr`）各跑 3 個 seed；序列層級只看框數足夠的類別或以框數加權，附 bootstrap 區間；夜間行人另外處理（RGB 歸零／RGB 破壞訓練增強）。
 0. 可靠度融合（分支 `reliability-fusion`）：`relp2_add` 與 `add` 各跑 3 個 seed，確認驗證集上的差距；輔助 loss 改成每條分支獨立的輕量偵測頭再試；之後再用乾淨初始權重跑論文設定四組（`INIT=_val`）。
 1. 論文設定（40 epoch、lr 0.005）在我們這邊驗證分數一路下降，下一輪要找出原因：較小的 lr ／ 較少的 epoch、TFS 與 HSF 每個 epoch 都評估（目前每 2 個 epoch 一次，沒評估到第 1 個 epoch）。
 2. 一律用 `--split val`：在驗證集挑權重，test 只在最後評估一次。
