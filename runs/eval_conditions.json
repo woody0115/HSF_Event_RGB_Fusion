@@ -2600,5 +2600,757 @@
     "frames": 1239
    }
   }
+ },
+ "add_seed1": {
+  "buckets": {
+   "all": {
+    "mAP50": 69.55,
+    "mAP50-95": 49.15,
+    "frames": 13893
+   },
+   "day": {
+    "mAP50": 69.6,
+    "mAP50-95": 49.49,
+    "frames": 12179
+   },
+   "dim": {
+    "mAP50": 81.49,
+    "mAP50-95": 58.33,
+    "frames": 1000
+   },
+   "night": {
+    "mAP50": 57.0,
+    "mAP50-95": 35.46,
+    "frames": 714
+   }
+  },
+  "sequences": {
+   "interlaken_00_a": {
+    "mAP50": 54.11,
+    "mAP50-95": 47.47,
+    "frames": 1134
+   },
+   "interlaken_00_b": {
+    "mAP50": 32.23,
+    "mAP50-95": 25.59,
+    "frames": 1101
+   },
+   "interlaken_01_a": {
+    "mAP50": 43.34,
+    "mAP50-95": 30.88,
+    "frames": 1676
+   },
+   "thun_01_a": {
+    "mAP50": 67.79,
+    "mAP50-95": 45.57,
+    "frames": 197
+   },
+   "thun_01_b": {
+    "mAP50": 47.79,
+    "mAP50-95": 34.2,
+    "frames": 1079
+   },
+   "thun_02_a": {
+    "mAP50": 72.04,
+    "mAP50-95": 51.22,
+    "frames": 3861
+   },
+   "zurich_city_12_a": {
+    "mAP50": 47.44,
+    "mAP50-95": 29.38,
+    "frames": 705
+   },
+   "zurich_city_13_a": {
+    "mAP50": 66.06,
+    "mAP50-95": 44.32,
+    "frames": 379
+   },
+   "zurich_city_13_b": {
+    "mAP50": 47.99,
+    "mAP50-95": 32.76,
+    "frames": 315
+   },
+   "zurich_city_14_a": {
+    "mAP50": 66.73,
+    "mAP50-95": 43.4,
+    "frames": 439
+   },
+   "zurich_city_14_b": {
+    "mAP50": 68.23,
+    "mAP50-95": 50.76,
+    "frames": 577
+   },
+   "zurich_city_14_c": {
+    "mAP50": 69.3,
+    "mAP50-95": 51.32,
+    "frames": 1191
+   },
+   "zurich_city_15_a": {
+    "mAP50": 77.73,
+    "mAP50-95": 58.35,
+    "frames": 1239
+   }
+  }
+ },
+ "add_seed2": {
+  "buckets": {
+   "all": {
+    "mAP50": 72.3,
+    "mAP50-95": 51.09,
+    "frames": 13893
+   },
+   "day": {
+    "mAP50": 72.2,
+    "mAP50-95": 51.36,
+    "frames": 12179
+   },
+   "dim": {
+    "mAP50": 82.34,
+    "mAP50-95": 58.81,
+    "frames": 1000
+   },
+   "night": {
+    "mAP50": 62.16,
+    "mAP50-95": 38.35,
+    "frames": 714
+   }
+  },
+  "sequences": {
+   "interlaken_00_a": {
+    "mAP50": 61.83,
+    "mAP50-95": 53.63,
+    "frames": 1134
+   },
+   "interlaken_00_b": {
+    "mAP50": 32.57,
+    "mAP50-95": 25.82,
+    "frames": 1101
+   },
+   "interlaken_01_a": {
+    "mAP50": 41.65,
+    "mAP50-95": 30.02,
+    "frames": 1676
+   },
+   "thun_01_a": {
+    "mAP50": 67.28,
+    "mAP50-95": 44.57,
+    "frames": 197
+   },
+   "thun_01_b": {
+    "mAP50": 46.41,
+    "mAP50-95": 34.04,
+    "frames": 1079
+   },
+   "thun_02_a": {
+    "mAP50": 76.56,
+    "mAP50-95": 54.51,
+    "frames": 3861
+   },
+   "zurich_city_12_a": {
+    "mAP50": 53.07,
+    "mAP50-95": 32.84,
+    "frames": 705
+   },
+   "zurich_city_13_a": {
+    "mAP50": 69.3,
+    "mAP50-95": 46.62,
+    "frames": 379
+   },
+   "zurich_city_13_b": {
+    "mAP50": 46.28,
+    "mAP50-95": 31.71,
+    "frames": 315
+   },
+   "zurich_city_14_a": {
+    "mAP50": 69.75,
+    "mAP50-95": 45.21,
+    "frames": 439
+   },
+   "zurich_city_14_b": {
+    "mAP50": 67.24,
+    "mAP50-95": 48.62,
+    "frames": 577
+   },
+   "zurich_city_14_c": {
+    "mAP50": 71.65,
+    "mAP50-95": 52.69,
+    "frames": 1191
+   },
+   "zurich_city_15_a": {
+    "mAP50": 77.32,
+    "mAP50-95": 58.89,
+    "frames": 1239
+   }
+  }
+ },
+ "relp2_add_seed1": {
+  "buckets": {
+   "all": {
+    "mAP50": 71.38,
+    "mAP50-95": 50.58,
+    "frames": 13893
+   },
+   "day": {
+    "mAP50": 71.6,
+    "mAP50-95": 50.9,
+    "frames": 12179
+   },
+   "dim": {
+    "mAP50": 81.94,
+    "mAP50-95": 59.2,
+    "frames": 1000
+   },
+   "night": {
+    "mAP50": 57.04,
+    "mAP50-95": 36.65,
+    "frames": 714
+   }
+  },
+  "sequences": {
+   "interlaken_00_a": {
+    "mAP50": 54.68,
+    "mAP50-95": 47.61,
+    "frames": 1134
+   },
+   "interlaken_00_b": {
+    "mAP50": 32.89,
+    "mAP50-95": 26.18,
+    "frames": 1101
+   },
+   "interlaken_01_a": {
+    "mAP50": 39.74,
+    "mAP50-95": 29.24,
+    "frames": 1676
+   },
+   "thun_01_a": {
+    "mAP50": 70.12,
+    "mAP50-95": 46.43,
+    "frames": 197
+   },
+   "thun_01_b": {
+    "mAP50": 46.11,
+    "mAP50-95": 33.47,
+    "frames": 1079
+   },
+   "thun_02_a": {
+    "mAP50": 73.09,
+    "mAP50-95": 52.25,
+    "frames": 3861
+   },
+   "zurich_city_12_a": {
+    "mAP50": 46.87,
+    "mAP50-95": 29.87,
+    "frames": 705
+   },
+   "zurich_city_13_a": {
+    "mAP50": 69.6,
+    "mAP50-95": 46.34,
+    "frames": 379
+   },
+   "zurich_city_13_b": {
+    "mAP50": 46.45,
+    "mAP50-95": 32.14,
+    "frames": 315
+   },
+   "zurich_city_14_a": {
+    "mAP50": 66.21,
+    "mAP50-95": 42.93,
+    "frames": 439
+   },
+   "zurich_city_14_b": {
+    "mAP50": 70.77,
+    "mAP50-95": 52.59,
+    "frames": 577
+   },
+   "zurich_city_14_c": {
+    "mAP50": 72.05,
+    "mAP50-95": 53.06,
+    "frames": 1191
+   },
+   "zurich_city_15_a": {
+    "mAP50": 76.94,
+    "mAP50-95": 58.07,
+    "frames": 1239
+   }
+  },
+  "gate": {
+   "all": 0.8853,
+   "day": 0.8831,
+   "dim": 0.8819,
+   "night": 0.9272
+  }
+ },
+ "cafr_seed1": {
+  "buckets": {
+   "all": {
+    "mAP50": 71.35,
+    "mAP50-95": 50.84,
+    "frames": 13893
+   },
+   "day": {
+    "mAP50": 71.54,
+    "mAP50-95": 51.22,
+    "frames": 12179
+   },
+   "dim": {
+    "mAP50": 81.97,
+    "mAP50-95": 59.35,
+    "frames": 1000
+   },
+   "night": {
+    "mAP50": 58.58,
+    "mAP50-95": 37.89,
+    "frames": 714
+   }
+  },
+  "sequences": {
+   "interlaken_00_a": {
+    "mAP50": 61.15,
+    "mAP50-95": 53.49,
+    "frames": 1134
+   },
+   "interlaken_00_b": {
+    "mAP50": 32.48,
+    "mAP50-95": 25.82,
+    "frames": 1101
+   },
+   "interlaken_01_a": {
+    "mAP50": 41.59,
+    "mAP50-95": 30.42,
+    "frames": 1676
+   },
+   "thun_01_a": {
+    "mAP50": 69.57,
+    "mAP50-95": 46.0,
+    "frames": 197
+   },
+   "thun_01_b": {
+    "mAP50": 45.12,
+    "mAP50-95": 32.97,
+    "frames": 1079
+   },
+   "thun_02_a": {
+    "mAP50": 72.84,
+    "mAP50-95": 52.31,
+    "frames": 3861
+   },
+   "zurich_city_12_a": {
+    "mAP50": 47.21,
+    "mAP50-95": 29.69,
+    "frames": 705
+   },
+   "zurich_city_13_a": {
+    "mAP50": 67.43,
+    "mAP50-95": 45.62,
+    "frames": 379
+   },
+   "zurich_city_13_b": {
+    "mAP50": 45.58,
+    "mAP50-95": 32.34,
+    "frames": 315
+   },
+   "zurich_city_14_a": {
+    "mAP50": 67.76,
+    "mAP50-95": 44.67,
+    "frames": 439
+   },
+   "zurich_city_14_b": {
+    "mAP50": 68.42,
+    "mAP50-95": 50.28,
+    "frames": 577
+   },
+   "zurich_city_14_c": {
+    "mAP50": 72.43,
+    "mAP50-95": 53.13,
+    "frames": 1191
+   },
+   "zurich_city_15_a": {
+    "mAP50": 77.96,
+    "mAP50-95": 59.86,
+    "frames": 1239
+   }
+  }
+ },
+ "sw2_add_seed1": {
+  "buckets": {
+   "all": {
+    "mAP50": 72.18,
+    "mAP50-95": 51.04,
+    "frames": 13893
+   },
+   "day": {
+    "mAP50": 72.07,
+    "mAP50-95": 51.11,
+    "frames": 12179
+   },
+   "dim": {
+    "mAP50": 82.72,
+    "mAP50-95": 59.78,
+    "frames": 1000
+   },
+   "night": {
+    "mAP50": 61.43,
+    "mAP50-95": 36.86,
+    "frames": 714
+   }
+  },
+  "sequences": {
+   "interlaken_00_a": {
+    "mAP50": 57.92,
+    "mAP50-95": 49.7,
+    "frames": 1134
+   },
+   "interlaken_00_b": {
+    "mAP50": 32.22,
+    "mAP50-95": 25.59,
+    "frames": 1101
+   },
+   "interlaken_01_a": {
+    "mAP50": 42.51,
+    "mAP50-95": 30.47,
+    "frames": 1676
+   },
+   "thun_01_a": {
+    "mAP50": 62.74,
+    "mAP50-95": 43.3,
+    "frames": 197
+   },
+   "thun_01_b": {
+    "mAP50": 47.74,
+    "mAP50-95": 33.74,
+    "frames": 1079
+   },
+   "thun_02_a": {
+    "mAP50": 74.13,
+    "mAP50-95": 52.75,
+    "frames": 3861
+   },
+   "zurich_city_12_a": {
+    "mAP50": 51.39,
+    "mAP50-95": 31.81,
+    "frames": 705
+   },
+   "zurich_city_13_a": {
+    "mAP50": 66.64,
+    "mAP50-95": 45.71,
+    "frames": 379
+   },
+   "zurich_city_13_b": {
+    "mAP50": 49.45,
+    "mAP50-95": 33.6,
+    "frames": 315
+   },
+   "zurich_city_14_a": {
+    "mAP50": 69.43,
+    "mAP50-95": 45.22,
+    "frames": 439
+   },
+   "zurich_city_14_b": {
+    "mAP50": 67.72,
+    "mAP50-95": 49.55,
+    "frames": 577
+   },
+   "zurich_city_14_c": {
+    "mAP50": 70.55,
+    "mAP50-95": 51.97,
+    "frames": 1191
+   },
+   "zurich_city_15_a": {
+    "mAP50": 78.29,
+    "mAP50-95": 59.12,
+    "frames": 1239
+   }
+  },
+  "gate": {
+   "all": 0.2067,
+   "day": 0.2068,
+   "dim": 0.2073,
+   "night": 0.2047
+  }
+ },
+ "sw2_add_seed2": {
+  "buckets": {
+   "all": {
+    "mAP50": 72.49,
+    "mAP50-95": 51.62,
+    "frames": 13893
+   },
+   "day": {
+    "mAP50": 72.49,
+    "mAP50-95": 51.79,
+    "frames": 12179
+   },
+   "dim": {
+    "mAP50": 83.6,
+    "mAP50-95": 60.5,
+    "frames": 1000
+   },
+   "night": {
+    "mAP50": 60.66,
+    "mAP50-95": 38.45,
+    "frames": 714
+   }
+  },
+  "sequences": {
+   "interlaken_00_a": {
+    "mAP50": 60.53,
+    "mAP50-95": 51.66,
+    "frames": 1134
+   },
+   "interlaken_00_b": {
+    "mAP50": 32.68,
+    "mAP50-95": 25.81,
+    "frames": 1101
+   },
+   "interlaken_01_a": {
+    "mAP50": 42.25,
+    "mAP50-95": 30.76,
+    "frames": 1676
+   },
+   "thun_01_a": {
+    "mAP50": 61.62,
+    "mAP50-95": 42.68,
+    "frames": 197
+   },
+   "thun_01_b": {
+    "mAP50": 46.94,
+    "mAP50-95": 34.0,
+    "frames": 1079
+   },
+   "thun_02_a": {
+    "mAP50": 76.4,
+    "mAP50-95": 54.95,
+    "frames": 3861
+   },
+   "zurich_city_12_a": {
+    "mAP50": 50.51,
+    "mAP50-95": 32.46,
+    "frames": 705
+   },
+   "zurich_city_13_a": {
+    "mAP50": 70.04,
+    "mAP50-95": 46.87,
+    "frames": 379
+   },
+   "zurich_city_13_b": {
+    "mAP50": 47.06,
+    "mAP50-95": 32.75,
+    "frames": 315
+   },
+   "zurich_city_14_a": {
+    "mAP50": 66.26,
+    "mAP50-95": 43.93,
+    "frames": 439
+   },
+   "zurich_city_14_b": {
+    "mAP50": 72.04,
+    "mAP50-95": 53.4,
+    "frames": 577
+   },
+   "zurich_city_14_c": {
+    "mAP50": 71.67,
+    "mAP50-95": 53.59,
+    "frames": 1191
+   },
+   "zurich_city_15_a": {
+    "mAP50": 77.85,
+    "mAP50-95": 58.99,
+    "frames": 1239
+   }
+  },
+  "gate": {
+   "all": 0.2023,
+   "day": 0.2025,
+   "dim": 0.2025,
+   "night": 0.1997
+  }
+ },
+ "relp2_add_seed2": {
+  "buckets": {
+   "all": {
+    "mAP50": 71.54,
+    "mAP50-95": 51.28,
+    "frames": 13893
+   },
+   "day": {
+    "mAP50": 71.51,
+    "mAP50-95": 51.43,
+    "frames": 12179
+   },
+   "dim": {
+    "mAP50": 83.12,
+    "mAP50-95": 61.25,
+    "frames": 1000
+   },
+   "night": {
+    "mAP50": 59.08,
+    "mAP50-95": 37.53,
+    "frames": 714
+   }
+  },
+  "sequences": {
+   "interlaken_00_a": {
+    "mAP50": 61.14,
+    "mAP50-95": 53.74,
+    "frames": 1134
+   },
+   "interlaken_00_b": {
+    "mAP50": 32.41,
+    "mAP50-95": 25.96,
+    "frames": 1101
+   },
+   "interlaken_01_a": {
+    "mAP50": 40.6,
+    "mAP50-95": 29.87,
+    "frames": 1676
+   },
+   "thun_01_a": {
+    "mAP50": 67.12,
+    "mAP50-95": 46.32,
+    "frames": 197
+   },
+   "thun_01_b": {
+    "mAP50": 45.56,
+    "mAP50-95": 33.13,
+    "frames": 1079
+   },
+   "thun_02_a": {
+    "mAP50": 74.01,
+    "mAP50-95": 53.56,
+    "frames": 3861
+   },
+   "zurich_city_12_a": {
+    "mAP50": 48.09,
+    "mAP50-95": 30.75,
+    "frames": 705
+   },
+   "zurich_city_13_a": {
+    "mAP50": 66.1,
+    "mAP50-95": 45.18,
+    "frames": 379
+   },
+   "zurich_city_13_b": {
+    "mAP50": 47.32,
+    "mAP50-95": 33.01,
+    "frames": 315
+   },
+   "zurich_city_14_a": {
+    "mAP50": 67.3,
+    "mAP50-95": 44.88,
+    "frames": 439
+   },
+   "zurich_city_14_b": {
+    "mAP50": 68.01,
+    "mAP50-95": 50.73,
+    "frames": 577
+   },
+   "zurich_city_14_c": {
+    "mAP50": 72.38,
+    "mAP50-95": 53.01,
+    "frames": 1191
+   },
+   "zurich_city_15_a": {
+    "mAP50": 76.87,
+    "mAP50-95": 58.5,
+    "frames": 1239
+   }
+  },
+  "gate": {
+   "all": 0.9013,
+   "day": 0.8994,
+   "dim": 0.8983,
+   "night": 0.9373
+  }
+ },
+ "cafr_seed2": {
+  "buckets": {
+   "all": {
+    "mAP50": 71.43,
+    "mAP50-95": 51.13,
+    "frames": 13893
+   },
+   "day": {
+    "mAP50": 71.77,
+    "mAP50-95": 51.59,
+    "frames": 12179
+   },
+   "dim": {
+    "mAP50": 82.25,
+    "mAP50-95": 59.96,
+    "frames": 1000
+   },
+   "night": {
+    "mAP50": 58.06,
+    "mAP50-95": 36.98,
+    "frames": 714
+   }
+  },
+  "sequences": {
+   "interlaken_00_a": {
+    "mAP50": 79.64,
+    "mAP50-95": 71.05,
+    "frames": 1134
+   },
+   "interlaken_00_b": {
+    "mAP50": 33.74,
+    "mAP50-95": 26.82,
+    "frames": 1101
+   },
+   "interlaken_01_a": {
+    "mAP50": 42.12,
+    "mAP50-95": 30.45,
+    "frames": 1676
+   },
+   "thun_01_a": {
+    "mAP50": 66.79,
+    "mAP50-95": 45.91,
+    "frames": 197
+   },
+   "thun_01_b": {
+    "mAP50": 45.24,
+    "mAP50-95": 32.77,
+    "frames": 1079
+   },
+   "thun_02_a": {
+    "mAP50": 74.14,
+    "mAP50-95": 53.64,
+    "frames": 3861
+   },
+   "zurich_city_12_a": {
+    "mAP50": 47.11,
+    "mAP50-95": 30.42,
+    "frames": 705
+   },
+   "zurich_city_13_a": {
+    "mAP50": 66.9,
+    "mAP50-95": 45.2,
+    "frames": 379
+   },
+   "zurich_city_13_b": {
+    "mAP50": 46.86,
+    "mAP50-95": 32.55,
+    "frames": 315
+   },
+   "zurich_city_14_a": {
+    "mAP50": 68.04,
+    "mAP50-95": 44.63,
+    "frames": 439
+   },
+   "zurich_city_14_b": {
+    "mAP50": 69.28,
+    "mAP50-95": 51.22,
+    "frames": 577
+   },
+   "zurich_city_14_c": {
+    "mAP50": 72.95,
+    "mAP50-95": 53.64,
+    "frames": 1191
+   },
+   "zurich_city_15_a": {
+    "mAP50": 77.78,
+    "mAP50-95": 59.31,
+    "frames": 1239
+   }
+  }
  }
 }

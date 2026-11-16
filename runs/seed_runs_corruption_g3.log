@@ -1,0 +1,102 @@
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  batch 0/435
+  batch 50/435
+  batch 100/435
+  batch 150/435
+  batch 200/435
+  batch 250/435
+  batch 300/435
+  batch 350/435
+  batch 400/435
+sw2_add_seed1 clean 51.1  mPC 20.64  rPC 0.4039  groups {'noise': 5.94, 'blur': 17.92, 'weather': 24.11, 'digital': 34.55, 'light': 38.93}  (1509 s)
+sw2_add_seed1 event share: clean 0.207  gaussian_noise 0.202  shot_noise 0.202  impulse_noise 0.202  defocus_blur 0.203  motion_blur 0.204  fog 0.203  brightness 0.205  contrast 0.202  dark 0.204
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  batch 0/435
+  batch 50/435
+  batch 100/435
+  batch 150/435
+  batch 200/435
+  batch 250/435
+  batch 300/435
+  batch 350/435
+  batch 400/435
+sw2_add_seed2 clean 51.77  mPC 20.14  rPC 0.389  groups {'noise': 5.65, 'blur': 17.7, 'weather': 22.85, 'digital': 32.96, 'light': 40.09}  (1502 s)
+sw2_add_seed2 event share: clean 0.202  gaussian_noise 0.196  shot_noise 0.197  impulse_noise 0.196  defocus_blur 0.198  motion_blur 0.199  fog 0.196  brightness 0.199  contrast 0.196  dark 0.199
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  batch 0/435
+  batch 50/435
+  batch 100/435
+  batch 150/435
+  batch 200/435
+  batch 250/435
+  batch 300/435
+  batch 350/435
+  batch 400/435
+relp2_add_seed2 clean 51.42  mPC 23.58  rPC 0.4586  groups {'noise': 8.96, 'blur': 21.69, 'weather': 28.08, 'digital': 36.3, 'light': 41.32}  (1665 s)
+relp2_add_seed2 event share: clean 0.901  gaussian_noise 0.901  shot_noise 0.901  impulse_noise 0.901  defocus_blur 0.901  motion_blur 0.901  fog 0.901  brightness 0.901  contrast 0.901  dark 0.901
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  batch 0/435
+  batch 50/435
+  batch 100/435
+  batch 150/435
+  batch 200/435
+  batch 250/435
+  batch 300/435
+  batch 350/435
+  batch 400/435
+cafr_seed2   clean 51.28  mPC 22.79  rPC 0.4444  groups {'noise': 7.71, 'blur': 21.59, 'weather': 27.24, 'digital': 35.64, 'light': 40.33}  (4887 s)
+
+# RGB corruption robustness (DSEC-Det test, every n-th frame; event input clean)
+
+mAP50-95 (%). mPC = mean over corruptions x severities, rPC = mPC / clean. Event share = mean gate of gated fusions.
+
+| model | clean | mPC | rPC | noise | blur | weather | digital | light |
+|---|---|---|---|---|---|---|---|---|
+| sw2_add_seed1 | 51.1 | 20.64 | 0.4039 | 5.94 | 17.92 | 24.11 | 34.55 | 38.93 |
+| sw2_add_seed2 | 51.77 | 20.14 | 0.389 | 5.65 | 17.7 | 22.85 | 32.96 | 40.09 |
+| relp2_add_seed2 | 51.42 | 23.58 | 0.4586 | 8.96 | 21.69 | 28.08 | 36.3 | 41.32 |
+| cafr_seed2 | 51.28 | 22.79 | 0.4444 | 7.71 | 21.59 | 27.24 | 35.64 | 40.33 |
+
+| model | corruption | s1 | s2 | s3 | s4 | s5 | event share s1..s5 |
+|---|---|---|---|---|---|---|---|
+| sw2_add_seed1 | gaussian_noise | 10.89 | 5.89 | 2.16 | 1.35 | 0.6 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed1 | shot_noise | 28.24 | 10.98 | 4.37 | 0.88 | 0.82 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed1 | impulse_noise | 13.04 | 6.6 | 2.67 | 0.52 | 0.06 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed1 | defocus_blur | 28.95 | 23.08 | 14.49 | 10.97 | 9.28 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed1 | motion_blur | 35.62 | 24.56 | 14.66 | 9.89 | 7.71 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed1 | fog | 32.02 | 28.81 | 23.57 | 20.32 | 15.85 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed1 | brightness | 49.5 | 44.97 | 40.77 | 36.96 | 33.73 | 0.21 0.21 0.20 0.20 0.20 |
+| sw2_add_seed1 | contrast | 40.57 | 36.3 | 29.91 | 20.38 | 12.36 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed1 | dark | 49.25 | 46.94 | 43.41 | 34.2 | 20.86 | 0.21 0.21 0.20 0.20 0.20 |
+| sw2_add_seed2 | gaussian_noise | 10.41 | 4.77 | 2.63 | 1.75 | 1.55 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed2 | shot_noise | 27.09 | 10.83 | 2.72 | 0.44 | 0.85 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed2 | impulse_noise | 11.29 | 6.64 | 2.51 | 0.83 | 0.5 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed2 | defocus_blur | 30.49 | 23.78 | 13.82 | 9.65 | 7.53 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed2 | motion_blur | 36.86 | 25.16 | 14.39 | 8.8 | 6.5 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed2 | fog | 30.73 | 27.56 | 22.14 | 18.9 | 14.91 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed2 | brightness | 50.06 | 44.79 | 39.52 | 34.42 | 30.62 | 0.20 0.20 0.20 0.20 0.20 |
+| sw2_add_seed2 | contrast | 39.94 | 34.99 | 28.9 | 18.58 | 7.79 | 0.20 0.20 0.20 0.20 0.19 |
+| sw2_add_seed2 | dark | 49.98 | 47.61 | 44.49 | 35.84 | 22.53 | 0.20 0.20 0.20 0.20 0.20 |
+| relp2_add_seed2 | gaussian_noise | 14.9 | 10.29 | 3.24 | 2.04 | 0.87 | 0.90 0.90 0.90 0.90 0.90 |
+| relp2_add_seed2 | shot_noise | 30.85 | 15.33 | 9.93 | 2.3 | 1.5 | 0.90 0.90 0.90 0.90 0.90 |
+| relp2_add_seed2 | impulse_noise | 15.77 | 10.63 | 11.65 | 2.92 | 2.13 | 0.90 0.90 0.90 0.90 0.90 |
+| relp2_add_seed2 | defocus_blur | 32.12 | 26.63 | 19.27 | 15.76 | 13.62 | 0.90 0.90 0.90 0.90 0.90 |
+| relp2_add_seed2 | motion_blur | 37.79 | 27.91 | 19.01 | 13.92 | 10.84 | 0.90 0.90 0.90 0.90 0.90 |
+| relp2_add_seed2 | fog | 34.92 | 32.17 | 27.93 | 24.91 | 20.48 | 0.90 0.90 0.90 0.90 0.90 |
+| relp2_add_seed2 | brightness | 49.83 | 45.58 | 41.77 | 38.45 | 35.9 | 0.90 0.90 0.90 0.90 0.90 |
+| relp2_add_seed2 | contrast | 40.59 | 37.19 | 32.58 | 23.31 | 17.78 | 0.90 0.90 0.90 0.90 0.90 |
+| relp2_add_seed2 | dark | 49.57 | 47.41 | 44.77 | 37.6 | 27.25 | 0.90 0.90 0.90 0.90 0.90 |
+| cafr_seed2 | gaussian_noise | 14.48 | 8.92 | 2.97 | 0.84 | 0.34 | - |
+| cafr_seed2 | shot_noise | 29.96 | 14.65 | 8.16 | 2.31 | 0.9 | - |
+| cafr_seed2 | impulse_noise | 15.19 | 9.17 | 5.02 | 1.71 | 0.97 | - |
+| cafr_seed2 | defocus_blur | 32.31 | 26.78 | 18.73 | 15.42 | 13.55 | - |
+| cafr_seed2 | motion_blur | 37.7 | 27.59 | 18.77 | 14.08 | 11.0 | - |
+| cafr_seed2 | fog | 33.83 | 31.03 | 27.0 | 24.29 | 20.04 | - |
+| cafr_seed2 | brightness | 49.81 | 45.33 | 41.32 | 38.01 | 35.4 | - |
+| cafr_seed2 | contrast | 39.58 | 36.01 | 31.27 | 22.77 | 16.86 | - |
+| cafr_seed2 | dark | 49.41 | 46.96 | 43.95 | 36.21 | 25.14 | - |
+
