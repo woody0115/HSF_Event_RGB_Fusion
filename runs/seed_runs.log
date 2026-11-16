@@ -1,0 +1,20 @@
+[2026-11-16 12:40:29] training
+[2026-11-16 12:40:29] start dual_cafr_s5_seed1 on GPU 0
+[2026-11-16 12:41:14] start dual_cafr_s5_seed2 on GPU 3
+[2026-11-16 15:29:06] end dual_cafr_s5_seed1 (exit 0)
+[2026-11-16 15:29:06] start dual_add_s5_seed1 on GPU 0
+[2026-11-16 15:50:26] end dual_cafr_s5_seed2 (exit 0)
+[2026-11-16 15:50:26] start dual_sw2_add_s5_seed1 on GPU 3
+[2026-11-16 16:25:09] end dual_add_s5_seed1 (exit 0)
+[2026-11-16 16:25:09] start dual_add_s5_seed2 on GPU 0
+[2026-11-16 16:56:17] end dual_sw2_add_s5_seed1 (exit 0)
+[2026-11-16 16:56:17] start dual_sw2_add_s5_seed2 on GPU 3
+[2026-11-16 17:21:29] end dual_add_s5_seed2 (exit 0)
+[2026-11-16 17:21:29] start dual_relp2_add_s5_seed1 on GPU 0
+[2026-11-16 18:01:54] end dual_sw2_add_s5_seed2 (exit 0)
+[2026-11-16 18:01:54] start dual_relp2_add_s5_seed2 on GPU 3
+[2026-11-16 18:22:22] end dual_relp2_add_s5_seed1 (exit 0)
+[2026-11-16 19:09:08] end dual_relp2_add_s5_seed2 (exit 0)
+[2026-11-16 19:09:08] per-lighting evaluation (GPU 0) + corruption evaluation (GPU 3): add_seed1=step4/dual_add_s5_seed1/best.pt:add add_seed2=step4/dual_add_s5_seed2/best.pt:add relp2_add_seed1=step11_rel/dual_relp2_add_s5_seed1/best.pt:relp2_add cafr_seed1=step13_cafr/dual_cafr_s5_seed1/best.pt:cafr sw2_add_seed1=step12_sw/dual_sw2_add_s5_seed1/best.pt:sw2_add sw2_add_seed2=step12_sw/dual_sw2_add_s5_seed2/best.pt:sw2_add relp2_add_seed2=step11_rel/dual_relp2_add_s5_seed2/best.pt:relp2_add cafr_seed2=step13_cafr/dual_cafr_s5_seed2/best.pt:cafr
+[2026-11-16 19:22:32] corruption evaluation (GPU 0)
+[2026-11-16 21:48:35] done

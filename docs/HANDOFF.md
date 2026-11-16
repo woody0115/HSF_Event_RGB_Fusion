@@ -20,7 +20,8 @@
 | `softmax-fusion` | Softmax 模態權重（`sw_` ／ `sw2_`，使用者提議） | 第 11 節 |
 | `corruption-eval` | 方案 A：RGB 破壞穩健性（`hsf/data/corruptions.py`、`tools/eval_corruption.py`） | 第 12 節 |
 | `cafr-fusion` | 方案 B：FRN 的 CAFR（`cafr` ／ `cafrx`） | 第 13 節 |
-| `diagnose-conditions`（目前） | 每序列診斷（`tools/diagnose_conditions.py`）、各情況最佳模型表 | 第 14 節 |
+| `diagnose-conditions` | 每序列診斷（`tools/diagnose_conditions.py`）、各情況最佳模型表 | 第 14 節 |
+| `multi-seed`（目前，2026-11-16） | 4 個主要融合各 3 個 seed（`runs/seed_runs.sh`、`tools/summarize_seeds.py`） | 第 15 節 |
 
 commit 作者：`git -c user.name="$(git log -1 --format=%an 520dbaf)" -c user.email="$(git log -1 --format=%ae 520dbaf)" commit`，訊息結尾
 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`。
@@ -33,10 +34,13 @@ commit 作者：`git -c user.name="$(git log -1 --format=%an 520dbaf)" -c user.e
 - 每序列的大幅差異主要是少數類別造成的假象（interlaken_00_a 只有 2 個 bus 框）；顯著差異只有 1–3 分；
   真正的弱點是夜間行人（zurich_city_12_a：RGB 33.7，融合 15.7–28.4）。
 - 單一 seed 下各融合之間的差距大多在雜訊內。
+- 3 個 seed（2026-11-16）確認：驗證集上 add、`relp2_add`、`sw2_add`、`cafr` 分不出來（42.6–43.0，標準差 0.2–0.5，
+  和 RGB 單流 42.7 也差不多）；三個 seed 方向都一致的只有 RGB 破壞 mPC（test）：`cafr` ≈ `relp2_add` 23.1 > add 22.3 > `sw2_add` 20.0。
 
 ## 4. 下一步（每一項都要先問使用者同意）
 
-1. add、`relp2_add`、`sw2_add`、`cafr` 各跑 3 個 seed。
+1. ~~add、`relp2_add`、`sw2_add`、`cafr` 各跑 3 個 seed~~（2026-11-16 完成，第 15 節）。新提議：在驗證集上做 RGB 破壞評估，
+   讓穩健性也能依規則用來挑模型（只跑評估，不用訓練）。
 2. 評估：序列層級只算框數足夠的類別或以框數加權，附 bootstrap 區間（只改評估程式）。
 3. FRN 式 RGB 歸零／RGB 破壞訓練增強（處理 Softmax 權重不動與夜間行人）。
 4. 之前提過、仍待同意：輔助 loss 改成每條分支獨立的輕量偵測頭、P3 的負 event 先驗、用乾淨初始權重跑 40 epoch 論文設定（`INIT=_val`）。
