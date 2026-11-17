@@ -66,6 +66,15 @@ def main():
                          '(decays linearly to 0; docs/fusion_model.md Sec. 4)')
     ap.add_argument('--aux-branches', default='rgb,evt', help='branches with an auxiliary loss: rgb,evt | evt | rgb')
     ap.add_argument('--smoke', action='store_true', help='2 short epochs on a few sequences')
+    # fine-tuning toward RGB failure / night (2026-11-17, docs/tuning_log.md)
+    ap.add_argument('--init-ckpt', default=None,
+                    help='start from a trained dual-stream checkpoint (runs/.../best.pt) instead of the single-stream inits')
+    ap.add_argument('--freeze', default='', help='comma list of frozen sub-modules: rgb, evt, model (neck + head)')
+    ap.add_argument('--rgb-aug', type=float, default=0.0,
+                    help='share of training images with a random RGB corruption (hsf/data/corruptions.py)')
+    ap.add_argument('--rgb-aug-kinds', default='gaussian_noise,defocus_blur,fog,brightness,dark',
+                    help='corruption kinds used for training; the others stay held out for evaluation')
+    ap.add_argument('--rgb-drop', type=float, default=0.0, help='share of training images with the RGB input set to 0')
     a = ap.parse_args()
     if a.seed is not None:
         random.seed(a.seed)
@@ -87,7 +96,15 @@ def main():
                        evt_init=a.evt_init if osp.isfile(a.evt_init) else None,
                        modality_drop=a.modality_drop)
     model.aux0, model.aux_branches = a.aux, tuple(a.aux_branches.split(','))
-    print(f'config: {vars(a)}', flush=True)
+    if a.init_ckpt:
+        model.load_state_dict(torch.load(a.init_ckpt, map_location='cpu', weights_only=False)['model'])
+        print(f'initialised from {a.init_ckpt}', flush=True)
+    if a.freeze:
+        model.freeze([n for n in a.freeze.split(',') if n])
+    model.rgb_aug_p, model.rgb_drop_p = a.rgb_aug, a.rgb_drop
+    model.rgb_aug_kinds = tuple(k for k in a.rgb_aug_kinds.split(',') if k)
+    n_train = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f'config: {vars(a)}  trainable params {n_train / 1e6:.2f} M', flush=True)
     smoke = dict(epochs=2, sequences_train=['zurich_city_16_a', 'zurich_city_17_a'], sequences_val=['thun_02_a'],
                  max_train_batches=150) if a.smoke else dict(epochs=a.epochs)
     splits = dict(train_split='train', val_split='test') if (a.split == 'legacy' or a.smoke) else \

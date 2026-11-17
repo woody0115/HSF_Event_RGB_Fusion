@@ -70,12 +70,14 @@ def _plasma(b, size, decay, gen, device):
 
 
 @torch.no_grad()
-def corrupt(x, kind, severity, gen):
-    """x (B, 3, 640, 640) float in [0, 1] -> corrupted copy; severity 1..5; gen: torch.Generator on x.device."""
+def corrupt(x, kind, severity, gen, rows=ROWS):
+    """x (B, 3, 640, 640) float in [0, 1] -> corrupted copy; severity 1..5; gen: torch.Generator on x.device.
+    rows: image rows to corrupt (the test letterbox by default; (0, 640) for augmented training inputs,
+    whose frame position varies)."""
     assert x.shape[-2:] == (640, 640), 'expects the 640x640 letterboxed test input'
     c = PARAMS[kind][severity - 1]
     out = x.clone()
-    y = x[:, :, ROWS[0]:ROWS[1]].float()
+    y = x[:, :, rows[0]:rows[1]].float()
     dev = y.device
     if kind == 'gaussian_noise':
         y = y + c * torch.randn(y.shape, device=dev, generator=gen)
@@ -91,7 +93,7 @@ def corrupt(x, kind, severity, gen):
         y = _conv(y, _line(c, angle, dev))
     elif kind == 'fog':
         a, decay = c
-        fog = _plasma(y.shape[0], 640, decay, gen, dev)[:, :, ROWS[0]:ROWS[1]]
+        fog = _plasma(y.shape[0], 640, decay, gen, dev)[:, :, rows[0]:rows[1]]
         mx = y.amax((1, 2, 3), keepdim=True)
         y = (y + a * fog) * mx / (mx + a)
     elif kind == 'brightness':
@@ -106,5 +108,24 @@ def corrupt(x, kind, severity, gen):
         y = torch.poisson(y.clamp(min=0) * c * p, generator=gen) / p
     else:
         raise ValueError(kind)
-    out[:, :, ROWS[0]:ROWS[1]] = y.clamp(0, 1).to(out.dtype)
+    out[:, :, rows[0]:rows[1]] = y.clamp(0, 1).to(out.dtype)
+    return out
+
+
+@torch.no_grad()
+def degrade_batch(x, kinds, p_corrupt, p_drop, severities=(1, 2, 3, 4, 5)):
+    """Training-time RGB degradation, per image (2026-11-17, tuning toward RGB failure and night):
+    with probability p_drop the RGB input is set to 0 (FRN's RGB dropout, Cao et al. ECCV 2024), otherwise with
+    probability p_corrupt one random kind from `kinds` at a random severity is applied to the whole 640x640 input
+    (augmented frames are not at the test letterbox rows). Uses the global torch RNG (seeded by train_dual)."""
+    out = x.clone()
+    u = torch.rand(x.shape[0]).tolist()
+    for i, ui in enumerate(u):
+        if ui < p_drop:
+            out[i] = 0
+        elif ui < p_drop + p_corrupt and kinds:
+            k = kinds[int(torch.randint(len(kinds), (1,)))]
+            s = severities[int(torch.randint(len(severities), (1,)))]
+            gen = torch.Generator(device=x.device).manual_seed(int(torch.randint(2 ** 31 - 1, (1,))))
+            out[i:i + 1] = corrupt(x[i:i + 1], k, s, gen, rows=(0, 640))
     return out
