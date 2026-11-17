@@ -366,6 +366,10 @@ class ReliabilityGateV2(nn.Module):
         self.last_gate = None
         self.last_terms = None
         self.last_branches = None
+        # 'raw': CNR = local std / sigma_n as trained (the local std includes the noise itself, so pure noise
+        # gives CNR ~ 1 and, with the 2 log s cell gain, g_r ~ 1); 'signal': the noise variance is removed first,
+        # CNR = sqrt(relu(var - sigma_n^2)) / sigma_n (test-time option, docs/tuning_log.md round 2)
+        self.cnr_mode = 'raw'
 
     def log_terms(self, sig, size):
         pool = lambda x: F.adaptive_avg_pool2d(x, size)     # noqa: E731
@@ -373,6 +377,8 @@ class ReliabilityGateV2(nn.Module):
         vs = v.clamp(min=1e-3)
         mu = pool(sig['y'] * sig['valid']) / vs
         var = (pool(sig['y'] ** 2 * sig['valid']) / vs - mu ** 2).clamp(min=0)
+        if self.cnr_mode == 'signal':
+            var = (var - sig['sigma_n'] ** 2).clamp(min=0)
         cnr = var.sqrt() / sig['sigma_n']
         sat = pool((sig['y'] > 0.98).float() * sig['valid']) / vs
         n = pool(sig['n']) / vs

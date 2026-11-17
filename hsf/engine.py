@@ -334,8 +334,10 @@ def make_loaders(batch, workers, size=640, sequences_train=None, sequences_val=N
 def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937, weight_decay=5e-4,
           warmup_epochs=3, nbs=64, workers=8, eval_every=1, sequences_train=None, sequences_val=None,
           max_train_batches=None, classes=None, label_map=None,
-          train_split='train', val_split='test', resume=False):
+          train_split='train', val_split='test', resume=False, warmup_bias_lr=0.1):
     """classes / label_map: train on a subset of classes with remapped ids.
+    warmup_bias_lr: start of the bias learning rate during warmup (Ultralytics 0.1; fine-tuning a trained
+    model uses 0, so the biases ramp up like the weights instead of jumping by 0.1).
     train_split / val_split: dataset splits (hsf/data/dataset.py split_filter); with val_split != 'test' the
     best checkpoint is also evaluated once on the test split (test_metrics.json).
     resume: continue from run_dir/resume.pt (written after every epoch)."""
@@ -376,7 +378,8 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
             if it <= n_warm:
                 accumulate = max(1, round(np.interp(it, [0, n_warm], [1, nbs / batch])))
                 for j, g in enumerate(opt.param_groups):
-                    g['lr'] = np.interp(it, [0, n_warm], [0.1 if j == 0 else 0.0, lr * lf(epoch)]) * g.get('lr_mult', 1.0)
+                    g['lr'] = np.interp(it, [0, n_warm], [warmup_bias_lr if j == 0 else 0.0,
+                                                          lr * lf(epoch)]) * g.get('lr_mult', 1.0)
                     g['momentum'] = np.interp(it, [0, n_warm], [0.8, momentum])
             rgb, evt = b['rgb'].to(device, non_blocking=True), b['evt'].to(device, non_blocking=True)
             with torch.autocast('cuda', enabled=device.type == 'cuda'):

@@ -75,6 +75,8 @@ def main():
     ap.add_argument('--rgb-aug-kinds', default='gaussian_noise,defocus_blur,fog,brightness,dark',
                     help='corruption kinds used for training; the others stay held out for evaluation')
     ap.add_argument('--rgb-drop', type=float, default=0.0, help='share of training images with the RGB input set to 0')
+    ap.add_argument('--warmup-bias-lr', type=float, default=0.1,
+                    help='bias lr at the start of warmup (Ultralytics 0.1); use 0 when fine-tuning a trained model')
     a = ap.parse_args()
     if a.seed is not None:
         random.seed(a.seed)
@@ -114,7 +116,8 @@ def main():
         train_temporal(model, run_dir, clips=a.clips, clip_len=a.clip_len, lr=a.lr, workers=a.workers,
                        eval_every=a.eval_every, warmup_epochs=a.warmup, **smoke)
     else:
-        train(model, run_dir, batch=a.batch, lr=a.lr, workers=a.workers, warmup_epochs=a.warmup, **smoke)
+        train(model, run_dir, batch=a.batch, lr=a.lr, workers=a.workers, warmup_epochs=a.warmup,
+              warmup_bias_lr=a.warmup_bias_lr, **smoke)
 
 
 if __name__ == '__main__':
