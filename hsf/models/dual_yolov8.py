@@ -60,6 +60,9 @@ class DualYOLOv8(nn.Module):
         # RGB term and on the event term of the neck input alone; hsf/engine.py train() adds
         # aux_weight * (L_rgb + L_evt) and decays aux_weight linearly from aux0 to 0 over the epochs.
         self.aux0, self.aux_weight, self.aux_branches, self.aux_outputs = 0.0, 0.0, ('rgb', 'evt'), []
+        # training-time RGB degradation (hsf/data/corruptions.py degrade_batch; set by tools/train_dual.py)
+        self.rgb_aug_kinds, self.rgb_aug_p, self.rgb_drop_p = (), 0.0, 0.0
+        self.frozen = ()            # sub-module names kept in eval mode (frozen BatchNorm statistics)
         self.nc = nc
         self.stride = self.model[-1].stride
         self.names = rgb_model.names
@@ -74,10 +77,27 @@ class DualYOLOv8(nn.Module):
                 return sub.conv.out_channels
         raise ValueError(f'cannot infer channels of layer {idx}')
 
+    def freeze(self, names):
+        """Freeze sub-modules ('rgb', 'evt', 'model' = neck + head): no gradients, BatchNorm in eval mode."""
+        self.frozen = tuple(names)
+        for n in self.frozen:
+            for p in getattr(self, n).parameters():
+                p.requires_grad = False
+        self.train(self.training)
+
+    def train(self, mode=True):
+        super().train(mode)
+        for n in getattr(self, 'frozen', ()):
+            getattr(self, n).eval()
+        return self
+
     def forward(self, rgb, evt, state=None):
         """rgb, evt: (B, 3, H, W). state: per-scale hidden states for temporal fusion (TFS), or None
         (= start of a sequence). Returns the Detect output (train: list of 3 maps; eval: (decoded
         preds, maps)); stateful models (self.stateful) return (detect_output, new_state)."""
+        if self.training and (self.rgb_aug_p > 0 or self.rgb_drop_p > 0):
+            from hsf.data.corruptions import degrade_batch
+            rgb = degrade_batch(rgb, self.rgb_aug_kinds, self.rgb_aug_p, self.rgb_drop_p)
         x_r, x_e = rgb, evt
         neck_inputs, new_state = {}, []
         extra = {}
