@@ -33,6 +33,9 @@ commit 作者：`git -c user.name=walkerp0 -c user.email="$(git log -1 --format=
 - `cafr` 學到的殘差係數接近 0，實際上接近 add；`cafrx` 5 epoch 不夠（驗證集 38.8）。
 - 每序列的大幅差異主要是少數類別造成的假象（interlaken_00_a 只有 2 個 bus 框）；顯著差異只有 1–3 分；
   真正的弱點是夜間行人（zurich_city_12_a：RGB 33.7，融合 15.7–28.4）。
+- 調參 5 輪（2026-11-17，`docs/tuning_log.md`）：`sw2_add` 凍結兩條 backbone，短微調 2 epoch（15% RGB 破壞 ＋ 5% RGB 歸零），
+  驗證集 val-mPC 15.4 → 29.3、RGB = 0 時 0 → 23.4，乾淨只差 −0.34（波動內）。閘門學會看情況切換到 event。
+  RGB 歸零時融合模型原本只剩 0–6 分，因為 neck 和 head 沒學過只靠 event 偵測。夜間行人沒有明確改善。
 - 單一 seed 下各融合之間的差距大多在雜訊內。
 - 3 個 seed（2026-11-16）確認：驗證集上 add、`relp2_add`、`sw2_add`、`cafr` 分不出來（42.6–43.0，標準差 0.2–0.5，
   和 RGB 單流 42.7 也差不多）；三個 seed 方向都一致的只有 RGB 破壞 mPC（test）：`cafr` ≈ `relp2_add` 23.1 > add 22.3 > `sw2_add` 20.0。
