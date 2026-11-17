@@ -1,0 +1,27 @@
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step11_rel/dual_relp2_add_v2: all 42.72  day 46.81  dim 28.73  night 28.49  night-ped 32.85  val-mPC 17.78 (43.44 clean-sub)  rgb_zero 5.89  (272 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step11_rel/dual_relp2_add_s5_seed1: all 42.05  day 46.33  dim 26.87  night 28.36  night-ped 29.51  val-mPC 17.33 (42.70 clean-sub)  rgb_zero 2.40  (275 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step11_rel/dual_relp2_add_s5_seed2: all 42.77  day 46.89  dim 27.37  night 28.63  night-ped 33.45  val-mPC 17.74 (43.43 clean-sub)  rgb_zero 1.56  (277 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step11_rel/dual_relp2_add_v2: all 43.09  day 46.87  dim 27.92  night 28.88  night-ped 36.01  val-mPC 17.67 (43.76 clean-sub)  (275 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step11_rel/dual_relp2_add_s5_seed1: all 42.46  day 46.42  dim 26.50  night 29.03  night-ped 32.28  val-mPC 17.54 (43.25 clean-sub)  (272 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step11_rel/dual_relp2_add_s5_seed2: all 43.15  day 47.09  dim 27.28  night 29.08  night-ped 35.86  val-mPC 17.79 (43.86 clean-sub)  (270 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step11_rel/dual_relp2_add_v2: all 43.04  day 46.85  dim 27.85  night 28.86  night-ped 36.10  val-mPC 17.69 (43.72 clean-sub)  (268 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step11_rel/dual_relp2_add_s5_seed1: all 42.43  day 46.39  dim 26.49  night 29.00  night-ped 32.30  val-mPC 17.64 (43.23 clean-sub)  (263 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step11_rel/dual_relp2_add_s5_seed2: all 43.14  day 47.08  dim 27.35  night 29.05  night-ped 35.87  val-mPC 17.83 (43.86 clean-sub)  (262 s)

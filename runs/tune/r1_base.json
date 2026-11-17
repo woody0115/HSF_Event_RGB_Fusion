@@ -1,0 +1,1454 @@
+{
+ "step3/rgb_yolov8s_val/weights/best.pt": {
+  "run": "step3/rgb_yolov8s_val/weights/best.pt",
+  "fusion": "single_rgb",
+  "weights": "best.pt",
+  "overrides": [],
+  "clean": {
+   "all": {
+    "mAP50-95": 42.65,
+    "per_class": {
+     "pedestrian": 42.77,
+     "rider": 45.63,
+     "car": 64.98,
+     "bus": 26.92,
+     "truck": 31.32,
+     "bicycle": 39.1,
+     "motorcycle": 47.86
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {}
+   },
+   "day": {
+    "mAP50-95": 46.48,
+    "per_class": {
+     "pedestrian": 51.12,
+     "rider": 49.16,
+     "car": 62.63,
+     "bus": 32.16,
+     "truck": 32.15,
+     "bicycle": 47.23,
+     "motorcycle": 50.93
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {}
+   },
+   "dim": {
+    "mAP50-95": 24.5,
+    "per_class": {
+     "pedestrian": 29.82,
+     "rider": 1.4,
+     "car": 69.78,
+     "bus": 17.04,
+     "truck": 52.13,
+     "bicycle": 0.24,
+     "motorcycle": 1.1
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {}
+   },
+   "night": {
+    "mAP50-95": 29.23,
+    "per_class": {
+     "pedestrian": 34.99,
+     "rider": 50.01,
+     "car": 66.0,
+     "bus": 1.5,
+     "truck": 1.13,
+     "bicycle": 36.72,
+     "motorcycle": 14.28
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {}
+   }
+  },
+  "corrupt": {
+   "stride": 4,
+   "severities": [
+    1,
+    3,
+    5
+   ],
+   "conds": {
+    "clean": {
+     "mAP50-95": 43.37,
+     "r_e": []
+    },
+    "gaussian_noise@1": {
+     "mAP50-95": 3.97,
+     "r_e": []
+    },
+    "gaussian_noise@3": {
+     "mAP50-95": 1.63,
+     "r_e": []
+    },
+    "gaussian_noise@5": {
+     "mAP50-95": 0.0,
+     "r_e": []
+    },
+    "shot_noise@1": {
+     "mAP50-95": 15.33,
+     "r_e": []
+    },
+    "shot_noise@3": {
+     "mAP50-95": 1.97,
+     "r_e": []
+    },
+    "shot_noise@5": {
+     "mAP50-95": 0.0,
+     "r_e": []
+    },
+    "impulse_noise@1": {
+     "mAP50-95": 4.55,
+     "r_e": []
+    },
+    "impulse_noise@3": {
+     "mAP50-95": 0.14,
+     "r_e": []
+    },
+    "impulse_noise@5": {
+     "mAP50-95": 0.0,
+     "r_e": []
+    },
+    "defocus_blur@1": {
+     "mAP50-95": 20.05,
+     "r_e": []
+    },
+    "defocus_blur@3": {
+     "mAP50-95": 6.25,
+     "r_e": []
+    },
+    "defocus_blur@5": {
+     "mAP50-95": 3.26,
+     "r_e": []
+    },
+    "motion_blur@1": {
+     "mAP50-95": 24.99,
+     "r_e": []
+    },
+    "motion_blur@3": {
+     "mAP50-95": 6.03,
+     "r_e": []
+    },
+    "motion_blur@5": {
+     "mAP50-95": 1.59,
+     "r_e": []
+    },
+    "fog@1": {
+     "mAP50-95": 16.36,
+     "r_e": []
+    },
+    "fog@3": {
+     "mAP50-95": 9.29,
+     "r_e": []
+    },
+    "fog@5": {
+     "mAP50-95": 5.88,
+     "r_e": []
+    },
+    "brightness@1": {
+     "mAP50-95": 37.01,
+     "r_e": []
+    },
+    "brightness@3": {
+     "mAP50-95": 21.77,
+     "r_e": []
+    },
+    "brightness@5": {
+     "mAP50-95": 16.76,
+     "r_e": []
+    },
+    "contrast@1": {
+     "mAP50-95": 27.4,
+     "r_e": []
+    },
+    "contrast@3": {
+     "mAP50-95": 16.67,
+     "r_e": []
+    },
+    "contrast@5": {
+     "mAP50-95": 4.58,
+     "r_e": []
+    },
+    "dark@1": {
+     "mAP50-95": 40.7,
+     "r_e": []
+    },
+    "dark@3": {
+     "mAP50-95": 32.72,
+     "r_e": []
+    },
+    "dark@5": {
+     "mAP50-95": 9.74,
+     "r_e": []
+    }
+   },
+   "mPC": 12.17,
+   "groups": {
+    "noise": 3.07,
+    "blur": 10.36,
+    "weather": 10.51,
+    "digital": 20.7,
+    "light": 27.72
+   }
+  },
+  "seconds": 164
+ },
+ "step4/dual_add_s5_cleaninit": {
+  "run": "step4/dual_add_s5_cleaninit",
+  "fusion": "add",
+  "weights": "best.pt",
+  "overrides": [],
+  "clean": {
+   "all": {
+    "mAP50-95": 42.66,
+    "per_class": {
+     "pedestrian": 42.39,
+     "rider": 47.73,
+     "car": 64.71,
+     "bus": 27.4,
+     "truck": 29.51,
+     "bicycle": 37.79,
+     "motorcycle": 49.1
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5295,
+      "rgb_norm": 551.96,
+      "evt_term_norm": 292.04
+     },
+     "P4": {
+      "r_e": 0.7723,
+      "rgb_norm": 266.79,
+      "evt_term_norm": 205.79
+     },
+     "P5": {
+      "r_e": 0.9781,
+      "rgb_norm": 124.52,
+      "evt_term_norm": 121.63
+     }
+    }
+   },
+   "day": {
+    "mAP50-95": 46.41,
+    "per_class": {
+     "pedestrian": 49.14,
+     "rider": 54.58,
+     "car": 62.08,
+     "bus": 32.04,
+     "truck": 29.98,
+     "bicycle": 44.41,
+     "motorcycle": 52.61
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5239,
+      "rgb_norm": 564.94,
+      "evt_term_norm": 295.67
+     },
+     "P4": {
+      "r_e": 0.7565,
+      "rgb_norm": 272.99,
+      "evt_term_norm": 206.38
+     },
+     "P5": {
+      "r_e": 0.9474,
+      "rgb_norm": 128.28,
+      "evt_term_norm": 121.43
+     }
+    }
+   },
+   "dim": {
+    "mAP50-95": 26.89,
+    "per_class": {
+     "pedestrian": 26.73,
+     "rider": 0.55,
+     "car": 70.25,
+     "bus": 24.24,
+     "truck": 65.22,
+     "bicycle": 0.0,
+     "motorcycle": 1.23
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5286,
+      "rgb_norm": 546.47,
+      "evt_term_norm": 288.75
+     },
+     "P4": {
+      "r_e": 0.7591,
+      "rgb_norm": 269.89,
+      "evt_term_norm": 204.75
+     },
+     "P5": {
+      "r_e": 0.9903,
+      "rgb_norm": 122.83,
+      "evt_term_norm": 121.56
+     }
+    }
+   },
+   "night": {
+    "mAP50-95": 29.02,
+    "per_class": {
+     "pedestrian": 36.57,
+     "rider": 50.7,
+     "car": 65.68,
+     "bus": 2.11,
+     "truck": 1.35,
+     "bicycle": 37.01,
+     "motorcycle": 9.73
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5357,
+      "rgb_norm": 540.63,
+      "evt_term_norm": 289.56
+     },
+     "P4": {
+      "r_e": 0.794,
+      "rgb_norm": 259.1,
+      "evt_term_norm": 205.58
+     },
+     "P5": {
+      "r_e": 1.0052,
+      "rgb_norm": 121.27,
+      "evt_term_norm": 121.86
+     }
+    }
+   }
+  },
+  "corrupt": {
+   "stride": 4,
+   "severities": [
+    1,
+    3,
+    5
+   ],
+   "conds": {
+    "clean": {
+     "mAP50-95": 43.11,
+     "r_e": [
+      0.5296,
+      0.7723,
+      0.9784
+     ]
+    },
+    "gaussian_noise@1": {
+     "mAP50-95": 7.81,
+     "r_e": [
+      0.4845,
+      0.6972,
+      0.7949
+     ]
+    },
+    "gaussian_noise@3": {
+     "mAP50-95": 2.48,
+     "r_e": [
+      0.482,
+      0.7201,
+      0.6566
+     ]
+    },
+    "gaussian_noise@5": {
+     "mAP50-95": 0.76,
+     "r_e": [
+      0.4859,
+      0.7482,
+      0.6102
+     ]
+    },
+    "shot_noise@1": {
+     "mAP50-95": 20.28,
+     "r_e": [
+      0.5036,
+      0.732,
+      0.9167
+     ]
+    },
+    "shot_noise@3": {
+     "mAP50-95": 3.2,
+     "r_e": [
+      0.4863,
+      0.707,
+      0.7088
+     ]
+    },
+    "shot_noise@5": {
+     "mAP50-95": 0.11,
+     "r_e": [
+      0.4927,
+      0.7378,
+      0.6084
+     ]
+    },
+    "impulse_noise@1": {
+     "mAP50-95": 10.97,
+     "r_e": [
+      0.4857,
+      0.7629,
+      0.6111
+     ]
+    },
+    "impulse_noise@3": {
+     "mAP50-95": 3.33,
+     "r_e": [
+      0.501,
+      0.7756,
+      0.5164
+     ]
+    },
+    "impulse_noise@5": {
+     "mAP50-95": 0.51,
+     "r_e": [
+      0.485,
+      0.7439,
+      0.59
+     ]
+    },
+    "defocus_blur@1": {
+     "mAP50-95": 25.03,
+     "r_e": [
+      0.608,
+      0.886,
+      1.0454
+     ]
+    },
+    "defocus_blur@3": {
+     "mAP50-95": 11.9,
+     "r_e": [
+      0.6304,
+      0.9074,
+      1.0408
+     ]
+    },
+    "defocus_blur@5": {
+     "mAP50-95": 8.98,
+     "r_e": [
+      0.6591,
+      0.9253,
+      1.0426
+     ]
+    },
+    "motion_blur@1": {
+     "mAP50-95": 30.04,
+     "r_e": [
+      0.5715,
+      0.8277,
+      1.0347
+     ]
+    },
+    "motion_blur@3": {
+     "mAP50-95": 13.49,
+     "r_e": [
+      0.5989,
+      0.8711,
+      1.0384
+     ]
+    },
+    "motion_blur@5": {
+     "mAP50-95": 6.39,
+     "r_e": [
+      0.619,
+      0.9039,
+      1.035
+     ]
+    },
+    "fog@1": {
+     "mAP50-95": 25.82,
+     "r_e": [
+      0.6743,
+      0.9838,
+      1.065
+     ]
+    },
+    "fog@3": {
+     "mAP50-95": 22.69,
+     "r_e": [
+      0.69,
+      1.0269,
+      1.0413
+     ]
+    },
+    "fog@5": {
+     "mAP50-95": 15.46,
+     "r_e": [
+      0.6632,
+      1.0256,
+      0.9767
+     ]
+    },
+    "brightness@1": {
+     "mAP50-95": 37.84,
+     "r_e": [
+      0.5584,
+      0.8302,
+      0.9973
+     ]
+    },
+    "brightness@3": {
+     "mAP50-95": 26.13,
+     "r_e": [
+      0.5812,
+      0.8729,
+      0.9777
+     ]
+    },
+    "brightness@5": {
+     "mAP50-95": 21.16,
+     "r_e": [
+      0.5939,
+      0.8853,
+      0.943
+     ]
+    },
+    "contrast@1": {
+     "mAP50-95": 33.91,
+     "r_e": [
+      0.6108,
+      0.8818,
+      1.0363
+     ]
+    },
+    "contrast@3": {
+     "mAP50-95": 26.78,
+     "r_e": [
+      0.6739,
+      0.9657,
+      1.0628
+     ]
+    },
+    "contrast@5": {
+     "mAP50-95": 17.13,
+     "r_e": [
+      0.7844,
+      1.1084,
+      0.9796
+     ]
+    },
+    "dark@1": {
+     "mAP50-95": 41.69,
+     "r_e": [
+      0.5465,
+      0.7974,
+      0.9905
+     ]
+    },
+    "dark@3": {
+     "mAP50-95": 36.97,
+     "r_e": [
+      0.579,
+      0.8431,
+      0.9987
+     ]
+    },
+    "dark@5": {
+     "mAP50-95": 19.06,
+     "r_e": [
+      0.6346,
+      0.9234,
+      0.9715
+     ]
+    }
+   },
+   "mPC": 17.4,
+   "groups": {
+    "noise": 5.49,
+    "blur": 15.97,
+    "weather": 21.32,
+    "digital": 27.16,
+    "light": 32.57
+   }
+  },
+  "seconds": 230
+ },
+ "step4/dual_add_s5_seed1": {
+  "run": "step4/dual_add_s5_seed1",
+  "fusion": "add",
+  "weights": "best.pt",
+  "overrides": [],
+  "clean": {
+   "all": {
+    "mAP50-95": 42.52,
+    "per_class": {
+     "pedestrian": 40.73,
+     "rider": 47.28,
+     "car": 64.51,
+     "bus": 29.19,
+     "truck": 30.45,
+     "bicycle": 37.79,
+     "motorcycle": 47.68
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5255,
+      "rgb_norm": 545.83,
+      "evt_term_norm": 286.61
+     },
+     "P4": {
+      "r_e": 0.7442,
+      "rgb_norm": 267.61,
+      "evt_term_norm": 198.87
+     },
+     "P5": {
+      "r_e": 0.9759,
+      "rgb_norm": 123.12,
+      "evt_term_norm": 119.96
+     }
+    }
+   },
+   "day": {
+    "mAP50-95": 47.47,
+    "per_class": {
+     "pedestrian": 49.66,
+     "rider": 55.55,
+     "car": 62.39,
+     "bus": 34.33,
+     "truck": 32.0,
+     "bicycle": 47.38,
+     "motorcycle": 50.99
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5149,
+      "rgb_norm": 558.08,
+      "evt_term_norm": 287.14
+     },
+     "P4": {
+      "r_e": 0.7155,
+      "rgb_norm": 275.29,
+      "evt_term_norm": 196.85
+     },
+     "P5": {
+      "r_e": 0.9418,
+      "rgb_norm": 127.28,
+      "evt_term_norm": 119.75
+     }
+    }
+   },
+   "dim": {
+    "mAP50-95": 27.65,
+    "per_class": {
+     "pedestrian": 27.93,
+     "rider": 1.26,
+     "car": 69.85,
+     "bus": 27.26,
+     "truck": 66.03,
+     "bicycle": 0.08,
+     "motorcycle": 1.14
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5297,
+      "rgb_norm": 538.51,
+      "evt_term_norm": 285.12
+     },
+     "P4": {
+      "r_e": 0.7466,
+      "rgb_norm": 266.87,
+      "evt_term_norm": 199.15
+     },
+     "P5": {
+      "r_e": 0.997,
+      "rgb_norm": 120.61,
+      "evt_term_norm": 120.13
+     }
+    }
+   },
+   "night": {
+    "mAP50-95": 28.71,
+    "per_class": {
+     "pedestrian": 32.46,
+     "rider": 50.18,
+     "car": 65.35,
+     "bus": 1.63,
+     "truck": 0.59,
+     "bicycle": 34.57,
+     "motorcycle": 16.18
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.535,
+      "rgb_norm": 535.98,
+      "evt_term_norm": 286.66
+     },
+     "P4": {
+      "r_e": 0.7733,
+      "rgb_norm": 259.9,
+      "evt_term_norm": 200.86
+     },
+     "P5": {
+      "r_e": 1.0031,
+      "rgb_norm": 119.77,
+      "evt_term_norm": 120.11
+     }
+    }
+   }
+  },
+  "corrupt": {
+   "stride": 4,
+   "severities": [
+    1,
+    3,
+    5
+   ],
+   "conds": {
+    "clean": {
+     "mAP50-95": 43.13,
+     "r_e": [
+      0.5256,
+      0.7442,
+      0.9762
+     ]
+    },
+    "gaussian_noise@1": {
+     "mAP50-95": 9.34,
+     "r_e": [
+      0.4916,
+      0.734,
+      0.8206
+     ]
+    },
+    "gaussian_noise@3": {
+     "mAP50-95": 2.43,
+     "r_e": [
+      0.489,
+      0.7446,
+      0.6645
+     ]
+    },
+    "gaussian_noise@5": {
+     "mAP50-95": 1.55,
+     "r_e": [
+      0.49,
+      0.7522,
+      0.5956
+     ]
+    },
+    "shot_noise@1": {
+     "mAP50-95": 21.45,
+     "r_e": [
+      0.5089,
+      0.7531,
+      0.9402
+     ]
+    },
+    "shot_noise@3": {
+     "mAP50-95": 4.21,
+     "r_e": [
+      0.4937,
+      0.737,
+      0.7258
+     ]
+    },
+    "shot_noise@5": {
+     "mAP50-95": 1.34,
+     "r_e": [
+      0.4929,
+      0.7336,
+      0.6179
+     ]
+    },
+    "impulse_noise@1": {
+     "mAP50-95": 9.26,
+     "r_e": [
+      0.4939,
+      0.7697,
+      0.5753
+     ]
+    },
+    "impulse_noise@3": {
+     "mAP50-95": 1.39,
+     "r_e": [
+      0.5059,
+      0.7818,
+      0.5107
+     ]
+    },
+    "impulse_noise@5": {
+     "mAP50-95": 0.84,
+     "r_e": [
+      0.4873,
+      0.7394,
+      0.585
+     ]
+    },
+    "defocus_blur@1": {
+     "mAP50-95": 24.45,
+     "r_e": [
+      0.5946,
+      0.8438,
+      1.0249
+     ]
+    },
+    "defocus_blur@3": {
+     "mAP50-95": 12.11,
+     "r_e": [
+      0.6185,
+      0.8723,
+      1.0082
+     ]
+    },
+    "defocus_blur@5": {
+     "mAP50-95": 9.02,
+     "r_e": [
+      0.6482,
+      0.894,
+      1.0089
+     ]
+    },
+    "motion_blur@1": {
+     "mAP50-95": 29.76,
+     "r_e": [
+      0.5611,
+      0.7895,
+      1.0198
+     ]
+    },
+    "motion_blur@3": {
+     "mAP50-95": 12.79,
+     "r_e": [
+      0.5881,
+      0.8373,
+      1.0247
+     ]
+    },
+    "motion_blur@5": {
+     "mAP50-95": 6.38,
+     "r_e": [
+      0.6088,
+      0.8714,
+      1.0189
+     ]
+    },
+    "fog@1": {
+     "mAP50-95": 26.02,
+     "r_e": [
+      0.6673,
+      0.955,
+      1.0362
+     ]
+    },
+    "fog@3": {
+     "mAP50-95": 20.07,
+     "r_e": [
+      0.6809,
+      0.9949,
+      0.9758
+     ]
+    },
+    "fog@5": {
+     "mAP50-95": 12.76,
+     "r_e": [
+      0.6522,
+      0.989,
+      0.8606
+     ]
+    },
+    "brightness@1": {
+     "mAP50-95": 38.59,
+     "r_e": [
+      0.5568,
+      0.8114,
+      0.9912
+     ]
+    },
+    "brightness@3": {
+     "mAP50-95": 29.84,
+     "r_e": [
+      0.5838,
+      0.8625,
+      0.9787
+     ]
+    },
+    "brightness@5": {
+     "mAP50-95": 24.12,
+     "r_e": [
+      0.5988,
+      0.8798,
+      0.9493
+     ]
+    },
+    "contrast@1": {
+     "mAP50-95": 33.49,
+     "r_e": [
+      0.6057,
+      0.8518,
+      1.0178
+     ]
+    },
+    "contrast@3": {
+     "mAP50-95": 25.16,
+     "r_e": [
+      0.6684,
+      0.9385,
+      1.0394
+     ]
+    },
+    "contrast@5": {
+     "mAP50-95": 17.1,
+     "r_e": [
+      0.7765,
+      1.0844,
+      0.9454
+     ]
+    },
+    "dark@1": {
+     "mAP50-95": 40.96,
+     "r_e": [
+      0.5405,
+      0.7668,
+      0.9891
+     ]
+    },
+    "dark@3": {
+     "mAP50-95": 35.45,
+     "r_e": [
+      0.5709,
+      0.8046,
+      1.0033
+     ]
+    },
+    "dark@5": {
+     "mAP50-95": 17.88,
+     "r_e": [
+      0.6273,
+      0.873,
+      0.9869
+     ]
+    }
+   },
+   "mPC": 17.32,
+   "groups": {
+    "noise": 5.76,
+    "blur": 15.75,
+    "weather": 19.62,
+    "digital": 28.05,
+    "light": 31.43
+   }
+  },
+  "seconds": 227
+ },
+ "step4/dual_add_s5_seed2": {
+  "run": "step4/dual_add_s5_seed2",
+  "fusion": "add",
+  "weights": "best.pt",
+  "overrides": [],
+  "clean": {
+   "all": {
+    "mAP50-95": 43.14,
+    "per_class": {
+     "pedestrian": 41.01,
+     "rider": 44.88,
+     "car": 64.52,
+     "bus": 30.03,
+     "truck": 33.93,
+     "bicycle": 38.94,
+     "motorcycle": 48.66
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5399,
+      "rgb_norm": 544.52,
+      "evt_term_norm": 293.76
+     },
+     "P4": {
+      "r_e": 0.7656,
+      "rgb_norm": 268.29,
+      "evt_term_norm": 205.17
+     },
+     "P5": {
+      "r_e": 0.9914,
+      "rgb_norm": 122.9,
+      "evt_term_norm": 121.69
+     }
+    }
+   },
+   "day": {
+    "mAP50-95": 47.27,
+    "per_class": {
+     "pedestrian": 47.94,
+     "rider": 52.17,
+     "car": 61.75,
+     "bus": 35.44,
+     "truck": 35.64,
+     "bicycle": 46.19,
+     "motorcycle": 51.75
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5333,
+      "rgb_norm": 556.37,
+      "evt_term_norm": 296.45
+     },
+     "P4": {
+      "r_e": 0.7461,
+      "rgb_norm": 274.97,
+      "evt_term_norm": 205.06
+     },
+     "P5": {
+      "r_e": 0.9574,
+      "rgb_norm": 126.46,
+      "evt_term_norm": 120.98
+     }
+    }
+   },
+   "dim": {
+    "mAP50-95": 27.0,
+    "per_class": {
+     "pedestrian": 30.05,
+     "rider": 1.68,
+     "car": 69.91,
+     "bus": 26.24,
+     "truck": 58.8,
+     "bicycle": 0.43,
+     "motorcycle": 1.86
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5415,
+      "rgb_norm": 537.63,
+      "evt_term_norm": 291.01
+     },
+     "P4": {
+      "r_e": 0.759,
+      "rgb_norm": 269.36,
+      "evt_term_norm": 204.37
+     },
+     "P5": {
+      "r_e": 1.01,
+      "rgb_norm": 121.04,
+      "evt_term_norm": 122.17
+     }
+    }
+   },
+   "night": {
+    "mAP50-95": 29.07,
+    "per_class": {
+     "pedestrian": 34.79,
+     "rider": 47.81,
+     "car": 65.72,
+     "bus": 2.02,
+     "truck": 1.03,
+     "bicycle": 37.54,
+     "motorcycle": 14.62
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5461,
+      "rgb_norm": 534.91,
+      "evt_term_norm": 292.04
+     },
+     "P4": {
+      "r_e": 0.7885,
+      "rgb_norm": 260.92,
+      "evt_term_norm": 205.61
+     },
+     "P5": {
+      "r_e": 1.0195,
+      "rgb_norm": 119.94,
+      "evt_term_norm": 122.24
+     }
+    }
+   }
+  },
+  "corrupt": {
+   "stride": 4,
+   "severities": [
+    1,
+    3,
+    5
+   ],
+   "conds": {
+    "clean": {
+     "mAP50-95": 43.67,
+     "r_e": [
+      0.54,
+      0.7655,
+      0.9918
+     ]
+    },
+    "gaussian_noise@1": {
+     "mAP50-95": 9.73,
+     "r_e": [
+      0.5022,
+      0.7391,
+      0.8022
+     ]
+    },
+    "gaussian_noise@3": {
+     "mAP50-95": 3.45,
+     "r_e": [
+      0.4964,
+      0.7398,
+      0.6126
+     ]
+    },
+    "gaussian_noise@5": {
+     "mAP50-95": 1.23,
+     "r_e": [
+      0.4939,
+      0.7537,
+      0.5353
+     ]
+    },
+    "shot_noise@1": {
+     "mAP50-95": 21.51,
+     "r_e": [
+      0.5215,
+      0.7714,
+      0.9369
+     ]
+    },
+    "shot_noise@3": {
+     "mAP50-95": 4.19,
+     "r_e": [
+      0.5029,
+      0.7399,
+      0.6881
+     ]
+    },
+    "shot_noise@5": {
+     "mAP50-95": 0.54,
+     "r_e": [
+      0.4996,
+      0.7389,
+      0.5721
+     ]
+    },
+    "impulse_noise@1": {
+     "mAP50-95": 9.05,
+     "r_e": [
+      0.4994,
+      0.7696,
+      0.5945
+     ]
+    },
+    "impulse_noise@3": {
+     "mAP50-95": 1.95,
+     "r_e": [
+      0.513,
+      0.7802,
+      0.4957
+     ]
+    },
+    "impulse_noise@5": {
+     "mAP50-95": 0.62,
+     "r_e": [
+      0.4906,
+      0.7451,
+      0.5366
+     ]
+    },
+    "defocus_blur@1": {
+     "mAP50-95": 24.41,
+     "r_e": [
+      0.6196,
+      0.8915,
+      1.0449
+     ]
+    },
+    "defocus_blur@3": {
+     "mAP50-95": 12.12,
+     "r_e": [
+      0.6436,
+      0.9185,
+      1.0362
+     ]
+    },
+    "defocus_blur@5": {
+     "mAP50-95": 9.13,
+     "r_e": [
+      0.6743,
+      0.9399,
+      1.0349
+     ]
+    },
+    "motion_blur@1": {
+     "mAP50-95": 29.83,
+     "r_e": [
+      0.5826,
+      0.8279,
+      1.0392
+     ]
+    },
+    "motion_blur@3": {
+     "mAP50-95": 12.59,
+     "r_e": [
+      0.6116,
+      0.879,
+      1.0382
+     ]
+    },
+    "motion_blur@5": {
+     "mAP50-95": 6.28,
+     "r_e": [
+      0.6329,
+      0.916,
+      1.0287
+     ]
+    },
+    "fog@1": {
+     "mAP50-95": 25.58,
+     "r_e": [
+      0.6863,
+      0.9829,
+      1.0464
+     ]
+    },
+    "fog@3": {
+     "mAP50-95": 20.01,
+     "r_e": [
+      0.7023,
+      1.0282,
+      0.9991
+     ]
+    },
+    "fog@5": {
+     "mAP50-95": 12.95,
+     "r_e": [
+      0.6734,
+      1.0286,
+      0.9032
+     ]
+    },
+    "brightness@1": {
+     "mAP50-95": 39.09,
+     "r_e": [
+      0.5692,
+      0.8317,
+      1.0102
+     ]
+    },
+    "brightness@3": {
+     "mAP50-95": 28.3,
+     "r_e": [
+      0.594,
+      0.8839,
+      0.9878
+     ]
+    },
+    "brightness@5": {
+     "mAP50-95": 22.69,
+     "r_e": [
+      0.6089,
+      0.9031,
+      0.9509
+     ]
+    },
+    "contrast@1": {
+     "mAP50-95": 33.22,
+     "r_e": [
+      0.6224,
+      0.8773,
+      1.029
+     ]
+    },
+    "contrast@3": {
+     "mAP50-95": 25.23,
+     "r_e": [
+      0.6875,
+      0.9648,
+      1.0453
+     ]
+    },
+    "contrast@5": {
+     "mAP50-95": 16.23,
+     "r_e": [
+      0.7975,
+      1.1178,
+      0.9226
+     ]
+    },
+    "dark@1": {
+     "mAP50-95": 41.46,
+     "r_e": [
+      0.5572,
+      0.7936,
+      1.0017
+     ]
+    },
+    "dark@3": {
+     "mAP50-95": 35.53,
+     "r_e": [
+      0.5913,
+      0.8445,
+      1.0055
+     ]
+    },
+    "dark@5": {
+     "mAP50-95": 17.65,
+     "r_e": [
+      0.6528,
+      0.9325,
+      0.9599
+     ]
+    }
+   },
+   "mPC": 17.21,
+   "groups": {
+    "noise": 5.81,
+    "blur": 15.73,
+    "weather": 19.51,
+    "digital": 27.46,
+    "light": 31.55
+   }
+  },
+  "seconds": 228
+ }
+}

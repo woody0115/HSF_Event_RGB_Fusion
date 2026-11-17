@@ -12,6 +12,9 @@ For each checkpoint (optionally with parameters overridden in memory, never writ
 
 Overrides: --set PATH=VALUE (absolute) or --add PATH=DELTA, PATH = state-dict key, optionally indexed,
 e.g. fusion.0.lambda_bias_e=-1  or  fusion.0.mlp.2.bias[1]=0.5. Applied identically to every checkpoint.
+--attr NAME=VALUE sets a plain attribute on every fusion module (e.g. cnr_mode=signal for relp2).
+--extra rgb_zero adds a diagnostic condition with the whole RGB input set to 0 (event-only floor of the
+fusion model); extra conditions are reported but not counted in mPC or the groups.
 
 Run:  python tools/tune_eval.py --family relp2_add --tag r1_base [--set ...] [--no-corrupt]
 Appends to runs/tune/<tag>.json (one entry per checkpoint) and prints a summary.
@@ -174,13 +177,15 @@ def eval_clean(model, inside, workers):
 
 
 @torch.no_grad()
-def eval_corrupt(model, inside, stride, kinds, sevs, workers):
+def eval_corrupt(model, inside, stride, kinds, sevs, workers, extra=()):
     ds = DualDSEC('val')
     sub = Subset(ds, range(0, len(ds), stride))
     dl = DataLoader(sub, batch_size=16, num_workers=workers, pin_memory=True, collate_fn=DualDSEC.collate)
     dev = next(model.parameters()).device
     iouv = IOUV.to(dev)
     conds = ['clean'] + [f'{k}@{s}' for k in kinds for s in sevs]
+    n_main = len(conds)
+    conds += list(extra)
     met = {c: DetMetrics(names=NAMES) for c in conds}
     ins = {c: [] for c in conds}
     gate = {c: [] for c in conds}
@@ -194,6 +199,8 @@ def eval_corrupt(model, inside, stride, kinds, sevs, workers):
         for ci, c in enumerate(conds):
             if c == 'clean':
                 rgb = rgb0
+            elif c == 'rgb_zero':
+                rgb = torch.zeros_like(rgb0)
             else:
                 kind, sev = c.rsplit('@', 1)
                 gen = torch.Generator(device=dev).manual_seed(100003 * bi + ci)
@@ -222,7 +229,7 @@ def eval_corrupt(model, inside, stride, kinds, sevs, workers):
         if trm[c]:
             e['terms'] = {n: round(float(np.mean([t[n] for t in trm[c] if n in t])), 4) for n in trm[c][0]}
         res['conds'][c] = e
-    vals = [res['conds'][c]['mAP50-95'] for c in conds[1:]]
+    vals = [res['conds'][c]['mAP50-95'] for c in conds[1:n_main]]
     res['mPC'] = round(float(np.mean(vals)), 2)
     res['groups'] = {}
     for gname, ks in GROUPS.items():
@@ -235,11 +242,15 @@ def eval_corrupt(model, inside, stride, kinds, sevs, workers):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--family', choices=list(FAMILIES), help='all three seeds of a fusion')
-    ap.add_argument('--ckpt', nargs='*', default=[], metavar='REL_RUN_DIR:FUSION', help='extra run dirs under runs/')
+    ap.add_argument('--ckpt', nargs='*', default=[], metavar='REL_RUN_DIR:FUSION[:INIT_RUN]',
+                    help='extra run dirs under runs/; INIT_RUN = the run a fine-tuned checkpoint started from '
+                         '(stored as "init", used by summarize_tune.py --ref for paired deltas)')
     ap.add_argument('--weights', default='best.pt')
     ap.add_argument('--tag', required=True)
     ap.add_argument('--set', nargs='*', default=[])
     ap.add_argument('--add', nargs='*', default=[])
+    ap.add_argument('--attr', nargs='*', default=[], help='NAME=VALUE set on every fusion module')
+    ap.add_argument('--extra', nargs='*', default=[], choices=['rgb_zero'])
     ap.add_argument('--no-corrupt', action='store_true')
     ap.add_argument('--no-clean', action='store_true')
     ap.add_argument('--stride', type=int, default=4)
@@ -247,12 +258,12 @@ def main():
     ap.add_argument('--severities', nargs='*', type=int, default=[1, 3, 5])
     ap.add_argument('--workers', type=int, default=8)
     a = ap.parse_args()
-    jobs = [(r, a.family) for r in FAMILIES[a.family]] if a.family else []
-    jobs += [tuple(c.rsplit(':', 1)) for c in a.ckpt]
+    jobs = [(r, a.family, None) for r in FAMILIES[a.family]] if a.family else []
+    jobs += [tuple((c.split(':') + [None])[:3]) for c in a.ckpt]
     dev = torch.device('cuda')
     os.makedirs(osp.join(RUNS, 'tune'), exist_ok=True)
     out_json = osp.join(RUNS, 'tune', f'{a.tag}.json')
-    for run, fusion in jobs:
+    for run, fusion, init in jobs:
         single = fusion in ('single_rgb', 'single_evt')      # run = checkpoint file under runs/
         path = osp.join(RUNS, run) if single else osp.join(RUNS, run, a.weights)
         if not osp.isfile(path):
@@ -265,13 +276,20 @@ def main():
             m.load_state_dict(torch.load(path, map_location='cpu', weights_only=False)['model'])
             m = m.to(dev).eval()
         ov = apply_overrides(m, a.set, a.add)
+        for spec in a.attr:
+            name, val = spec.split('=', 1)
+            for f in getattr(m, 'fusion', []):
+                if not hasattr(f, name):
+                    raise AttributeError(f'{type(f).__name__} has no attribute {name}')
+                setattr(f, name, type(getattr(f, name))(val))
+            ov.append((f'attr {name}', None, val))
         inside = Inside(m)
         t0 = time.time()
-        r = {'run': run, 'fusion': fusion, 'weights': a.weights, 'overrides': ov}
+        r = {'run': run, 'fusion': fusion, 'weights': a.weights, 'overrides': ov, 'init': init}
         if not a.no_clean:
             r['clean'] = eval_clean(m, inside, a.workers)
         if not a.no_corrupt:
-            r['corrupt'] = eval_corrupt(m, inside, a.stride, a.kinds, a.severities, a.workers)
+            r['corrupt'] = eval_corrupt(m, inside, a.stride, a.kinds, a.severities, a.workers, a.extra)
         r['seconds'] = round(time.time() - t0)
         results = json.load(open(out_json)) if osp.isfile(out_json) else {}
         results[run] = r
@@ -282,6 +300,8 @@ def main():
             msg += f'  night-ped {c["night"]["per_class"].get("pedestrian", float("nan")):.2f}'
         if 'corrupt' in r:
             msg += f'  val-mPC {r["corrupt"]["mPC"]:.2f} ({r["corrupt"]["conds"]["clean"]["mAP50-95"]:.2f} clean-sub)'
+            for x in a.extra:
+                msg += f'  {x} {r["corrupt"]["conds"][x]["mAP50-95"]:.2f}'
         print(msg + f'  ({r["seconds"]} s)', flush=True)
         del m
         torch.cuda.empty_cache()
