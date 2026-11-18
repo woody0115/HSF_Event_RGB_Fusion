@@ -84,6 +84,11 @@ def main():
                     help='weight of the clean (EMA teacher) vs degraded (student) consistency loss')
     ap.add_argument('--distill', type=float, default=0.0,
                     help='weight of the night-only distillation from an RGB single-stream teacher')
+    ap.add_argument('--distill-box', type=float, default=0.0,
+                    help='weight of the localization (DFL bin distribution) distillation from the same teacher')
+    ap.add_argument('--distill-scope', default='night', choices=['night', 'all'],
+                    help='frames that get the distillation terms')
+    ap.add_argument('--distill-tau', type=float, default=10.0, help='temperature of the localization distillation')
     ap.add_argument('--distill-teacher', default=osp.join(STEP3, 'rgb_yolov8s_val', 'weights', 'best.pt'))
     ap.add_argument('--night-weight', type=float, default=1.0, help='sampling weight of night training frames')
     a = ap.parse_args()
@@ -119,7 +124,7 @@ def main():
     model.rgb_aug_kinds = tuple(k for k in a.rgb_aug_kinds.split(',') if k)
     model.rgb_aug_depth = a.rgb_aug_depth
     teacher = None
-    if a.distill > 0:
+    if a.distill > 0 or a.distill_box > 0:
         from hsf.models.dual_yolov8 import load_ultralytics
         teacher = load_ultralytics(a.distill_teacher)
         print(f'distillation teacher {a.distill_teacher}', flush=True)
@@ -136,7 +141,8 @@ def main():
     else:
         train(model, run_dir, batch=a.batch, lr=a.lr, workers=a.workers, warmup_epochs=a.warmup,
               warmup_bias_lr=a.warmup_bias_lr, consist=a.consist, distill=a.distill, teacher=teacher,
-              night_weight=a.night_weight, **smoke)
+              night_weight=a.night_weight, distill_box=a.distill_box, distill_scope=a.distill_scope,
+              distill_tau=a.distill_tau, **smoke)
 
 
 if __name__ == '__main__':
