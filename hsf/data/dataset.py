@@ -87,6 +87,8 @@ class DualDSEC(Dataset):
         """classes: keep only these class ids.
         label_map: {original class id: training class index} applied after filtering."""
         self.items = list_frames(split, sequences)
+        self.folder = split_filter(split)[0]
+        self.lum, self.return_lum = None, False      # per-item mean luminance (load_lighting)
         self.size, self.augment = size, augment
         self.scale, self.translate, self.fliplr, self.hsv = scale, translate, fliplr, hsv
         self.classes = None if classes is None else np.array(sorted(classes))
@@ -94,6 +96,14 @@ class DualDSEC(Dataset):
 
     def __len__(self):
         return len(self.items)
+
+    def load_lighting(self, return_lum=True):
+        """Mean RGB luminance (0-255) of every item from <processed_root>/<folder>_lighting.json
+        (tools/lighting_stats.py --split train); with return_lum each sample also carries it (batch 'lum')."""
+        lt = json.load(open(osp.join(CFG['processed_root'], f'{self.folder}_lighting.json')))
+        self.lum = np.array([lt[osp.basename(sd)][str(i)][0] for sd, _, i in self.items], np.float32)
+        self.return_lum = return_lum
+        return self.lum
 
     def _matrix(self, w, h):
         """Affine matrix mapping the original frame into the S x S network input."""
@@ -122,7 +132,8 @@ class DualDSEC(Dataset):
 
     def __getitem__(self, i):
         rgb, evt, lab = self.load(i)
-        return self.transform(rgb, evt, lab, self.sample_aug(rgb.shape[1], rgb.shape[0]))
+        out = self.transform(rgb, evt, lab, self.sample_aug(rgb.shape[1], rgb.shape[0]))
+        return (*out, float(self.lum[i])) if self.return_lum else out
 
     def transform(self, rgb, evt, lab, aug):
         h, w = rgb.shape[:2]
@@ -163,13 +174,16 @@ class DualDSEC(Dataset):
 
     @staticmethod
     def collate(batch):
-        rgb, evt, labels = zip(*batch)
+        rgb, evt, labels = zip(*[x[:3] for x in batch])
         idx = torch.cat([torch.full((len(l),), i, dtype=torch.float32) for i, l in enumerate(labels)])
         lab = torch.cat(labels, 0)
-        return {
+        out = {
             'rgb': torch.stack(rgb), 'evt': torch.stack(evt),
             'batch_idx': idx, 'cls': lab[:, :1], 'bboxes': lab[:, 1:],     # Ultralytics loss format
         }
+        if len(batch[0]) > 3:                                              # load_lighting(return_lum=True)
+            out['lum'] = torch.tensor([x[3] for x in batch])
+        return out
 
 
 class ClipDSEC(DualDSEC):

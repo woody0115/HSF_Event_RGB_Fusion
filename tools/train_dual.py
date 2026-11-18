@@ -77,6 +77,15 @@ def main():
     ap.add_argument('--rgb-drop', type=float, default=0.0, help='share of training images with the RGB input set to 0')
     ap.add_argument('--warmup-bias-lr', type=float, default=0.1,
                     help='bias lr at the start of warmup (Ultralytics 0.1); use 0 when fine-tuning a trained model')
+    # single-factor options (2026-11-19, docs/tuning_log.md; hsf/engine.py train)
+    ap.add_argument('--rgb-aug-depth', type=int, default=1,
+                    help='corrupted images get 1..N training kinds in a row (AugMix-style composition)')
+    ap.add_argument('--consist', type=float, default=0.0,
+                    help='weight of the clean (EMA teacher) vs degraded (student) consistency loss')
+    ap.add_argument('--distill', type=float, default=0.0,
+                    help='weight of the night-only distillation from an RGB single-stream teacher')
+    ap.add_argument('--distill-teacher', default=osp.join(STEP3, 'rgb_yolov8s_val', 'weights', 'best.pt'))
+    ap.add_argument('--night-weight', type=float, default=1.0, help='sampling weight of night training frames')
     a = ap.parse_args()
     if a.seed is not None:
         random.seed(a.seed)
@@ -99,12 +108,21 @@ def main():
                        modality_drop=a.modality_drop)
     model.aux0, model.aux_branches = a.aux, tuple(a.aux_branches.split(','))
     if a.init_ckpt:
-        model.load_state_dict(torch.load(a.init_ckpt, map_location='cpu', weights_only=False)['model'])
-        print(f'initialised from {a.init_ckpt}', flush=True)
+        sd = torch.load(a.init_ckpt, map_location='cpu', weights_only=False)['model']
+        missing, unexpected = model.load_state_dict(sd, strict=False)
+        # only new zero-initialised modules may be missing (sw2i_ gate: illum_fc)
+        assert not unexpected and all('illum_fc' in k for k in missing), (missing, unexpected)
+        print(f'initialised from {a.init_ckpt}' + (f' (new: {missing})' if missing else ''), flush=True)
     if a.freeze:
         model.freeze([n for n in a.freeze.split(',') if n])
     model.rgb_aug_p, model.rgb_drop_p = a.rgb_aug, a.rgb_drop
     model.rgb_aug_kinds = tuple(k for k in a.rgb_aug_kinds.split(',') if k)
+    model.rgb_aug_depth = a.rgb_aug_depth
+    teacher = None
+    if a.distill > 0:
+        from hsf.models.dual_yolov8 import load_ultralytics
+        teacher = load_ultralytics(a.distill_teacher)
+        print(f'distillation teacher {a.distill_teacher}', flush=True)
     n_train = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f'config: {vars(a)}  trainable params {n_train / 1e6:.2f} M', flush=True)
     smoke = dict(epochs=2, sequences_train=['zurich_city_16_a', 'zurich_city_17_a'], sequences_val=['thun_02_a'],
@@ -117,7 +135,8 @@ def main():
                        eval_every=a.eval_every, warmup_epochs=a.warmup, **smoke)
     else:
         train(model, run_dir, batch=a.batch, lr=a.lr, workers=a.workers, warmup_epochs=a.warmup,
-              warmup_bias_lr=a.warmup_bias_lr, **smoke)
+              warmup_bias_lr=a.warmup_bias_lr, consist=a.consist, distill=a.distill, teacher=teacher,
+              night_weight=a.night_weight, **smoke)
 
 
 if __name__ == '__main__':

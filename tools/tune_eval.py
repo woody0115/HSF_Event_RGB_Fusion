@@ -19,6 +19,9 @@ fusion model); extra conditions are reported but not counted in mPC or the group
 Run:  python tools/tune_eval.py --family relp2_add --tag r1_base [--set ...] [--no-corrupt]
       --split test evaluates the test split with the same metrics, for report-only numbers of a configuration
       already chosen on val (never use it for decisions)
+      --pool-rgb REL_CKPT (2026-11-19): late fusion with an RGB single-stream detector, the decoded predictions of
+      both models pooled before one NMS (the NMS baseline of ProbEn, Chen et al. ECCV 2022); gate statistics
+      stay those of the fusion model
 Appends to runs/tune/<tag>.json (one entry per checkpoint) and prints a summary.
 """
 import argparse
@@ -105,6 +108,20 @@ def terms(model):
         for name, v in (getattr(f, 'last_terms', None) or {}).items():
             out[f'P{k + 3}_{name}'] = v
     return out
+
+
+class PoolRGB(torch.nn.Module):
+    """Fusion model + RGB single-stream detector, decoded predictions concatenated over anchors (one NMS later)."""
+
+    def __init__(self, m, rgb_model):
+        super().__init__()
+        self.m, self.r = m, rgb_model
+        self.fusion = getattr(m, 'fusion', [])
+
+    def forward(self, rgb, evt):
+        a = self.m(rgb, evt)
+        b = self.r(rgb)
+        return torch.cat([a[0], b[0]], 2), a[1]
 
 
 def luminance(rgb):
@@ -260,6 +277,8 @@ def main():
     ap.add_argument('--severities', nargs='*', type=int, default=[1, 3, 5])
     ap.add_argument('--workers', type=int, default=8)
     ap.add_argument('--split', default='val', choices=['val', 'test'], help='test = report only')
+    ap.add_argument('--pool-rgb', default=None, metavar='REL_CKPT',
+                    help='pool the detections with this RGB single-stream checkpoint (under runs/) before NMS')
     a = ap.parse_args()
     jobs = [(r, a.family, None) for r in FAMILIES[a.family]] if a.family else []
     jobs += [tuple((c.split(':') + [None])[:3]) for c in a.ckpt]
@@ -287,8 +306,11 @@ def main():
                 setattr(f, name, type(getattr(f, name))(val))
             ov.append((f'attr {name}', None, val))
         inside = Inside(m)
+        if a.pool_rgb:
+            m = PoolRGB(m, load_ultralytics(osp.join(RUNS, a.pool_rgb)).to(dev).eval())
         t0 = time.time()
-        r = {'run': run, 'fusion': fusion, 'weights': a.weights, 'overrides': ov, 'init': init, 'split': a.split}
+        r = {'run': run, 'fusion': fusion, 'weights': a.weights, 'overrides': ov, 'init': init, 'split': a.split,
+             'pool_rgb': a.pool_rgb}
         if not a.no_clean:
             r['clean'] = eval_clean(m, inside, a.workers, a.split)
         if not a.no_corrupt:
