@@ -17,6 +17,8 @@ e.g. fusion.0.lambda_bias_e=-1  or  fusion.0.mlp.2.bias[1]=0.5. Applied identica
 fusion model); extra conditions are reported but not counted in mPC or the groups.
 
 Run:  python tools/tune_eval.py --family relp2_add --tag r1_base [--set ...] [--no-corrupt]
+      --split test evaluates the test split with the same metrics, for report-only numbers of a configuration
+      already chosen on val (never use it for decisions)
 Appends to runs/tune/<tag>.json (one entry per checkpoint) and prints a summary.
 """
 import argparse
@@ -121,8 +123,8 @@ def summ(dm, per_class=False):
 
 
 @torch.no_grad()
-def eval_clean(model, inside, workers):
-    ds = DualDSEC('val')
+def eval_clean(model, inside, workers, split='val'):
+    ds = DualDSEC(split)
     dl = DataLoader(ds, batch_size=16, num_workers=workers, pin_memory=True, collate_fn=DualDSEC.collate)
     dev = next(model.parameters()).device
     iouv = IOUV.to(dev)
@@ -177,8 +179,8 @@ def eval_clean(model, inside, workers):
 
 
 @torch.no_grad()
-def eval_corrupt(model, inside, stride, kinds, sevs, workers, extra=()):
-    ds = DualDSEC('val')
+def eval_corrupt(model, inside, stride, kinds, sevs, workers, extra=(), split='val'):
+    ds = DualDSEC(split)
     sub = Subset(ds, range(0, len(ds), stride))
     dl = DataLoader(sub, batch_size=16, num_workers=workers, pin_memory=True, collate_fn=DualDSEC.collate)
     dev = next(model.parameters()).device
@@ -257,6 +259,7 @@ def main():
     ap.add_argument('--kinds', nargs='*', default=list(KINDS))
     ap.add_argument('--severities', nargs='*', type=int, default=[1, 3, 5])
     ap.add_argument('--workers', type=int, default=8)
+    ap.add_argument('--split', default='val', choices=['val', 'test'], help='test = report only')
     a = ap.parse_args()
     jobs = [(r, a.family, None) for r in FAMILIES[a.family]] if a.family else []
     jobs += [tuple((c.split(':') + [None])[:3]) for c in a.ckpt]
@@ -285,11 +288,11 @@ def main():
             ov.append((f'attr {name}', None, val))
         inside = Inside(m)
         t0 = time.time()
-        r = {'run': run, 'fusion': fusion, 'weights': a.weights, 'overrides': ov, 'init': init}
+        r = {'run': run, 'fusion': fusion, 'weights': a.weights, 'overrides': ov, 'init': init, 'split': a.split}
         if not a.no_clean:
-            r['clean'] = eval_clean(m, inside, a.workers)
+            r['clean'] = eval_clean(m, inside, a.workers, a.split)
         if not a.no_corrupt:
-            r['corrupt'] = eval_corrupt(m, inside, a.stride, a.kinds, a.severities, a.workers, a.extra)
+            r['corrupt'] = eval_corrupt(m, inside, a.stride, a.kinds, a.severities, a.workers, a.extra, a.split)
         r['seconds'] = round(time.time() - t0)
         results = json.load(open(out_json)) if osp.isfile(out_json) else {}
         results[run] = r
