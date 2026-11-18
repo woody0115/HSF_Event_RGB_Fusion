@@ -367,11 +367,34 @@ def soft_cls_loss(s_maps, t_maps, nc, mask=None):
     return num.sum() / den.sum().clamp(min=1.0)
 
 
+def soft_box_loss(s_maps, t_maps, nc, tau=10.0, mask=None):
+    """Localization distillation (LD, Zheng et al. CVPR 2022, arXiv 2102.12252): KL divergence between the
+    teacher's and the student's distributions over the DFL bins of each box side, both softened with temperature
+    tau (LD's default 10) and scaled by tau^2. Anchors are weighted by the teacher's highest class probability (a
+    soft version of LD's positive and valuable localization regions), normalised by the sum of those weights.
+    Student and teacher must share the Detect layout (same anchors, same reg_max)."""
+    num, den = 0.0, 0.0
+    for s, t in zip(s_maps, t_maps):
+        b, c, h, w = s.shape
+        r = (c - nc) // 4
+        sl = s[:, :4 * r].float().view(b, 4, r, h * w) / tau
+        tl = t[:, :4 * r].float().view(b, 4, r, h * w) / tau
+        tp = tl.softmax(2)
+        kl = (tp * (tp.clamp(min=1e-9).log() - sl.log_softmax(2))).sum(2).sum(1)     # (B, HW)
+        wgt = t[:, -nc:].float().sigmoid().amax(1).view(b, h * w)
+        num = num + (kl * wgt).sum(1) * tau * tau
+        den = den + wgt.sum(1)
+    if mask is not None:
+        num, den = num * mask, den * mask
+    return num.sum() / den.sum().clamp(min=1.0)
+
+
 def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937, weight_decay=5e-4,
           warmup_epochs=3, nbs=64, workers=8, eval_every=1, sequences_train=None, sequences_val=None,
           max_train_batches=None, classes=None, label_map=None,
           train_split='train', val_split='test', resume=False, warmup_bias_lr=0.1,
-          consist=0.0, distill=0.0, teacher=None, night_weight=1.0):
+          consist=0.0, distill=0.0, teacher=None, night_weight=1.0, distill_box=0.0, distill_scope='night',
+          distill_tau=10.0):
     """classes / label_map: train on a subset of classes with remapped ids.
     warmup_bias_lr: start of the bias learning rate during warmup (Ultralytics 0.1; fine-tuning a trained
     model uses 0, so the biases ramp up like the weights instead of jumping by 0.1).
@@ -384,14 +407,20 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
               for RGB-T detection and AugMix's consistency loss)
     distill   weight of a distillation loss from `teacher` (an RGB single-stream detector on the clean RGB input),
               night frames only (luminance < NIGHT_LUM), where the RGB single stream detects pedestrians best
-    night_weight  sampling weight of night frames (make_loaders)"""
+    night_weight  sampling weight of night frames (make_loaders)
+    2026-11-19 phase 2 (after the literature check of the phase-1 results):
+    distill_box   weight of the localization distillation (soft_box_loss) from the same teacher, same frames
+    distill_scope 'night' (phase 1) or 'all' frames for both distillation terms (Uni-Modal Teacher, Du et al.
+                  ICML 2023, distils the unimodal teacher on all samples)
+    distill_tau   temperature of soft_box_loss"""
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     names = {i: n for i, n in enumerate(model.names.values() if isinstance(model.names, dict) else model.names)}
     train_loader, val_loader = make_loaders(batch, workers, sequences_train=sequences_train,
                                             sequences_val=sequences_val, classes=classes, label_map=label_map,
                                             train_split=train_split, val_split=val_split,
-                                            night_weight=night_weight, need_lum=distill > 0)
+                                            night_weight=night_weight,
+                                            need_lum=(distill > 0 or distill_box > 0) and distill_scope == 'night')
     if teacher is not None:
         teacher = teacher.to(device).eval()
         for p in teacher.parameters():
@@ -433,11 +462,11 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
                     g['momentum'] = np.interp(it, [0, n_warm], [0.8, momentum])
             rgb, evt = b['rgb'].to(device, non_blocking=True), b['evt'].to(device, non_blocking=True)
             t_ema = t_rgb = None
-            if consist > 0 or distill > 0:
+            if consist > 0 or distill > 0 or distill_box > 0:
                 with torch.no_grad(), torch.autocast('cuda', enabled=device.type == 'cuda'):
                     if consist > 0:     # eval-mode EMA model never degrades its RGB input
                         t_ema = ema.ema(rgb, evt)[1]
-                    if distill > 0:
+                    if distill > 0 or distill_box > 0:
                         t_rgb = teacher(rgb)[1]
             with torch.autocast('cuda', enabled=device.type == 'cuda'):
                 out = model(rgb, evt)
@@ -449,8 +478,11 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
                 if t_ema is not None:
                     kd = kd + consist * soft_cls_loss(preds, t_ema, model.nc)
                 if t_rgb is not None:
-                    night = (b['lum'].to(device) < NIGHT_LUM).float()
-                    kd = kd + distill * soft_cls_loss(preds, t_rgb, model.nc, mask=night)
+                    night = (b['lum'].to(device) < NIGHT_LUM).float() if distill_scope == 'night' else None
+                    if distill > 0:
+                        kd = kd + distill * soft_cls_loss(preds, t_rgb, model.nc, mask=night)
+                    if distill_box > 0:
+                        kd = kd + distill_box * soft_box_loss(preds, t_rgb, model.nc, distill_tau, mask=night)
                 if t_ema is not None or t_rgb is not None:
                     # Ultralytics returns the loss vector times the batch size; spread the extra term over it
                     loss = loss + kd * rgb.shape[0] / loss.numel()
@@ -467,7 +499,7 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
             it += 1
             if bi % 100 == 0:
                 print(f'epoch {epoch + 1}/{epochs}  {bi}/{nb}  box {mloss[0]:.3f} cls {mloss[1]:.3f} '
-                      f'dfl {mloss[2]:.3f}' + (f' kd {mkd:.4f}' if consist > 0 or distill > 0 else '') +
+                      f'dfl {mloss[2]:.3f}' + (f' kd {mkd:.4f}' if consist > 0 or distill > 0 or distill_box > 0 else '') +
                       f'  lr {opt.param_groups[1]["lr"]:.5f}  '
                       f'{(time.time() - t0) / 60:.1f} min  mem {torch.cuda.memory_reserved() / 1e9:.1f} GB',
                       flush=True)

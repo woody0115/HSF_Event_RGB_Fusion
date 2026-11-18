@@ -111,17 +111,71 @@ def terms(model):
 
 
 class PoolRGB(torch.nn.Module):
-    """Fusion model + RGB single-stream detector, decoded predictions concatenated over anchors (one NMS later)."""
+    """Fusion model + RGB single-stream detector, decoded predictions concatenated over anchors (one NMS later).
+    wbf=True keeps the two models' predictions apart (a tuple), for detect() to fuse them with WBF."""
 
-    def __init__(self, m, rgb_model):
+    def __init__(self, m, rgb_model, wbf=False):
         super().__init__()
-        self.m, self.r = m, rgb_model
+        self.m, self.r, self.wbf = m, rgb_model, wbf
         self.fusion = getattr(m, 'fusion', [])
 
     def forward(self, rgb, evt):
         a = self.m(rgb, evt)
         b = self.r(rgb)
-        return torch.cat([a[0], b[0]], 2), a[1]
+        return ((a[0], b[0]) if self.wbf else torch.cat([a[0], b[0]], 2)), a[1]
+
+
+def _iou(box, boxes):
+    lt = np.maximum(box[:2], boxes[:, :2])
+    rb = np.minimum(box[2:], boxes[:, 2:])
+    inter = np.prod(np.clip(rb - lt, 0, None), 1)
+    area = lambda b: (b[..., 2] - b[..., 0]) * (b[..., 3] - b[..., 1])       # noqa: E731
+    return inter / (area(box) + area(boxes) - inter + 1e-9)
+
+
+def wbf(dets, iou_thr=0.55, max_det=300):
+    """Weighted boxes fusion (Solovyev et al., Image and Vision Computing 2021, arXiv 1910.13302) of the
+    per-model detections of one image: dets = list of (n_i, 6) tensors [x1, y1, x2, y2, conf, cls] after each
+    model's own NMS. Per class, boxes in descending confidence join the first fused box with IoU > iou_thr
+    (else start a new one); a fused box has the confidence-weighted mean coordinates and the mean confidence
+    times min(T, N) / N (T boxes in the cluster, N models; the paper's eq. 4)."""
+    dev = dets[0].device
+    n_models = len(dets)
+    allb = torch.cat(dets).float().cpu().numpy()
+    out = []
+    for c in np.unique(allb[:, 5]):
+        b = allb[allb[:, 5] == c]
+        b = b[np.argsort(-b[:, 4])]
+        fused, members = np.zeros((0, 4)), []
+        for row in b:
+            j = -1
+            if len(fused):
+                iou = _iou(row[:4], fused)
+                k = int(iou.argmax())
+                if iou[k] > iou_thr:
+                    j = k
+            if j < 0:
+                fused = np.vstack([fused, row[None, :4]])
+                members.append([row])
+            else:
+                members[j].append(row)
+                m = np.stack(members[j])
+                fused[j] = (m[:, :4] * m[:, 4:5]).sum(0) / m[:, 4].sum()
+        for f, m in zip(fused, members):
+            conf = float(np.mean([r[4] for r in m])) * min(len(m), n_models) / n_models
+            out.append([*f, conf, c])
+    if not out:
+        return torch.zeros(0, 6, device=dev)
+    o = torch.tensor(np.array(out), dtype=torch.float32, device=dev)
+    return o[o[:, 4].argsort(descending=True)[:max_det]]
+
+
+def detect(pred):
+    """NMS as in validation; a tuple of per-model predictions (PoolRGB with wbf) gets per-model NMS then WBF."""
+    if isinstance(pred, tuple):
+        per = [ops.non_max_suppression(p.float(), 0.001, 0.7, multi_label=True, max_det=300) for p in pred]
+        return [wbf(list(d)) for d in zip(*per)]
+    return ops.non_max_suppression(pred.float(), 0.001, 0.7, multi_label=True, max_det=300)
 
 
 def luminance(rgb):
@@ -158,7 +212,7 @@ def eval_clean(model, inside, workers, split='val'):
         g = gate_means(model)
         t = terms(model)
         lum = luminance(rgb).cpu()
-        dets = ops.non_max_suppression(out[0].float(), 0.001, 0.7, multi_label=True, max_det=300)
+        dets = detect(out[0])
         bks = set()
         for i, d in enumerate(dets):
             bk = bucket_of(float(lum[i]))
@@ -234,7 +288,7 @@ def eval_corrupt(model, inside, stride, kinds, sevs, workers, extra=(), split='v
             t = terms(model)
             if t:
                 trm[c].append(t)
-            dets = ops.non_max_suppression(out[0].float(), 0.001, 0.7, multi_label=True, max_det=300)
+            dets = detect(out[0])
             for d, (tcls, tbox) in zip(dets, tgt):
                 met[c].update_stats(_frame_stats(d, tcls, tbox, iouv))
     res = {'stride': stride, 'severities': sevs, 'conds': {}}
@@ -279,6 +333,8 @@ def main():
     ap.add_argument('--split', default='val', choices=['val', 'test'], help='test = report only')
     ap.add_argument('--pool-rgb', default=None, metavar='REL_CKPT',
                     help='pool the detections with this RGB single-stream checkpoint (under runs/) before NMS')
+    ap.add_argument('--pool-mode', default='nms', choices=['nms', 'wbf'],
+                    help='nms: one NMS over both models; wbf: per-model NMS, then weighted boxes fusion')
     a = ap.parse_args()
     jobs = [(r, a.family, None) for r in FAMILIES[a.family]] if a.family else []
     jobs += [tuple((c.split(':') + [None])[:3]) for c in a.ckpt]
@@ -307,10 +363,10 @@ def main():
             ov.append((f'attr {name}', None, val))
         inside = Inside(m)
         if a.pool_rgb:
-            m = PoolRGB(m, load_ultralytics(osp.join(RUNS, a.pool_rgb)).to(dev).eval())
+            m = PoolRGB(m, load_ultralytics(osp.join(RUNS, a.pool_rgb)).to(dev).eval(), a.pool_mode == 'wbf')
         t0 = time.time()
         r = {'run': run, 'fusion': fusion, 'weights': a.weights, 'overrides': ov, 'init': init, 'split': a.split,
-             'pool_rgb': a.pool_rgb}
+             'pool_rgb': a.pool_rgb, 'pool_mode': a.pool_mode if a.pool_rgb else None}
         if not a.no_clean:
             r['clean'] = eval_clean(m, inside, a.workers, a.split)
         if not a.no_corrupt:
