@@ -54,6 +54,7 @@ class DualYOLOv8(nn.Module):
         self.fusion_type = fusion
         self.stateful = bool(getattr(self.fusion[0], 'stateful', False))   # needs consecutive frames
         self.illum = fusion.startswith('iaf_')
+        self.illum_in = fusion.startswith(('iaf_', 'sw2i_'))   # fusion modules read the lighting descriptor
         self.reliability = fusion.startswith(('rel_', 'relp_', 'rel2_', 'relp2_'))   # docs/fusion_model.md
         self.modality_drop = modality_drop
         # auxiliary per-branch losses (docs/fusion_model.md Sec. 4): the shared neck + head also run on the
@@ -61,7 +62,7 @@ class DualYOLOv8(nn.Module):
         # aux_weight * (L_rgb + L_evt) and decays aux_weight linearly from aux0 to 0 over the epochs.
         self.aux0, self.aux_weight, self.aux_branches, self.aux_outputs = 0.0, 0.0, ('rgb', 'evt'), []
         # training-time RGB degradation (hsf/data/corruptions.py degrade_batch; set by tools/train_dual.py)
-        self.rgb_aug_kinds, self.rgb_aug_p, self.rgb_drop_p = (), 0.0, 0.0
+        self.rgb_aug_kinds, self.rgb_aug_p, self.rgb_drop_p, self.rgb_aug_depth = (), 0.0, 0.0, 1
         self.frozen = ()            # sub-module names kept in eval mode (frozen BatchNorm statistics)
         self.nc = nc
         self.stride = self.model[-1].stride
@@ -97,13 +98,14 @@ class DualYOLOv8(nn.Module):
         preds, maps)); stateful models (self.stateful) return (detect_output, new_state)."""
         if self.training and (self.rgb_aug_p > 0 or self.rgb_drop_p > 0):
             from hsf.data.corruptions import degrade_batch
-            rgb = degrade_batch(rgb, self.rgb_aug_kinds, self.rgb_aug_p, self.rgb_drop_p)
+            rgb = degrade_batch(rgb, self.rgb_aug_kinds, self.rgb_aug_p, self.rgb_drop_p,
+                                depth=getattr(self, 'rgb_aug_depth', 1))
         x_r, x_e = rgb, evt
         neck_inputs, new_state = {}, []
         extra = {}
-        if self.illum:          # illumination-gated fusion: lighting descriptor + modality dropout mask
+        if self.illum_in:       # illumination-gated fusion: lighting descriptor (+ modality dropout mask for iaf_)
             extra['illum'] = illum_descriptor(rgb)
-            if self.training and self.modality_drop > 0:
+            if self.illum and self.training and self.modality_drop > 0:
                 extra['keep'] = (torch.rand(rgb.shape[0], device=rgb.device) >= self.modality_drop).float()
         if self.reliability:    # physical reliability signals of the raw inputs (no gradient)
             extra['sig'] = reliability_signals(rgb, evt)

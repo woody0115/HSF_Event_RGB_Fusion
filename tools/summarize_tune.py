@@ -43,7 +43,8 @@ def main():
     for t in a.ref:
         p = osp.join(ROOT, 'runs', 'tune', f'{t}.json')
         if osp.isfile(p):
-            ref.update(json.load(open(p)))
+            # keyed like the compared entries: a fine-tuned reference pairs through its init checkpoint too
+            ref.update({(v.get('init') or k): v for k, v in json.load(open(p)).items()})
 
     def metrics(r):
         c = r.get('clean', {})

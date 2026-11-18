@@ -16,7 +16,8 @@ import time
 import numpy as np
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, WeightedRandomSampler
 from ultralytics.utils import ops
 from ultralytics.utils.loss import v8DetectionLoss
 from ultralytics.utils.metrics import DetMetrics, box_iou
@@ -321,32 +322,80 @@ def match_predictions(pred_cls, true_cls, iou, iouv):
     return correct
 
 
+NIGHT_LUM = 35.0      # night bucket of tools/eval_conditions.py: mean RGB luminance < 35
+
+
 def make_loaders(batch, workers, size=640, sequences_train=None, sequences_val=None, classes=None, label_map=None,
-                 train_split='train', val_split='test'):
+                 train_split='train', val_split='test', night_weight=1.0, need_lum=False):
+    """night_weight != 1: sample training frames with replacement, night frames (luminance < NIGHT_LUM) weighted
+    by night_weight (2026-11-19, image-level re-sampling as in LVIS repeat factor sampling, Gupta et al. CVPR 2019);
+    the epoch length stays len(dataset). need_lum: batches carry the per-frame luminance ('lum')."""
     tr = DualDSEC(train_split, size, augment=True, sequences=sequences_train, classes=classes, label_map=label_map)
     va = DualDSEC(val_split, size, augment=False, sequences=sequences_val, classes=classes, label_map=label_map)
     kw = dict(num_workers=workers, pin_memory=True, collate_fn=DualDSEC.collate,
               persistent_workers=workers > 0)
-    return (DataLoader(tr, batch_size=batch, shuffle=True, drop_last=True, **kw),
-            DataLoader(va, batch_size=batch * 2, shuffle=False, **kw))
+    if night_weight != 1.0 or need_lum:
+        lum = tr.load_lighting(return_lum=need_lum)
+        night = lum < NIGHT_LUM
+        print(f'train lighting: {night.sum()} / {len(lum)} night frames ({night.mean():.1%})', flush=True)
+    if night_weight != 1.0:
+        w = torch.as_tensor(np.where(night, night_weight, 1.0), dtype=torch.double)
+        print(f'night oversampling x{night_weight:g}: expected night share {float(w[night].sum() / w.sum()):.1%}',
+              flush=True)
+        train_dl = DataLoader(tr, batch_size=batch, sampler=WeightedRandomSampler(w, len(tr), replacement=True),
+                              drop_last=True, **kw)
+    else:
+        train_dl = DataLoader(tr, batch_size=batch, shuffle=True, drop_last=True, **kw)
+    return train_dl, DataLoader(va, batch_size=batch * 2, shuffle=False, **kw)
+
+
+def soft_cls_loss(s_maps, t_maps, nc, mask=None):
+    """Binary KL divergence between the class probabilities of a teacher and the student, summed over anchors and
+    classes, normalised by the teacher's probability mass (like Ultralytics' target_scores_sum). s_maps / t_maps:
+    Detect training outputs (list of (B, 4 * reg_max + nc, H, W)); only the last nc channels are used.
+    mask: (B,) per-image weights (e.g. night only), or None."""
+    num, den = 0.0, 0.0
+    for s, t in zip(s_maps, t_maps):
+        sl, tl = s[:, -nc:].float(), t[:, -nc:].float()
+        tp = tl.sigmoid()
+        kl = (F.binary_cross_entropy_with_logits(sl, tp, reduction='none') -
+              F.binary_cross_entropy_with_logits(tl, tp, reduction='none'))
+        num = num + kl.sum((1, 2, 3))
+        den = den + tp.sum((1, 2, 3))
+    if mask is not None:
+        num, den = num * mask, den * mask
+    return num.sum() / den.sum().clamp(min=1.0)
 
 
 def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937, weight_decay=5e-4,
           warmup_epochs=3, nbs=64, workers=8, eval_every=1, sequences_train=None, sequences_val=None,
           max_train_batches=None, classes=None, label_map=None,
-          train_split='train', val_split='test', resume=False, warmup_bias_lr=0.1):
+          train_split='train', val_split='test', resume=False, warmup_bias_lr=0.1,
+          consist=0.0, distill=0.0, teacher=None, night_weight=1.0):
     """classes / label_map: train on a subset of classes with remapped ids.
     warmup_bias_lr: start of the bias learning rate during warmup (Ultralytics 0.1; fine-tuning a trained
     model uses 0, so the biases ramp up like the weights instead of jumping by 0.1).
     train_split / val_split: dataset splits (hsf/data/dataset.py split_filter); with val_split != 'test' the
     best checkpoint is also evaluated once on the test split (test_metrics.json).
-    resume: continue from run_dir/resume.pt (written after every epoch)."""
+    resume: continue from run_dir/resume.pt (written after every epoch).
+    2026-11-19 single-factor options (docs/tuning_log.md), all off by default:
+    consist   weight of a clean-vs-degraded consistency loss: the EMA model on the clean RGB input is the teacher of
+              the student on the degraded input (soft_cls_loss; after the consistency constraint of Tian et al. 2025
+              for RGB-T detection and AugMix's consistency loss)
+    distill   weight of a distillation loss from `teacher` (an RGB single-stream detector on the clean RGB input),
+              night frames only (luminance < NIGHT_LUM), where the RGB single stream detects pedestrians best
+    night_weight  sampling weight of night frames (make_loaders)"""
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     names = {i: n for i, n in enumerate(model.names.values() if isinstance(model.names, dict) else model.names)}
     train_loader, val_loader = make_loaders(batch, workers, sequences_train=sequences_train,
                                             sequences_val=sequences_val, classes=classes, label_map=label_map,
-                                            train_split=train_split, val_split=val_split)
+                                            train_split=train_split, val_split=val_split,
+                                            night_weight=night_weight, need_lum=distill > 0)
+    if teacher is not None:
+        teacher = teacher.to(device).eval()
+        for p in teacher.parameters():
+            p.requires_grad = False
     print(f'train frames {len(train_loader.dataset)}, val frames {len(val_loader.dataset)}, '
           f'params {sum(p.numel() for p in model.parameters()) / 1e6:.1f} M', flush=True)
 
@@ -370,6 +419,7 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
             print(f'aux weight {model.aux_weight:.3f} ({", ".join(model.aux_branches)})', flush=True)
         t0 = time.time()
         mloss = torch.zeros(3, device=device)
+        mkd = 0.0
         opt.zero_grad()
         for bi, b in enumerate(train_loader):
             if bi >= nb:
@@ -382,12 +432,29 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
                                                           lr * lf(epoch)]) * g.get('lr_mult', 1.0)
                     g['momentum'] = np.interp(it, [0, n_warm], [0.8, momentum])
             rgb, evt = b['rgb'].to(device, non_blocking=True), b['evt'].to(device, non_blocking=True)
+            t_ema = t_rgb = None
+            if consist > 0 or distill > 0:
+                with torch.no_grad(), torch.autocast('cuda', enabled=device.type == 'cuda'):
+                    if consist > 0:     # eval-mode EMA model never degrades its RGB input
+                        t_ema = ema.ema(rgb, evt)[1]
+                    if distill > 0:
+                        t_rgb = teacher(rgb)[1]
             with torch.autocast('cuda', enabled=device.type == 'cuda'):
                 out = model(rgb, evt)
                 preds = out[0] if isinstance(out, tuple) and isinstance(out[0], list) else out
                 loss, items = crit(preds, b)
                 for aux in getattr(model, 'aux_outputs', []):
                     loss = loss + model.aux_weight * crit(aux, b)[0]
+                kd = 0.0
+                if t_ema is not None:
+                    kd = kd + consist * soft_cls_loss(preds, t_ema, model.nc)
+                if t_rgb is not None:
+                    night = (b['lum'].to(device) < NIGHT_LUM).float()
+                    kd = kd + distill * soft_cls_loss(preds, t_rgb, model.nc, mask=night)
+                if t_ema is not None or t_rgb is not None:
+                    # Ultralytics returns the loss vector times the batch size; spread the extra term over it
+                    loss = loss + kd * rgb.shape[0] / loss.numel()
+                    mkd = (mkd * bi + float(kd)) / (bi + 1)
             scaler.scale(loss.sum()).backward()
             if (it + 1) % accumulate == 0:
                 scaler.unscale_(opt)
@@ -400,7 +467,8 @@ def train(model, run_dir, epochs=40, batch=8, lr=0.005, lrf=0.01, momentum=0.937
             it += 1
             if bi % 100 == 0:
                 print(f'epoch {epoch + 1}/{epochs}  {bi}/{nb}  box {mloss[0]:.3f} cls {mloss[1]:.3f} '
-                      f'dfl {mloss[2]:.3f}  lr {opt.param_groups[1]["lr"]:.5f}  '
+                      f'dfl {mloss[2]:.3f}' + (f' kd {mkd:.4f}' if consist > 0 or distill > 0 else '') +
+                      f'  lr {opt.param_groups[1]["lr"]:.5f}  '
                       f'{(time.time() - t0) / 60:.1f} min  mem {torch.cuda.memory_reserved() / 1e9:.1f} GB',
                       flush=True)
         for g in opt.param_groups:                  # epoch-level linear decay after warmup

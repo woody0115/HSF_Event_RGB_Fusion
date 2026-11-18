@@ -113,19 +113,29 @@ def corrupt(x, kind, severity, gen, rows=ROWS):
 
 
 @torch.no_grad()
-def degrade_batch(x, kinds, p_corrupt, p_drop, severities=(1, 2, 3, 4, 5)):
+def degrade_batch(x, kinds, p_corrupt, p_drop, severities=(1, 2, 3, 4, 5), depth=1):
     """Training-time RGB degradation, per image (2026-11-17, tuning toward RGB failure and night):
     with probability p_drop the RGB input is set to 0 (FRN's RGB dropout, Cao et al. ECCV 2024), otherwise with
     probability p_corrupt one random kind from `kinds` at a random severity is applied to the whole 640x640 input
-    (augmented frames are not at the test letterbox rows). Uses the global torch RNG (seeded by train_dual)."""
+    (augmented frames are not at the test letterbox rows). Uses the global torch RNG (seeded by train_dual).
+    depth > 1 (2026-11-19, AugMix-style composition, Hendrycks et al. ICLR 2020): a corrupted image gets 1..depth
+    distinct kinds applied one after another, each at its own random severity."""
     out = x.clone()
     u = torch.rand(x.shape[0]).tolist()
     for i, ui in enumerate(u):
         if ui < p_drop:
             out[i] = 0
-        elif ui < p_drop + p_corrupt and kinds:
+        elif ui < p_drop + p_corrupt and kinds and depth <= 1:     # unchanged RNG sequence of the 11-17 runs
             k = kinds[int(torch.randint(len(kinds), (1,)))]
             s = severities[int(torch.randint(len(severities), (1,)))]
             gen = torch.Generator(device=x.device).manual_seed(int(torch.randint(2 ** 31 - 1, (1,))))
             out[i:i + 1] = corrupt(x[i:i + 1], k, s, gen, rows=(0, 640))
+        elif ui < p_drop + p_corrupt and kinds:
+            n = int(torch.randint(1, min(depth, len(kinds)) + 1, (1,)))
+            y = x[i:i + 1]
+            for j in torch.randperm(len(kinds))[:n].tolist():
+                s = severities[int(torch.randint(len(severities), (1,)))]
+                gen = torch.Generator(device=x.device).manual_seed(int(torch.randint(2 ** 31 - 1, (1,))))
+                y = corrupt(y, kinds[j], s, gen, rows=(0, 640))
+            out[i:i + 1] = y
     return out

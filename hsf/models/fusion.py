@@ -424,9 +424,12 @@ class SoftmaxModalityGate(nn.Module):
     pretrained neck sees the feature scale it was trained with. The MLP's last layer is zero-initialised
     (equal weights). The MLP reads backbone features, not raw event counts, so it can learn that many
     events from ego-motion or background change do not mean a reliable event stream.
-    last_gate: per-image w_E / scale (event share, read by tools/eval_conditions.py per lighting)."""
+    last_gate: per-image w_E / scale (event share, read by tools/eval_conditions.py per lighting).
+    illum ('sw2i_', 2026-11-19, after IAF R-CNN, Li et al. Pattern Recognition 2019): the 64-d global lighting
+    descriptor of the RGB input (illum_descriptor) adds a zero-initialised linear term to the gate logits, so a
+    checkpoint of the plain gate loads unchanged and starts from the same weights."""
 
-    def __init__(self, base, c, scale=1.0):
+    def __init__(self, base, c, scale=1.0, illum=False):
         super().__init__()
         self.base = base
         self.stateful = bool(getattr(base, 'stateful', False))
@@ -435,6 +438,11 @@ class SoftmaxModalityGate(nn.Module):
         self.mlp = nn.Sequential(nn.Linear(4 * c, hidden), nn.SiLU(), nn.Linear(hidden, 2))
         nn.init.zeros_(self.mlp[-1].weight)
         nn.init.zeros_(self.mlp[-1].bias)
+        self.illum_fc = None
+        if illum:
+            self.illum_fc = nn.Linear(64, 2)
+            nn.init.zeros_(self.illum_fc.weight)
+            nn.init.zeros_(self.illum_fc.bias)
         self.proj = nn.Conv2d(c, c, 1)
         nn.init.zeros_(self.proj.bias)
         with torch.no_grad():
@@ -442,10 +450,13 @@ class SoftmaxModalityGate(nn.Module):
         self.last_gate = None
         self.last_terms = None
 
-    def forward(self, evt, rgb, h=None, **_):
+    def forward(self, evt, rgb, h=None, illum=None, **_):
         evt2, rgb2, neck_base, h = self.base(evt, rgb, h)
         d = torch.cat([rgb.mean((2, 3)), rgb.amax((2, 3)), evt.mean((2, 3)), evt.amax((2, 3))], 1).float()
-        w = torch.softmax(self.mlp(d), 1) * self.scale                         # (B, 2): [w_R, w_E]
+        logits = self.mlp(d)
+        if self.illum_fc is not None and illum is not None:
+            logits = logits + self.illum_fc(illum.float())
+        w = torch.softmax(logits, 1) * self.scale                              # (B, 2): [w_R, w_E]
         self.last_gate = (w[:, 1] / self.scale).detach()
         if not self.training:
             e = w[:, 1] / self.scale
@@ -531,15 +542,16 @@ def build_fusion(name, c, scale_idx=0):
     'rel_<base>' = <base> wrapped in the reliability-weighted gate v1 (docs/fusion_model.md);
     'relp_<base>' = same with the physical prior only (no learned residual delta);
     'rel2_<base>' / 'relp2_<base>' = reliability-gated additive fusion v2 (with / without delta);
-    'sw_<base>' / 'sw2_<base>' = softmax modality weights from the features, sum 1 / sum 2."""
-    for prefix in ('iaf_', 'relp2_', 'rel2_', 'relp_', 'rel_', 'sw2_', 'sw_'):
+    'sw_<base>' / 'sw2_<base>' = softmax modality weights from the features, sum 1 / sum 2;
+    'sw2i_<base>' = sw2 with the global lighting descriptor as an extra gate input."""
+    for prefix in ('iaf_', 'relp2_', 'rel2_', 'relp_', 'rel_', 'sw2i_', 'sw2_', 'sw_'):
         if name.startswith(prefix):
             base = name[len(prefix):]
             break
     else:
         prefix, base = '', name
     if base not in FUSIONS:
-        raise ValueError(f'unknown fusion "{name}" (available: {list(FUSIONS)}, iaf_/rel_/relp_/rel2_/relp2_/sw_/sw2_<name>)')
+        raise ValueError(f'unknown fusion "{name}" (available: {list(FUSIONS)}, iaf_/rel_/relp_/rel2_/relp2_/sw_/sw2_/sw2i_<name>)')
     m = FUSIONS[base](c)
     if prefix == 'iaf_':
         return IllumGate(m, c)
@@ -547,6 +559,6 @@ def build_fusion(name, c, scale_idx=0):
         return ReliabilityGate(m, c, scale_idx, learn_delta=prefix == 'rel_')
     if prefix in ('rel2_', 'relp2_'):
         return ReliabilityGateV2(m, c, scale_idx, learn_delta=prefix == 'rel2_')
-    if prefix in ('sw_', 'sw2_'):
-        return SoftmaxModalityGate(m, c, scale=2.0 if prefix == 'sw2_' else 1.0)
+    if prefix in ('sw_', 'sw2_', 'sw2i_'):
+        return SoftmaxModalityGate(m, c, scale=1.0 if prefix == 'sw_' else 2.0, illum=prefix == 'sw2i_')
     return m
