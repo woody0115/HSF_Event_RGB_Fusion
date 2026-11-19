@@ -115,8 +115,10 @@ def main():
     if a.init_ckpt:
         sd = torch.load(a.init_ckpt, map_location='cpu', weights_only=False)['model']
         missing, unexpected = model.load_state_dict(sd, strict=False)
-        # only new zero-initialised modules may be missing (sw2i_ gate: illum_fc)
-        assert not unexpected and all('illum_fc' in k for k in missing), (missing, unexpected)
+        # only new zero-initialised modules may be missing (sw2i_ gate: illum_fc; iaf_ IllumGate around a
+        # checkpoint of its base fusion: fusion.<i>.mlp, 2026-11-20 add-based literature experiments)
+        new_ok = lambda k: 'illum_fc' in k or (a.fusion.startswith('iaf_') and '.mlp.' in k)  # noqa: E731
+        assert not unexpected and all(new_ok(k) for k in missing), (missing, unexpected)
         print(f'initialised from {a.init_ckpt}' + (f' (new: {missing})' if missing else ''), flush=True)
     if a.freeze:
         model.freeze([n for n in a.freeze.split(',') if n])
