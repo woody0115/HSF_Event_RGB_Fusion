@@ -1,0 +1,4 @@
+[2026-11-12 09:51:24] start dual_add_paper_s0 on GPU 0
+[2026-11-12 09:52:24] start dual_tfs_paper_s0 on GPU 1
+[2026-11-12 09:53:24] start dual_af_paper_s0 on GPU 2
+[2026-11-12 09:54:24] start dual_hsf_paper_s0 on GPU 3

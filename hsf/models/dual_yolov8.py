@@ -19,7 +19,7 @@ import torch
 import torch.nn as nn
 from ultralytics.nn.tasks import DetectionModel
 
-from hsf.models.fusion import build_fusion, illum_descriptor
+from hsf.models.fusion import build_fusion, illum_descriptor, reliability_signals
 
 FUSE_AT = (4, 6, 9)            # backbone layer indices of C3 / C4 / C5 outputs (P3, P4, P5)
 
@@ -54,7 +54,16 @@ class DualYOLOv8(nn.Module):
         self.fusion_type = fusion
         self.stateful = bool(getattr(self.fusion[0], 'stateful', False))   # needs consecutive frames
         self.illum = fusion.startswith('iaf_')
+        self.illum_in = fusion.startswith(('iaf_', 'sw2i_'))   # fusion modules read the lighting descriptor
+        self.reliability = fusion.startswith(('rel_', 'relp_', 'rel2_', 'relp2_'))   # docs/fusion_model.md
         self.modality_drop = modality_drop
+        # auxiliary per-branch losses (docs/fusion_model.md Sec. 4): the shared neck + head also run on the
+        # RGB term and on the event term of the neck input alone; hsf/engine.py train() adds
+        # aux_weight * (L_rgb + L_evt) and decays aux_weight linearly from aux0 to 0 over the epochs.
+        self.aux0, self.aux_weight, self.aux_branches, self.aux_outputs = 0.0, 0.0, ('rgb', 'evt'), []
+        # training-time RGB degradation (hsf/data/corruptions.py degrade_batch; set by tools/train_dual.py)
+        self.rgb_aug_kinds, self.rgb_aug_p, self.rgb_drop_p, self.rgb_aug_depth = (), 0.0, 0.0, 1
+        self.frozen = ()            # sub-module names kept in eval mode (frozen BatchNorm statistics)
         self.nc = nc
         self.stride = self.model[-1].stride
         self.names = rgb_model.names
@@ -69,17 +78,37 @@ class DualYOLOv8(nn.Module):
                 return sub.conv.out_channels
         raise ValueError(f'cannot infer channels of layer {idx}')
 
+    def freeze(self, names):
+        """Freeze sub-modules ('rgb', 'evt', 'model' = neck + head): no gradients, BatchNorm in eval mode."""
+        self.frozen = tuple(names)
+        for n in self.frozen:
+            for p in getattr(self, n).parameters():
+                p.requires_grad = False
+        self.train(self.training)
+
+    def train(self, mode=True):
+        super().train(mode)
+        for n in getattr(self, 'frozen', ()):
+            getattr(self, n).eval()
+        return self
+
     def forward(self, rgb, evt, state=None):
         """rgb, evt: (B, 3, H, W). state: per-scale hidden states for temporal fusion (TFS), or None
         (= start of a sequence). Returns the Detect output (train: list of 3 maps; eval: (decoded
         preds, maps)); stateful models (self.stateful) return (detect_output, new_state)."""
+        if self.training and (self.rgb_aug_p > 0 or self.rgb_drop_p > 0):
+            from hsf.data.corruptions import degrade_batch
+            rgb = degrade_batch(rgb, self.rgb_aug_kinds, self.rgb_aug_p, self.rgb_drop_p,
+                                depth=getattr(self, 'rgb_aug_depth', 1))
         x_r, x_e = rgb, evt
         neck_inputs, new_state = {}, []
         extra = {}
-        if self.illum:          # illumination-gated fusion: lighting descriptor + modality dropout mask
+        if self.illum_in:       # illumination-gated fusion: lighting descriptor (+ modality dropout mask for iaf_)
             extra['illum'] = illum_descriptor(rgb)
-            if self.training and self.modality_drop > 0:
+            if self.illum and self.training and self.modality_drop > 0:
                 extra['keep'] = (torch.rand(rgb.shape[0], device=rgb.device) >= self.modality_drop).float()
+        if self.reliability:    # physical reliability signals of the raw inputs (no gradient)
+            extra['sig'] = reliability_signals(rgb, evt)
         k = 0
         for i in range(10):
             x_r, x_e = self.rgb[i](x_r), self.evt[i](x_e)
@@ -88,7 +117,16 @@ class DualYOLOv8(nn.Module):
                 x_e, x_r, neck_inputs[i], h_new = self.fusion[k](x_e, x_r, h, **extra)
                 new_state.append(h_new)
                 k += 1
-        # replay the Ultralytics neck graph; it only reads layers 4, 6, 9 from the backbone
+        x = self._neck(neck_inputs)
+        self.aux_outputs = []
+        if self.training and self.aux_weight > 0 and all(getattr(f, 'last_branches', None) for f in self.fusion):
+            for k, br in enumerate(('rgb', 'evt')):
+                if br in self.aux_branches:
+                    self.aux_outputs.append(self._neck({i: f.last_branches[k] for i, f in zip(FUSE_AT, self.fusion)}))
+        return (x, new_state) if self.stateful else x
+
+    def _neck(self, neck_inputs):
+        """Replay the Ultralytics neck graph; it only reads layers 4, 6, 9 from the backbone."""
         y = [None] * 10
         for i in FUSE_AT:
             y[i] = neck_inputs[i]
@@ -98,4 +136,4 @@ class DualYOLOv8(nn.Module):
                 x = y[m.f] if isinstance(m.f, int) else [x if j == -1 else y[j] for j in m.f]
             x = m(x)
             y.append(x)
-        return (x, new_state) if self.stateful else x
+        return x

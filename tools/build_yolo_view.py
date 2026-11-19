@@ -16,10 +16,14 @@ import os
 import os.path as osp
 import shutil
 
+import sys
+
 import yaml
 
-ROOT = osp.join(osp.dirname(__file__), '..')
-CFG = yaml.safe_load(open(osp.join(ROOT, 'configs', 'paths.yaml')))
+ROOT = osp.abspath(osp.join(osp.dirname(__file__), '..'))
+sys.path.insert(0, ROOT)
+from hsf.data.dataset import CFG, VAL_SEQUENCES  # noqa: E402  (CFG includes configs/paths.local.yaml)
+
 PROC = CFG['processed_root']
 
 
@@ -31,8 +35,14 @@ def link(src, dst):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--train-seqs', nargs='*', help='restrict train split to these sequences (smoke test)')
-    ap.add_argument('--tag', default='', help='suffix for the generated yaml / view folder, e.g. "_smoke"')
+    ap.add_argument('--tag', default=None, help='suffix for the generated yaml / view folder, e.g. "_smoke" '
+                                                '(default: "" for legacy, "_val" for --split val)')
+    ap.add_argument('--split', default='legacy', choices=['legacy', 'val'],
+                    help='legacy: train = all 47 sequences, val = test (step 3 of versions #1-#10); '
+                         'val: train_core / val / test')
     a = ap.parse_args()
+    if a.tag is None:
+        a.tag = '_val' if a.split == 'val' else ''
 
     metas = sorted(glob.glob(osp.join(PROC, '*', '*', 'meta.json')))
     counts = {}
@@ -41,6 +51,8 @@ def main():
         split, seq = m['split'], m['sequence']
         if split == 'train' and a.train_seqs and seq not in a.train_seqs:
             continue
+        if split == 'train' and a.split == 'val':
+            split = 'val' if seq in VAL_SEQUENCES else 'train_core'
         seq_dir = osp.dirname(mpath)
         has_gear = osp.isfile(osp.join(seq_dir, 'gear_done.json'))
         for mod in ('rgb', 'event'):
@@ -62,16 +74,15 @@ def main():
 
     os.makedirs(osp.join(ROOT, 'configs', 'generated'), exist_ok=True)
     for mod in ('rgb', 'event'):
-        data = {
-            'path': osp.join(PROC, f'yolo{a.tag}', mod).replace('\\', '/'),
-            'train': 'train/images',
-            'val': 'test/images',
-            'names': {i: n for i, n in enumerate(CFG['names'])},
-        }
+        data = {'path': osp.join(PROC, f'yolo{a.tag}', mod).replace('\\', '/')}
+        data.update({'train': 'train_core/images', 'val': 'val/images', 'test': 'test/images'} if a.split == 'val'
+                    else {'train': 'train/images', 'val': 'test/images'})
+        data['names'] = {i: n for i, n in enumerate(CFG['names'])}
         out = osp.join(ROOT, 'configs', 'generated', f'dsec_{mod}{a.tag}.yaml')
         with open(out, 'w') as f:
             yaml.safe_dump(data, f, sort_keys=False)
-        print(f'{out}: train {counts.get((mod, "train"), 0)} / val {counts.get((mod, "test"), 0)} labelled frames')
+        print(f'{out}: ' + ', '.join(f'{k[1]} {v}' for k, v in sorted(counts.items()) if k[0] == mod) +
+              ' labelled frames')
 
 
 if __name__ == '__main__':

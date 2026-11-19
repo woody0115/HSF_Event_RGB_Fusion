@@ -1,9 +1,22 @@
-# Validation split carved out of the 47 DSEC-Det training sequences (since 2026-10-13).
-# New runs select checkpoints on "val" and train on "train_core" (= train minus val); the 13 test
-# sequences are only used for the final report. Versions #1-#10 were trained on all 47 sequences and
-# selected on test ("--split legacy" reproduces that).
-# Chosen for coverage: 5,413 frames (9.6 %), one night sequence, every class with >= 600 boxes.
+# Validation split carved out of the 47 DSEC-Det training sequences. New runs select checkpoints on "val"
+# and train on "train_core" (= train minus val); the 13 test sequences are only used for the final report.
+#
+# Since 2026-11-14: WHOLE DRIVES. A sequence <city>_<NN>_<x> is segment <x> of drive <city>_<NN>; segments of
+# one drive share route, weather and lighting, so holding out single segments (the 2026-10-13 list below)
+# made val far easier than test (step-3 RGB: val 65.9 vs test 53.9 mAP50-95). Per-drive statistics:
+# tools/split_stats.py. Chosen: zurich_city_10 (night, 3,712 frames) + zurich_city_05 (day, 2,912 frames,
+# all 7 classes) = 6,624 frames (11.7 %); boxes: ped 2,453, rider 287, car 23,914, bus 574, truck 548,
+# bicycle 809, motorcycle 450.
 val_sequences:
+  - zurich_city_05_a
+  - zurich_city_05_b
+  - zurich_city_10_a
+  - zurich_city_10_b
+
+# 2026-10-13 .. 2026-11-13 (runs *_paper_s0 and every --split val run before 2026-11-14): one segment per
+# drive, each with sibling segments in train_core. Kept for reproducing those runs (swap it into
+# val_sequences); not used by the code.
+val_sequences_2026_10_13:
   - interlaken_00_g
   - zurich_city_01_d
   - zurich_city_04_d

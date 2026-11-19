@@ -1,0 +1,18 @@
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5: all 42.56  day 46.20  dim 29.09  night 29.16  night-ped 34.55  val-mPC 15.05 (43.10 clean-sub)  (249 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed1: all 43.09  day 47.15  dim 28.53  night 28.17  night-ped 33.00  val-mPC 15.85 (43.87 clean-sub)  (258 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed2: all 43.47  day 47.44  dim 30.51  night 29.12  night-ped 34.40  val-mPC 15.23 (43.85 clean-sub)  (258 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step13_cafr/dual_cafr_s5: all 42.38  day 46.78  dim 26.87  night 28.56  night-ped 31.44  val-mPC 17.29 (42.91 clean-sub)  (813 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step13_cafr/dual_cafr_s5_seed1: all 42.60  day 46.67  dim 23.07  night 28.86  night-ped 33.53  val-mPC 17.63 (43.40 clean-sub)  (818 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step13_cafr/dual_cafr_s5_seed2: all 42.78  day 47.12  dim 26.67  night 28.74  night-ped 33.13  val-mPC 17.57 (43.43 clean-sub)  (816 s)

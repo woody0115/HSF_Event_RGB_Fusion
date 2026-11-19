@@ -1,0 +1,6 @@
+[2026-11-14 16:47:10] start dual_cafr_s5 (cafr ) on GPU 0
+[2026-11-14 16:47:55] start dual_cafrx_s5 (cafrx ) on GPU 3
+[2026-11-14 19:37:00] end dual_cafr_s5 (exit 0)
+[2026-11-14 19:57:58] end dual_cafrx_s5 (exit 0)
+[2026-11-14 19:57:58] per-lighting evaluation: dual_cafr_s5=step13_cafr/dual_cafr_s5/best.pt:cafr dual_cafrx_s5=step13_cafr/dual_cafrx_s5/best.pt:cafrx
+[2026-11-14 20:04:34] done

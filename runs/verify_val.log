@@ -1,0 +1,80 @@
+  val rgb 1/339  (4 s)
+  val rgb 51/339  (8 s)
+  val rgb 101/339  (13 s)
+  val rgb 151/339  (18 s)
+  val rgb 201/339  (23 s)
+  val rgb 251/339  (27 s)
+  val rgb 301/339  (32 s)
+== val rgb              mAP50 91.8  mAP50-95 65.9  (36 s)
+  val event 1/339  (1 s)
+  val event 51/339  (5 s)
+  val event 101/339  (8 s)
+  val event 151/339  (12 s)
+  val event 201/339  (16 s)
+  val event 251/339  (20 s)
+  val event 301/339  (26 s)
+== val event            mAP50 82.7  mAP50-95 53.0  (29 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  val add_paper 1/339  (1 s)
+  val add_paper 51/339  (5 s)
+  val add_paper 101/339  (9 s)
+  val add_paper 151/339  (13 s)
+  val add_paper 201/339  (18 s)
+  val add_paper 251/339  (22 s)
+  val add_paper 301/339  (26 s)
+== val add_paper        mAP50 91.3  mAP50-95 64.8  (28 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  val add_paper:last 1/339  (1 s)
+  val add_paper:last 51/339  (5 s)
+  val add_paper:last 101/339  (9 s)
+  val add_paper:last 151/339  (14 s)
+  val add_paper:last 201/339  (19 s)
+  val add_paper:last 251/339  (23 s)
+  val add_paper:last 301/339  (27 s)
+== val add_paper:last   mAP50 79.3  mAP50-95 55.3  (30 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  val af_paper 1/339  (2 s)
+  val af_paper 51/339  (6 s)
+  val af_paper 101/339  (11 s)
+  val af_paper 151/339  (16 s)
+  val af_paper 201/339  (22 s)
+  val af_paper 251/339  (27 s)
+  val af_paper 301/339  (33 s)
+== val af_paper         mAP50 90.8  mAP50-95 64.9  (37 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  val af_paper:last 1/339  (2 s)
+  val af_paper:last 51/339  (6 s)
+  val af_paper:last 101/339  (12 s)
+  val af_paper:last 151/339  (17 s)
+  val af_paper:last 201/339  (22 s)
+  val af_paper:last 251/339  (28 s)
+  val af_paper:last 301/339  (33 s)
+== val af_paper:last    mAP50 79.9  mAP50-95 55.7  (37 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  val tfs_paper 1/5533 frames (1 s)
+  val tfs_paper 2001/5533 frames (28 s)
+  val tfs_paper 4001/5533 frames (56 s)
+== val tfs_paper        mAP50 88.8  mAP50-95 61.8  (75 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  val tfs_paper:last 1/5533 frames (0 s)
+  val tfs_paper:last 2001/5533 frames (21 s)
+  val tfs_paper:last 4001/5533 frames (46 s)
+== val tfs_paper:last   mAP50 79.3  mAP50-95 55.1  (64 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  val hsf_paper 1/5533 frames (0 s)
+  val hsf_paper 2001/5533 frames (26 s)
+  val hsf_paper 4001/5533 frames (52 s)
+== val hsf_paper        mAP50 88.3  mAP50-95 60.6  (72 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  val hsf_paper:last 1/5533 frames (0 s)
+  val hsf_paper:last 2001/5533 frames (25 s)
+  val hsf_paper:last 4001/5533 frames (51 s)
+== val hsf_paper:last   mAP50 79.3  mAP50-95 55.2  (71 s)

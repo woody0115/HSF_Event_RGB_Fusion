@@ -1,0 +1,6 @@
+[2026-11-14 14:18:55] start dual_sw_add_s5 (sw_add ) on GPU 0
+[2026-11-14 14:19:40] start dual_sw2_add_s5 (sw2_add ) on GPU 3
+[2026-11-14 15:18:23] end dual_sw_add_s5 (exit 0)
+[2026-11-14 15:24:57] end dual_sw2_add_s5 (exit 0)
+[2026-11-14 15:24:57] per-lighting evaluation: dual_sw_add_s5=step12_sw/dual_sw_add_s5/best.pt:sw_add dual_sw2_add_s5=step12_sw/dual_sw2_add_s5/best.pt:sw2_add
+[2026-11-14 15:27:12] done

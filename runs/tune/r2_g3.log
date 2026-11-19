@@ -1,0 +1,46 @@
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5: all 42.22  day 46.59  dim 27.32  night 29.17  night-ped 34.13  val-mPC 18.00 (42.99 clean-sub)  (253 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed1: all 42.69  day 47.16  dim 28.36  night 27.79  night-ped 33.03  val-mPC 18.82 (43.21 clean-sub)  (269 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed2: all 43.17  day 47.77  dim 30.11  night 28.59  night-ped 34.35  val-mPC 18.49 (43.71 clean-sub)  (270 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5: all 38.56  day 44.05  dim 20.81  night 25.88  night-ped 29.51  val-mPC 21.22 (39.41 clean-sub)  (278 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed1: all 38.35  day 44.14  dim 22.58  night 24.21  night-ped 28.43  val-mPC 22.18 (38.73 clean-sub)  (278 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed2: all 39.34  day 45.17  dim 25.35  night 25.57  night-ped 30.38  val-mPC 21.94 (39.61 clean-sub)  (272 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step4/dual_add_s5_cleaninit:   val-mPC 0.64 (43.11 clean-sub)  rgb_zero 5.48  (25 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step4/dual_add_s5_seed1:   val-mPC 1.51 (43.13 clean-sub)  rgb_zero 2.36  (22 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step4/dual_add_s5_seed2:   val-mPC 0.81 (43.67 clean-sub)  rgb_zero 2.49  (22 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5:   val-mPC 0.00 (43.10 clean-sub)  rgb_zero 0.00  (24 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed1:   val-mPC 0.00 (43.87 clean-sub)  rgb_zero 0.00  (23 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed2:   val-mPC 0.00 (43.85 clean-sub)  rgb_zero 0.00  (23 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step13_cafr/dual_cafr_s5:   val-mPC 0.06 (42.91 clean-sub)  rgb_zero 3.17  (78 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step13_cafr/dual_cafr_s5_seed1:   val-mPC 0.39 (43.40 clean-sub)  rgb_zero 2.56  (77 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step13_cafr/dual_cafr_s5_seed2:   val-mPC 0.04 (43.43 clean-sub)  rgb_zero 0.14  (77 s)
+step3/event_yolov8s_val/weights/best.pt:   val-mPC 21.93 (21.93 clean-sub)  (13 s)

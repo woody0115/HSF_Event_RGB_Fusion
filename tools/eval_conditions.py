@@ -33,12 +33,20 @@ RUNS = osp.join(ROOT, 'runs')
 MODELS = {   # key: (kind, path, fusion)
     'rgb': ('single_rgb', 'step3/rgb_yolov8s/weights/best.pt', None),
     'event': ('single_evt', 'step3/event_yolov8s/weights/best.pt', None),
+    # single-stream trained on train_core, selected on the whole-drive val split (2026-11-14)
+    'rgb_val': ('single_rgb', 'step3/rgb_yolov8s_val/weights/best.pt', None),
+    'event_val': ('single_evt', 'step3/event_yolov8s_val/weights/best.pt', None),
     'add': ('dual', 'step4/dual_add_e20/best.pt', 'add'),
     'af': ('dual', 'step5_6/dual_af_e20/best.pt', 'af'),
     'hsf': ('dual', 'step5_6/dual_hsf_e20/best.pt', 'hsf'),
     'add_lr1e3': ('dual', 'step4/dual_add_lr1e3_e5/best.pt', 'add'),
     'af_lr1e3': ('dual', 'step5_6/dual_af_lr1e3_e5/best.pt', 'af'),
     'hsf_lr1e3': ('dual', 'step5_6/dual_hsf_lr1e3_e5/best.pt', 'hsf'),
+    # paper schedule (40 ep, lr 0.005, batch 8, --split val, seed 0; tools/run_paper_schedule.sh)
+    'add_paper': ('dual', 'step4/dual_add_paper_s0/best.pt', 'add'),
+    'tfs_paper': ('dual', 'step5_6/dual_tfs_paper_s0/best.pt', 'tfs'),
+    'af_paper': ('dual', 'step5_6/dual_af_paper_s0/best.pt', 'af'),
+    'hsf_paper': ('dual', 'step5_6/dual_hsf_paper_s0/best.pt', 'hsf'),
     # step 8: illumination-aware fusion
     'route_add': ('route', ('rgb', 'add_lr1e3'), None),      # hard switch: day -> RGB, dim/night -> fusion
     'route_af': ('route', ('rgb', 'af_lr1e3'), None),
@@ -160,7 +168,15 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--models', nargs='*', default=list(MODELS))
     ap.add_argument('--workers', type=int, default=8)
+    ap.add_argument('--extra', nargs='*', default=[], metavar='KEY=REL_PATH:FUSION',
+                    help='dual-stream checkpoints not in MODELS, e.g. rel1=step11_rel/dual_rel_add_v1/best.pt:rel_add '
+                         '(evaluated in addition to --models)')
     a = ap.parse_args()
+    for spec in a.extra:
+        key, rest = spec.split('=', 1)
+        rel, fusion = rest.rsplit(':', 1)
+        MODELS[key] = ('dual', rel, fusion)
+        a.models.append(key)
     lighting = json.load(open(osp.join(CFG['processed_root'], 'test_lighting.json')))
     counts = {b: 0 for b in BUCKETS}
     for seq in lighting.values():

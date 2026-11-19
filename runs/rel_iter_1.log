@@ -1,0 +1,6 @@
+[2026-11-13 22:06:06] start dual_add_s5_cleaninit (add ) on GPU 0
+[2026-11-13 22:06:51] start dual_rel_add_v1 (rel_add ) on GPU 3
+[2026-11-13 23:10:14] end dual_add_s5_cleaninit (exit 0)
+[2026-11-13 23:18:02] end dual_rel_add_v1 (exit 0)
+[2026-11-13 23:18:02] per-lighting evaluation: dual_add_s5_cleaninit=step4/dual_add_s5_cleaninit/best.pt:add dual_rel_add_v1=step11_rel/dual_rel_add_v1/best.pt:rel_add
+[2026-11-13 23:20:27] done
