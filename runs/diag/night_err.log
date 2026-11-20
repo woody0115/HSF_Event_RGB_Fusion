@@ -1,0 +1,47 @@
+rgb: done before, skipped
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+add step4/dual_add_s5_cleaninit:add: night found 78.4 %  night ped found 47.3 %  (34 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+add step4/dual_add_s5_seed1:add: night found 75.3 %  night ped found 37.2 %  (32 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+add step4/dual_add_s5_seed2:add: night found 77.5 %  night ped found 41.6 %  (32 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+add_H1 step4/a2h1_add_s0:add: night found 80.6 %  night ped found 49.9 %  (32 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+add_H1 step4/a2h1_add_s1:add: night found 79.8 %  night ped found 46.5 %  (32 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+add_H1 step4/a2h1_add_s2:add: night found 81.0 %  night ped found 48.9 %  (32 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+sw2 step12_sw/dual_sw2_add_s5:sw2_add: night found 80.5 %  night ped found 46.5 %  (33 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+sw2 step12_sw/dual_sw2_add_s5_seed1:sw2_add: night found 78.5 %  night ped found 40.9 %  (33 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+sw2 step12_sw/dual_sw2_add_s5_seed2:sw2_add: night found 78.5 %  night ped found 46.1 %  (33 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+sw2_C step12_sw/ft5c_sw2_add_s0:sw2_add: night found 81.4 %  night ped found 53.7 %  (33 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+sw2_C step12_sw/ft5c_sw2_add_s1:sw2_add: night found 79.4 %  night ped found 46.5 %  (33 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+sw2_C step12_sw/ft5c_sw2_add_s2:sw2_add: night found 79.5 %  night ped found 46.3 %  (33 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+sw2_G3 step12_sw/p2g3_sw2_add_s0:sw2_add: night found 81.3 %  night ped found 56.1 %  (33 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+sw2_G3 step12_sw/p2g3_sw2_add_s1:sw2_add: night found 79.5 %  night ped found 51.7 %  (33 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+sw2_G3 step12_sw/p2g3_sw2_add_s2:sw2_add: night found 80.4 %  night ped found 53.2 %  (33 s)
+wrote /home/jovyan/work/HSF_Event_RGB_Fusion/runs/diag/night_err.md
