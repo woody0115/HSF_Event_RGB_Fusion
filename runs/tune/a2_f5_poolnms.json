@@ -1,0 +1,509 @@
+{
+ "step4/a1f5_add_s0": {
+  "run": "step4/a1f5_add_s0",
+  "fusion": "add",
+  "weights": "best.pt",
+  "overrides": [],
+  "init": "step4/dual_add_s5_cleaninit",
+  "split": "val",
+  "pool_rgb": "step3/rgb_yolov8s_val/weights/best.pt",
+  "pool_mode": "nms",
+  "clean": {
+   "all": {
+    "mAP50-95": 42.88,
+    "per_class": {
+     "pedestrian": 43.6,
+     "rider": 46.58,
+     "car": 64.8,
+     "bus": 28.19,
+     "truck": 30.75,
+     "bicycle": 39.1,
+     "motorcycle": 47.16
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5295,
+      "rgb_norm": 551.96,
+      "evt_term_norm": 292.04
+     },
+     "P4": {
+      "r_e": 0.7723,
+      "rgb_norm": 266.79,
+      "evt_term_norm": 205.79
+     },
+     "P5": {
+      "r_e": 0.9781,
+      "rgb_norm": 124.52,
+      "evt_term_norm": 121.63
+     }
+    }
+   },
+   "day": {
+    "mAP50-95": 46.51,
+    "per_class": {
+     "pedestrian": 50.87,
+     "rider": 50.15,
+     "car": 62.49,
+     "bus": 32.66,
+     "truck": 31.47,
+     "bicycle": 48.0,
+     "motorcycle": 49.95
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5239,
+      "rgb_norm": 564.94,
+      "evt_term_norm": 295.67
+     },
+     "P4": {
+      "r_e": 0.7565,
+      "rgb_norm": 272.99,
+      "evt_term_norm": 206.38
+     },
+     "P5": {
+      "r_e": 0.9474,
+      "rgb_norm": 128.28,
+      "evt_term_norm": 121.43
+     }
+    }
+   },
+   "dim": {
+    "mAP50-95": 27.75,
+    "per_class": {
+     "pedestrian": 32.53,
+     "rider": 0.83,
+     "car": 69.37,
+     "bus": 28.36,
+     "truck": 58.6,
+     "bicycle": 0.15,
+     "motorcycle": 4.43
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5286,
+      "rgb_norm": 546.47,
+      "evt_term_norm": 288.75
+     },
+     "P4": {
+      "r_e": 0.7591,
+      "rgb_norm": 269.89,
+      "evt_term_norm": 204.75
+     },
+     "P5": {
+      "r_e": 0.9903,
+      "rgb_norm": 122.83,
+      "evt_term_norm": 121.56
+     }
+    }
+   },
+   "night": {
+    "mAP50-95": 29.46,
+    "per_class": {
+     "pedestrian": 36.18,
+     "rider": 49.46,
+     "car": 65.64,
+     "bus": 1.8,
+     "truck": 0.92,
+     "bicycle": 35.84,
+     "motorcycle": 16.36
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5357,
+      "rgb_norm": 540.63,
+      "evt_term_norm": 289.56
+     },
+     "P4": {
+      "r_e": 0.794,
+      "rgb_norm": 259.1,
+      "evt_term_norm": 205.58
+     },
+     "P5": {
+      "r_e": 1.0052,
+      "rgb_norm": 121.27,
+      "evt_term_norm": 121.86
+     }
+    }
+   }
+  },
+  "seconds": 48
+ },
+ "step4/a1f5_add_s1": {
+  "run": "step4/a1f5_add_s1",
+  "fusion": "add",
+  "weights": "best.pt",
+  "overrides": [],
+  "init": "step4/dual_add_s5_seed1",
+  "split": "val",
+  "pool_rgb": "step3/rgb_yolov8s_val/weights/best.pt",
+  "pool_mode": "nms",
+  "clean": {
+   "all": {
+    "mAP50-95": 43.64,
+    "per_class": {
+     "pedestrian": 43.81,
+     "rider": 47.85,
+     "car": 64.72,
+     "bus": 30.36,
+     "truck": 31.48,
+     "bicycle": 40.3,
+     "motorcycle": 46.93
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5256,
+      "rgb_norm": 545.84,
+      "evt_term_norm": 286.62
+     },
+     "P4": {
+      "r_e": 0.7443,
+      "rgb_norm": 267.61,
+      "evt_term_norm": 198.87
+     },
+     "P5": {
+      "r_e": 0.9759,
+      "rgb_norm": 123.12,
+      "evt_term_norm": 119.96
+     }
+    }
+   },
+   "day": {
+    "mAP50-95": 47.52,
+    "per_class": {
+     "pedestrian": 51.27,
+     "rider": 51.33,
+     "car": 62.38,
+     "bus": 35.71,
+     "truck": 32.09,
+     "bicycle": 49.56,
+     "motorcycle": 50.32
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5149,
+      "rgb_norm": 558.08,
+      "evt_term_norm": 287.14
+     },
+     "P4": {
+      "r_e": 0.7155,
+      "rgb_norm": 275.29,
+      "evt_term_norm": 196.85
+     },
+     "P5": {
+      "r_e": 0.9418,
+      "rgb_norm": 127.28,
+      "evt_term_norm": 119.75
+     }
+    }
+   },
+   "dim": {
+    "mAP50-95": 28.66,
+    "per_class": {
+     "pedestrian": 34.4,
+     "rider": 1.03,
+     "car": 69.36,
+     "bus": 32.19,
+     "truck": 60.64,
+     "bicycle": 0.2,
+     "motorcycle": 2.82
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5297,
+      "rgb_norm": 538.51,
+      "evt_term_norm": 285.13
+     },
+     "P4": {
+      "r_e": 0.7466,
+      "rgb_norm": 266.87,
+      "evt_term_norm": 199.15
+     },
+     "P5": {
+      "r_e": 0.997,
+      "rgb_norm": 120.61,
+      "evt_term_norm": 120.13
+     }
+    }
+   },
+   "night": {
+    "mAP50-95": 30.99,
+    "per_class": {
+     "pedestrian": 36.79,
+     "rider": 49.77,
+     "car": 65.53,
+     "bus": 1.88,
+     "truck": 0.91,
+     "bicycle": 36.51,
+     "motorcycle": 25.51
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.535,
+      "rgb_norm": 535.98,
+      "evt_term_norm": 286.66
+     },
+     "P4": {
+      "r_e": 0.7733,
+      "rgb_norm": 259.89,
+      "evt_term_norm": 200.86
+     },
+     "P5": {
+      "r_e": 1.0031,
+      "rgb_norm": 119.77,
+      "evt_term_norm": 120.11
+     }
+    }
+   }
+  },
+  "seconds": 47
+ },
+ "step4/a1f5_add_s2": {
+  "run": "step4/a1f5_add_s2",
+  "fusion": "add",
+  "weights": "best.pt",
+  "overrides": [],
+  "init": "step4/dual_add_s5_seed2",
+  "split": "val",
+  "pool_rgb": "step3/rgb_yolov8s_val/weights/best.pt",
+  "pool_mode": "nms",
+  "clean": {
+   "all": {
+    "mAP50-95": 43.25,
+    "per_class": {
+     "pedestrian": 43.65,
+     "rider": 46.7,
+     "car": 64.62,
+     "bus": 29.15,
+     "truck": 31.81,
+     "bicycle": 39.32,
+     "motorcycle": 47.51
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5399,
+      "rgb_norm": 544.52,
+      "evt_term_norm": 293.76
+     },
+     "P4": {
+      "r_e": 0.7656,
+      "rgb_norm": 268.29,
+      "evt_term_norm": 205.17
+     },
+     "P5": {
+      "r_e": 0.9914,
+      "rgb_norm": 122.9,
+      "evt_term_norm": 121.69
+     }
+    }
+   },
+   "day": {
+    "mAP50-95": 46.87,
+    "per_class": {
+     "pedestrian": 50.86,
+     "rider": 49.51,
+     "car": 62.03,
+     "bus": 34.09,
+     "truck": 32.43,
+     "bicycle": 48.58,
+     "motorcycle": 50.61
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5333,
+      "rgb_norm": 556.37,
+      "evt_term_norm": 296.45
+     },
+     "P4": {
+      "r_e": 0.7461,
+      "rgb_norm": 274.97,
+      "evt_term_norm": 205.06
+     },
+     "P5": {
+      "r_e": 0.9574,
+      "rgb_norm": 126.46,
+      "evt_term_norm": 120.98
+     }
+    }
+   },
+   "dim": {
+    "mAP50-95": 28.8,
+    "per_class": {
+     "pedestrian": 31.97,
+     "rider": 1.04,
+     "car": 69.58,
+     "bus": 31.87,
+     "truck": 61.77,
+     "bicycle": 0.59,
+     "motorcycle": 4.76
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5415,
+      "rgb_norm": 537.62,
+      "evt_term_norm": 291.01
+     },
+     "P4": {
+      "r_e": 0.759,
+      "rgb_norm": 269.36,
+      "evt_term_norm": 204.37
+     },
+     "P5": {
+      "r_e": 1.01,
+      "rgb_norm": 121.04,
+      "evt_term_norm": 122.17
+     }
+    }
+   },
+   "night": {
+    "mAP50-95": 29.24,
+    "per_class": {
+     "pedestrian": 36.73,
+     "rider": 49.39,
+     "car": 65.64,
+     "bus": 1.85,
+     "truck": 0.89,
+     "bicycle": 35.9,
+     "motorcycle": 14.25
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.5461,
+      "rgb_norm": 534.91,
+      "evt_term_norm": 292.04
+     },
+     "P4": {
+      "r_e": 0.7885,
+      "rgb_norm": 260.92,
+      "evt_term_norm": 205.61
+     },
+     "P5": {
+      "r_e": 1.0195,
+      "rgb_norm": 119.94,
+      "evt_term_norm": 122.24
+     }
+    }
+   }
+  },
+  "seconds": 48
+ }
+}
