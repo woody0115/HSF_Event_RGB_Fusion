@@ -1,0 +1,16 @@
+tensor([[8.0000e+01, 6.0000e+01, 1.2000e+02, 1.4000e+02, 9.0000e-01, 0.0000e+00],
+        [3.7500e+02, 2.7500e+02, 4.2500e+02, 3.2500e+02, 7.0000e-01, 1.0000e+00],
+        [8.0000e+01, 6.0000e+01, 1.2000e+02, 1.4000e+02, 1.0827e-01, 0.0000e+00]])
+soft_nms ok
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s0: all 43.23  day 46.39  dim 29.71  night 29.61  night-ped 38.06  (34 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s0: all 42.57  day 45.72  dim 29.39  night 29.03  night-ped 37.50  (70 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s0: all 44.35  day 47.75  dim 29.78  night 30.02  night-ped 40.21  (58 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s0: all 46.14  day 48.71  dim 31.27  night 31.81  night-ped 42.01  (73 s)

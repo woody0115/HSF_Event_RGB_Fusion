@@ -1,0 +1,18 @@
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s0: all 42.57  day 45.72  dim 29.39  night 29.03  night-ped 37.50  val-mPC 28.91 (43.30 clean-sub)  rgb_zero 22.91  (738 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s1: all 42.06  day 45.45  dim 28.65  night 29.10  night-ped 36.35  val-mPC 28.98 (42.60 clean-sub)  rgb_zero 23.29  (717 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s2: all 42.58  day 46.12  dim 30.49  night 28.30  night-ped 36.07  val-mPC 29.18 (43.20 clean-sub)  rgb_zero 23.82  (694 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s0: all 46.14  day 48.71  dim 31.27  night 31.81  night-ped 42.01  val-mPC 30.82 (46.88 clean-sub)  rgb_zero 24.86  (574 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s1: all 45.89  day 48.90  dim 30.76  night 31.73  night-ped 41.01  val-mPC 31.11 (46.37 clean-sub)  rgb_zero 25.38  (572 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s2: all 45.96  day 48.96  dim 31.66  night 31.06  night-ped 41.65  val-mPC 31.31 (46.33 clean-sub)  rgb_zero 26.01  (572 s)

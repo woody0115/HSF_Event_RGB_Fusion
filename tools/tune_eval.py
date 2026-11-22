@@ -22,6 +22,11 @@ Run:  python tools/tune_eval.py --family relp2_add --tag r1_base [--set ...] [--
       --pool-rgb REL_CKPT (2026-11-19): late fusion with an RGB single-stream detector, the decoded predictions of
       both models pooled before one NMS (the NMS baseline of ProbEn, Chen et al. ECCV 2022); gate statistics
       stay those of the fusion model
+      --nms soft (2026-11-23): Gaussian soft-NMS (Bodla et al. ICCV 2017) instead of hard NMS, --soft-sigma
+      --tta flip | up (2026-11-23): test-time augmentation, the model also runs on the horizontally flipped batch
+      (flip) or on the batch resized by --tta-scale (up); both modalities get the same transform, the decoded
+      predictions are mapped back and concatenated over anchors before one NMS (as Ultralytics' augmented
+      inference); inside / gate statistics stay those of the plain pass
 Appends to runs/tune/<tag>.json (one entry per checkpoint) and prints a summary.
 """
 import argparse
@@ -34,6 +39,8 @@ import time
 
 import numpy as np
 import torch
+import torch.nn.functional as F
+from torchvision.ops import box_iou
 from torch.utils.data import DataLoader, Subset
 
 ROOT = osp.abspath(osp.join(osp.dirname(__file__), '..'))
@@ -125,6 +132,65 @@ class PoolRGB(torch.nn.Module):
         return ((a[0], b[0]) if self.wbf else torch.cat([a[0], b[0]], 2)), a[1]
 
 
+class TTA(torch.nn.Module):
+    """Test-time augmentation around a dual-stream model: one extra pass on a transformed copy of the batch
+    (flip: horizontal flip; up: bilinear resize by `scale`, rounded to a multiple of 32), predictions mapped back
+    to the original frame and concatenated over anchors with the plain pass. The extra pass runs first and its
+    hook rows are dropped, so the inside / gate / terms statistics stay those of the plain pass."""
+
+    def __init__(self, m, inside, mode, scale=1.3):
+        super().__init__()
+        self.m, self.inside, self.mode, self.scale = m, inside, mode, scale
+        self.fusion = getattr(m, 'fusion', [])
+
+    def forward(self, rgb, evt):
+        w = rgb.shape[-1]
+        if self.mode == 'flip':
+            p = self.m(rgb.flip(3), evt.flip(3))[0].clone()
+            p[:, 0] = w - p[:, 0]                       # decoded boxes are xywh in pixels
+        else:
+            size = int(round(w * self.scale / 32)) * 32
+            rs = lambda x: F.interpolate(x, size=(size, size), mode='bilinear', align_corners=False)  # noqa: E731
+            p = self.m(rs(rgb), rs(evt))[0].clone()
+            p[:, :4] *= w / size
+        self.inside.cur = []
+        out = self.m(rgb, evt)
+        return torch.cat([out[0], p.to(out[0].dtype)], 2), out[1]
+
+
+def soft_nms(pred, conf=0.001, sigma=0.5, max_det=300, pre=5000, max_wh=7680):
+    """Gaussian soft-NMS (Bodla et al., ICCV 2017) with the candidate set of validation NMS (multi-label, conf >
+    conf): per image, the highest-scoring box is kept and every other box of the same class has its score
+    multiplied by exp(-IoU^2 / sigma); repeated max_det times, then boxes whose decayed score is <= conf are
+    dropped. Classes are kept apart by a coordinate offset as in Ultralytics. The `pre` highest initial scores
+    are the candidates (scores only decrease, so lower ones rarely reach the top max_det)."""
+    out = []
+    for x in pred.float():                              # (4 + nc, A)
+        x = x.T
+        box = ops.xywh2xyxy(x[:, :4])
+        i, j = (x[:, 4:] > conf).nonzero(as_tuple=False).T
+        sc, cl, box = x[i, 4 + j], j.float(), box[i]
+        if sc.numel() > pre:
+            k = sc.topk(pre).indices
+            sc, cl, box = sc[k], cl[k], box[k]
+        if not sc.numel():
+            out.append(torch.zeros(0, 6, device=pred.device))
+            continue
+        iou = box_iou(box + cl[:, None] * max_wh, box + cl[:, None] * max_wh)
+        s = sc.clone()
+        picks, vals = [], []
+        for _ in range(min(max_det, s.numel())):        # no host sync inside the loop
+            k = s.argmax()
+            picks.append(k)
+            vals.append(s[k])
+            s = s * torch.exp(-iou[k] ** 2 / sigma)
+            s[k] = -1.0                                 # taken (negative stays negative)
+        k, v = torch.stack(picks), torch.stack(vals)
+        d = torch.cat([box[k], v[:, None], cl[k, None]], 1)
+        out.append(d[v > conf])
+    return out
+
+
 def _iou(box, boxes):
     lt = np.maximum(box[:2], boxes[:, :2])
     rb = np.minimum(box[2:], boxes[:, 2:])
@@ -170,8 +236,14 @@ def wbf(dets, iou_thr=0.55, max_det=300):
     return o[o[:, 4].argsort(descending=True)[:max_det]]
 
 
+NMS = {'mode': 'hard', 'sigma': 0.5}       # set from --nms / --soft-sigma
+
+
 def detect(pred):
-    """NMS as in validation; a tuple of per-model predictions (PoolRGB with wbf) gets per-model NMS then WBF."""
+    """NMS as in validation; a tuple of per-model predictions (PoolRGB with wbf) gets per-model NMS then WBF;
+    --nms soft swaps the hard NMS for Gaussian soft-NMS."""
+    if NMS['mode'] == 'soft' and not isinstance(pred, tuple):
+        return soft_nms(pred, sigma=NMS['sigma'])
     if isinstance(pred, tuple):
         per = [ops.non_max_suppression(p.float(), 0.001, 0.7, multi_label=True, max_det=300) for p in pred]
         return [wbf(list(d)) for d in zip(*per)]
@@ -335,7 +407,15 @@ def main():
                     help='pool the detections with this RGB single-stream checkpoint (under runs/) before NMS')
     ap.add_argument('--pool-mode', default='nms', choices=['nms', 'wbf'],
                     help='nms: one NMS over both models; wbf: per-model NMS, then weighted boxes fusion')
+    ap.add_argument('--nms', default='hard', choices=['hard', 'soft'], help='soft: Gaussian soft-NMS')
+    ap.add_argument('--soft-sigma', type=float, default=0.5)
+    ap.add_argument('--tta', default='none', choices=['none', 'flip', 'up'],
+                    help='test-time augmentation: flip = + horizontal flip, up = + resized by --tta-scale')
+    ap.add_argument('--tta-scale', type=float, default=1.3)
     a = ap.parse_args()
+    if a.nms == 'soft' and a.pool_rgb and a.pool_mode == 'wbf':
+        raise SystemExit('--nms soft with --pool-mode wbf is not supported')
+    NMS.update(mode=a.nms, sigma=a.soft_sigma)
     jobs = [(r, a.family, None) for r in FAMILIES[a.family]] if a.family else []
     jobs += [tuple((c.split(':') + [None])[:3]) for c in a.ckpt]
     dev = torch.device('cuda')
@@ -364,9 +444,15 @@ def main():
         inside = Inside(m)
         if a.pool_rgb:
             m = PoolRGB(m, load_ultralytics(osp.join(RUNS, a.pool_rgb)).to(dev).eval(), a.pool_mode == 'wbf')
+        if a.tta != 'none':
+            if single or a.pool_rgb:
+                raise SystemExit('--tta is for dual-stream checkpoints without --pool-rgb')
+            m = TTA(m, inside, a.tta, a.tta_scale)
         t0 = time.time()
         r = {'run': run, 'fusion': fusion, 'weights': a.weights, 'overrides': ov, 'init': init, 'split': a.split,
-             'pool_rgb': a.pool_rgb, 'pool_mode': a.pool_mode if a.pool_rgb else None}
+             'pool_rgb': a.pool_rgb, 'pool_mode': a.pool_mode if a.pool_rgb else None,
+             'nms': a.nms, 'soft_sigma': a.soft_sigma if a.nms == 'soft' else None,
+             'tta': a.tta, 'tta_scale': a.tta_scale if a.tta == 'up' else None}
         if not a.no_clean:
             r['clean'] = eval_clean(m, inside, a.workers, a.split)
         if not a.no_corrupt:
