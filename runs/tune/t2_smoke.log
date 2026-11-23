@@ -1,0 +1,7 @@
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s0: all 46.14  day 48.71  dim 31.27  night 31.81  night-ped 42.01  (71 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/p2g3_sw2_add_s0: all 45.92  day 48.31  dim 28.61  night 32.08  night-ped 42.37  (49 s)
+step3/rgb_yolov8s_val/weights/best.pt: all 45.45  day 48.77  dim 28.47  night 30.99  night-ped 40.95  (34 s)

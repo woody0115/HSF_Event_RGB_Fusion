@@ -27,6 +27,8 @@ Run:  python tools/tune_eval.py --family relp2_add --tag r1_base [--set ...] [--
       (flip) or on the batch resized by --tta-scale (up); both modalities get the same transform, the decoded
       predictions are mapped back and concatenated over anchors before one NMS (as Ultralytics' augmented
       inference); inside / gate statistics stay those of the plain pass
+      --tta resize: only the pass resized by --tta-scale (no plain pass, nothing merged): a higher inference
+      resolution alone, to tell it apart from the ensemble effect of --tta up; also allowed on single-stream models
 Appends to runs/tune/<tag>.json (one entry per checkpoint) and prints a summary.
 """
 import argparse
@@ -136,7 +138,8 @@ class TTA(torch.nn.Module):
     """Test-time augmentation around a dual-stream model: one extra pass on a transformed copy of the batch
     (flip: horizontal flip; up: bilinear resize by `scale`, rounded to a multiple of 32), predictions mapped back
     to the original frame and concatenated over anchors with the plain pass. The extra pass runs first and its
-    hook rows are dropped, so the inside / gate / terms statistics stay those of the plain pass."""
+    hook rows are dropped, so the inside / gate / terms statistics stay those of the plain pass.
+    resize: the resized pass only (statistics are then those of the resized pass)."""
 
     def __init__(self, m, inside, mode, scale=1.3):
         super().__init__()
@@ -145,14 +148,17 @@ class TTA(torch.nn.Module):
 
     def forward(self, rgb, evt):
         w = rgb.shape[-1]
-        if self.mode == 'flip':
-            p = self.m(rgb.flip(3), evt.flip(3))[0].clone()
-            p[:, 0] = w - p[:, 0]                       # decoded boxes are xywh in pixels
-        else:
+        if self.mode in ('up', 'resize'):
             size = int(round(w * self.scale / 32)) * 32
             rs = lambda x: F.interpolate(x, size=(size, size), mode='bilinear', align_corners=False)  # noqa: E731
-            p = self.m(rs(rgb), rs(evt))[0].clone()
+            o = self.m(rs(rgb), rs(evt))
+            p = o[0].clone()
             p[:, :4] *= w / size
+            if self.mode == 'resize':
+                return p, o[1]
+        else:
+            p = self.m(rgb.flip(3), evt.flip(3))[0].clone()
+            p[:, 0] = w - p[:, 0]                       # decoded boxes are xywh in pixels
         self.inside.cur = []
         out = self.m(rgb, evt)
         return torch.cat([out[0], p.to(out[0].dtype)], 2), out[1]
@@ -409,8 +415,9 @@ def main():
                     help='nms: one NMS over both models; wbf: per-model NMS, then weighted boxes fusion')
     ap.add_argument('--nms', default='hard', choices=['hard', 'soft'], help='soft: Gaussian soft-NMS')
     ap.add_argument('--soft-sigma', type=float, default=0.5)
-    ap.add_argument('--tta', default='none', choices=['none', 'flip', 'up'],
-                    help='test-time augmentation: flip = + horizontal flip, up = + resized by --tta-scale')
+    ap.add_argument('--tta', default='none', choices=['none', 'flip', 'up', 'resize'],
+                    help='test-time augmentation: flip = + horizontal flip, up = + resized by --tta-scale, '
+                         'resize = the resized pass only')
     ap.add_argument('--tta-scale', type=float, default=1.3)
     a = ap.parse_args()
     if a.nms == 'soft' and a.pool_rgb and a.pool_mode == 'wbf':
@@ -445,14 +452,14 @@ def main():
         if a.pool_rgb:
             m = PoolRGB(m, load_ultralytics(osp.join(RUNS, a.pool_rgb)).to(dev).eval(), a.pool_mode == 'wbf')
         if a.tta != 'none':
-            if single or a.pool_rgb:
-                raise SystemExit('--tta is for dual-stream checkpoints without --pool-rgb')
+            if a.pool_rgb or (single and a.tta != 'resize'):
+                raise SystemExit('--tta: not with --pool-rgb; single-stream models only with --tta resize')
             m = TTA(m, inside, a.tta, a.tta_scale)
         t0 = time.time()
         r = {'run': run, 'fusion': fusion, 'weights': a.weights, 'overrides': ov, 'init': init, 'split': a.split,
              'pool_rgb': a.pool_rgb, 'pool_mode': a.pool_mode if a.pool_rgb else None,
              'nms': a.nms, 'soft_sigma': a.soft_sigma if a.nms == 'soft' else None,
-             'tta': a.tta, 'tta_scale': a.tta_scale if a.tta == 'up' else None}
+             'tta': a.tta, 'tta_scale': a.tta_scale if a.tta in ('up', 'resize') else None}
         if not a.no_clean:
             r['clean'] = eval_clean(m, inside, a.workers, a.split)
         if not a.no_corrupt:

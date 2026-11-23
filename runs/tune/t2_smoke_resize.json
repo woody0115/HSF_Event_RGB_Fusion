@@ -1,0 +1,223 @@
+{
+ "step12_sw/p2g3_sw2_add_s0": {
+  "run": "step12_sw/p2g3_sw2_add_s0",
+  "fusion": "sw2_add",
+  "weights": "best.pt",
+  "overrides": [],
+  "init": "step12_sw/dual_sw2_add_s5",
+  "split": "val",
+  "pool_rgb": null,
+  "pool_mode": null,
+  "nms": "hard",
+  "soft_sigma": null,
+  "tta": "resize",
+  "tta_scale": 1.3,
+  "clean": {
+   "all": {
+    "mAP50-95": 45.92,
+    "per_class": {
+     "pedestrian": 49.47,
+     "rider": 54.37,
+     "car": 66.59,
+     "bus": 33.12,
+     "truck": 24.99,
+     "bicycle": 45.53,
+     "motorcycle": 47.38
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.9409,
+      "rgb_norm": 492.25,
+      "evt_term_norm": 463.17
+     },
+     "P4": {
+      "r_e": 0.8876,
+      "rgb_norm": 307.46,
+      "evt_term_norm": 272.88
+     },
+     "P5": {
+      "r_e": 0.8703,
+      "rgb_norm": 157.29,
+      "evt_term_norm": 136.85
+     }
+    },
+    "gate": 0.1431,
+    "terms": {
+     "P3_evt_share_mean": 0.0794,
+     "P3_evt_share_min": 0.0666,
+     "P3_evt_share_max": 0.094,
+     "P4_evt_share_mean": 0.1089,
+     "P4_evt_share_min": 0.0856,
+     "P4_evt_share_max": 0.1375,
+     "P5_evt_share_mean": 0.2411,
+     "P5_evt_share_min": 0.2231,
+     "P5_evt_share_max": 0.2605
+    }
+   },
+   "day": {
+    "mAP50-95": 48.31,
+    "per_class": {
+     "pedestrian": 56.83,
+     "rider": 50.52,
+     "car": 64.29,
+     "bus": 36.49,
+     "truck": 25.95,
+     "bicycle": 53.26,
+     "motorcycle": 50.8
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.9432,
+      "rgb_norm": 498.25,
+      "evt_term_norm": 469.94
+     },
+     "P4": {
+      "r_e": 0.8731,
+      "rgb_norm": 310.63,
+      "evt_term_norm": 271.21
+     },
+     "P5": {
+      "r_e": 0.8606,
+      "rgb_norm": 159.67,
+      "evt_term_norm": 137.39
+     }
+    },
+    "gate": 0.1407,
+    "terms": {
+     "P3_evt_share_mean": 0.0807,
+     "P3_evt_share_min": 0.0667,
+     "P3_evt_share_max": 0.0962,
+     "P4_evt_share_mean": 0.1268,
+     "P4_evt_share_min": 0.0988,
+     "P4_evt_share_max": 0.1594,
+     "P5_evt_share_mean": 0.2147,
+     "P5_evt_share_min": 0.1991,
+     "P5_evt_share_max": 0.232
+    }
+   },
+   "dim": {
+    "mAP50-95": 28.61,
+    "per_class": {
+     "pedestrian": 39.13,
+     "rider": 6.36,
+     "car": 71.71,
+     "bus": 28.46,
+     "truck": 37.19,
+     "bicycle": 0.19,
+     "motorcycle": 17.23
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.943,
+      "rgb_norm": 485.94,
+      "evt_term_norm": 458.23
+     },
+     "P4": {
+      "r_e": 0.8977,
+      "rgb_norm": 308.69,
+      "evt_term_norm": 277.09
+     },
+     "P5": {
+      "r_e": 0.8682,
+      "rgb_norm": 157.47,
+      "evt_term_norm": 136.69
+     }
+    },
+    "gate": 0.1437,
+    "terms": {
+     "P3_evt_share_mean": 0.0733,
+     "P3_evt_share_min": 0.0622,
+     "P3_evt_share_max": 0.0861,
+     "P4_evt_share_mean": 0.0923,
+     "P4_evt_share_min": 0.0733,
+     "P4_evt_share_max": 0.117,
+     "P5_evt_share_mean": 0.2634,
+     "P5_evt_share_min": 0.2436,
+     "P5_evt_share_max": 0.2829
+    }
+   },
+   "night": {
+    "mAP50-95": 32.08,
+    "per_class": {
+     "pedestrian": 42.37,
+     "rider": 58.63,
+     "car": 67.43,
+     "bus": 2.19,
+     "truck": 1.0,
+     "bicycle": 41.69,
+     "motorcycle": 11.24
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.9378,
+      "rgb_norm": 488.49,
+      "evt_term_norm": 458.07
+     },
+     "P4": {
+      "r_e": 0.8988,
+      "rgb_norm": 303.67,
+      "evt_term_norm": 272.96
+     },
+     "P5": {
+      "r_e": 0.8813,
+      "rgb_norm": 154.75,
+      "evt_term_norm": 136.36
+     }
+    },
+    "gate": 0.1455,
+    "terms": {
+     "P3_evt_share_mean": 0.0803,
+     "P3_evt_share_min": 0.0682,
+     "P3_evt_share_max": 0.0946,
+     "P4_evt_share_mean": 0.0964,
+     "P4_evt_share_min": 0.0763,
+     "P4_evt_share_max": 0.1223,
+     "P5_evt_share_mean": 0.2604,
+     "P5_evt_share_min": 0.2407,
+     "P5_evt_share_max": 0.2819
+    }
+   }
+  },
+  "seconds": 49
+ }
+}

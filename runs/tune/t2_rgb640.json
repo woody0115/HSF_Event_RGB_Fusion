@@ -1,0 +1,245 @@
+{
+ "step3/rgb_yolov8s_val/weights/best.pt": {
+  "run": "step3/rgb_yolov8s_val/weights/best.pt",
+  "fusion": "single_rgb",
+  "weights": "best.pt",
+  "overrides": [],
+  "init": null,
+  "split": "val",
+  "pool_rgb": null,
+  "pool_mode": null,
+  "nms": "hard",
+  "soft_sigma": null,
+  "tta": "none",
+  "tta_scale": null,
+  "clean": {
+   "all": {
+    "mAP50-95": 42.65,
+    "per_class": {
+     "pedestrian": 42.77,
+     "rider": 45.63,
+     "car": 64.98,
+     "bus": 26.92,
+     "truck": 31.32,
+     "bicycle": 39.1,
+     "motorcycle": 47.86
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {}
+   },
+   "day": {
+    "mAP50-95": 46.48,
+    "per_class": {
+     "pedestrian": 51.12,
+     "rider": 49.16,
+     "car": 62.63,
+     "bus": 32.16,
+     "truck": 32.15,
+     "bicycle": 47.23,
+     "motorcycle": 50.93
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {}
+   },
+   "dim": {
+    "mAP50-95": 24.5,
+    "per_class": {
+     "pedestrian": 29.82,
+     "rider": 1.4,
+     "car": 69.78,
+     "bus": 17.04,
+     "truck": 52.13,
+     "bicycle": 0.24,
+     "motorcycle": 1.1
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {}
+   },
+   "night": {
+    "mAP50-95": 29.23,
+    "per_class": {
+     "pedestrian": 34.99,
+     "rider": 50.01,
+     "car": 66.0,
+     "bus": 1.5,
+     "truck": 1.13,
+     "bicycle": 36.72,
+     "motorcycle": 14.28
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {}
+   }
+  },
+  "corrupt": {
+   "stride": 4,
+   "severities": [
+    1,
+    3,
+    5
+   ],
+   "conds": {
+    "clean": {
+     "mAP50-95": 43.37,
+     "r_e": []
+    },
+    "gaussian_noise@1": {
+     "mAP50-95": 3.97,
+     "r_e": []
+    },
+    "gaussian_noise@3": {
+     "mAP50-95": 1.63,
+     "r_e": []
+    },
+    "gaussian_noise@5": {
+     "mAP50-95": 0.0,
+     "r_e": []
+    },
+    "shot_noise@1": {
+     "mAP50-95": 15.33,
+     "r_e": []
+    },
+    "shot_noise@3": {
+     "mAP50-95": 1.97,
+     "r_e": []
+    },
+    "shot_noise@5": {
+     "mAP50-95": 0.0,
+     "r_e": []
+    },
+    "impulse_noise@1": {
+     "mAP50-95": 4.55,
+     "r_e": []
+    },
+    "impulse_noise@3": {
+     "mAP50-95": 0.14,
+     "r_e": []
+    },
+    "impulse_noise@5": {
+     "mAP50-95": 0.0,
+     "r_e": []
+    },
+    "defocus_blur@1": {
+     "mAP50-95": 20.05,
+     "r_e": []
+    },
+    "defocus_blur@3": {
+     "mAP50-95": 6.25,
+     "r_e": []
+    },
+    "defocus_blur@5": {
+     "mAP50-95": 3.26,
+     "r_e": []
+    },
+    "motion_blur@1": {
+     "mAP50-95": 24.99,
+     "r_e": []
+    },
+    "motion_blur@3": {
+     "mAP50-95": 6.03,
+     "r_e": []
+    },
+    "motion_blur@5": {
+     "mAP50-95": 1.59,
+     "r_e": []
+    },
+    "fog@1": {
+     "mAP50-95": 16.36,
+     "r_e": []
+    },
+    "fog@3": {
+     "mAP50-95": 9.29,
+     "r_e": []
+    },
+    "fog@5": {
+     "mAP50-95": 5.88,
+     "r_e": []
+    },
+    "brightness@1": {
+     "mAP50-95": 37.01,
+     "r_e": []
+    },
+    "brightness@3": {
+     "mAP50-95": 21.77,
+     "r_e": []
+    },
+    "brightness@5": {
+     "mAP50-95": 16.76,
+     "r_e": []
+    },
+    "contrast@1": {
+     "mAP50-95": 27.4,
+     "r_e": []
+    },
+    "contrast@3": {
+     "mAP50-95": 16.67,
+     "r_e": []
+    },
+    "contrast@5": {
+     "mAP50-95": 4.58,
+     "r_e": []
+    },
+    "dark@1": {
+     "mAP50-95": 40.7,
+     "r_e": []
+    },
+    "dark@3": {
+     "mAP50-95": 32.72,
+     "r_e": []
+    },
+    "dark@5": {
+     "mAP50-95": 9.74,
+     "r_e": []
+    },
+    "rgb_zero": {
+     "mAP50-95": 0.0,
+     "r_e": []
+    }
+   },
+   "mPC": 12.17,
+   "groups": {
+    "noise": 3.07,
+    "blur": 10.36,
+    "weather": 10.51,
+    "digital": 20.7,
+    "light": 27.72
+   }
+  },
+  "seconds": 181
+ }
+}

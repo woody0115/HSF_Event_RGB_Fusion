@@ -1,0 +1,223 @@
+{
+ "step12_sw/p2g3_sw2_add_s0": {
+  "run": "step12_sw/p2g3_sw2_add_s0",
+  "fusion": "sw2_add",
+  "weights": "best.pt",
+  "overrides": [],
+  "init": "step12_sw/dual_sw2_add_s5",
+  "split": "val",
+  "pool_rgb": null,
+  "pool_mode": null,
+  "nms": "hard",
+  "soft_sigma": null,
+  "tta": "up",
+  "tta_scale": 1.3,
+  "clean": {
+   "all": {
+    "mAP50-95": 46.14,
+    "per_class": {
+     "pedestrian": 49.01,
+     "rider": 53.11,
+     "car": 66.04,
+     "bus": 32.65,
+     "truck": 29.91,
+     "bicycle": 44.08,
+     "motorcycle": 48.19
+    },
+    "frames": 6624,
+    "gt": {
+     "pedestrian": 2453,
+     "rider": 287,
+     "car": 23909,
+     "bus": 574,
+     "truck": 548,
+     "bicycle": 809,
+     "motorcycle": 450
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.9308,
+      "rgb_norm": 404.47,
+      "evt_term_norm": 376.5
+     },
+     "P4": {
+      "r_e": 0.8571,
+      "rgb_norm": 243.76,
+      "evt_term_norm": 208.95
+     },
+     "P5": {
+      "r_e": 0.8757,
+      "rgb_norm": 120.45,
+      "evt_term_norm": 105.42
+     }
+    },
+    "gate": 0.1598,
+    "terms": {
+     "P3_evt_share_mean": 0.0924,
+     "P3_evt_share_min": 0.0752,
+     "P3_evt_share_max": 0.1123,
+     "P4_evt_share_mean": 0.166,
+     "P4_evt_share_min": 0.1299,
+     "P4_evt_share_max": 0.2085,
+     "P5_evt_share_mean": 0.2211,
+     "P5_evt_share_min": 0.2054,
+     "P5_evt_share_max": 0.2375
+    }
+   },
+   "day": {
+    "mAP50-95": 48.71,
+    "per_class": {
+     "pedestrian": 56.21,
+     "rider": 51.02,
+     "car": 63.54,
+     "bus": 35.7,
+     "truck": 30.43,
+     "bicycle": 52.82,
+     "motorcycle": 51.26
+    },
+    "frames": 2831,
+    "gt": {
+     "pedestrian": 1179,
+     "rider": 78,
+     "car": 9535,
+     "bus": 491,
+     "truck": 522,
+     "bicycle": 356,
+     "motorcycle": 413
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.9374,
+      "rgb_norm": 410.81,
+      "evt_term_norm": 385.07
+     },
+     "P4": {
+      "r_e": 0.8619,
+      "rgb_norm": 247.54,
+      "evt_term_norm": 213.35
+     },
+     "P5": {
+      "r_e": 0.8631,
+      "rgb_norm": 123.31,
+      "evt_term_norm": 106.4
+     }
+    },
+    "gate": 0.1416,
+    "terms": {
+     "P3_evt_share_mean": 0.0842,
+     "P3_evt_share_min": 0.068,
+     "P3_evt_share_max": 0.103,
+     "P4_evt_share_mean": 0.1445,
+     "P4_evt_share_min": 0.1131,
+     "P4_evt_share_max": 0.1823,
+     "P5_evt_share_mean": 0.1961,
+     "P5_evt_share_min": 0.1829,
+     "P5_evt_share_max": 0.2099
+    }
+   },
+   "dim": {
+    "mAP50-95": 31.27,
+    "per_class": {
+     "pedestrian": 38.27,
+     "rider": 3.23,
+     "car": 71.28,
+     "bus": 34.24,
+     "truck": 64.04,
+     "bicycle": 0.11,
+     "motorcycle": 7.74
+    },
+    "frames": 1075,
+    "gt": {
+     "pedestrian": 206,
+     "rider": 6,
+     "car": 2929,
+     "bus": 53,
+     "truck": 22,
+     "bicycle": 12,
+     "motorcycle": 10
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.9306,
+      "rgb_norm": 399.89,
+      "evt_term_norm": 372.12
+     },
+     "P4": {
+      "r_e": 0.852,
+      "rgb_norm": 246.1,
+      "evt_term_norm": 209.66
+     },
+     "P5": {
+      "r_e": 0.8813,
+      "rgb_norm": 119.32,
+      "evt_term_norm": 105.12
+     }
+    },
+    "gate": 0.1691,
+    "terms": {
+     "P3_evt_share_mean": 0.0906,
+     "P3_evt_share_min": 0.0736,
+     "P3_evt_share_max": 0.1097,
+     "P4_evt_share_mean": 0.1704,
+     "P4_evt_share_min": 0.1309,
+     "P4_evt_share_max": 0.2136,
+     "P5_evt_share_mean": 0.2479,
+     "P5_evt_share_min": 0.2298,
+     "P5_evt_share_max": 0.2656
+    }
+   },
+   "night": {
+    "mAP50-95": 31.81,
+    "per_class": {
+     "pedestrian": 42.01,
+     "rider": 57.45,
+     "car": 67.01,
+     "bus": 1.89,
+     "truck": 0.89,
+     "bicycle": 40.46,
+     "motorcycle": 12.99
+    },
+    "frames": 2718,
+    "gt": {
+     "pedestrian": 1068,
+     "rider": 203,
+     "car": 11445,
+     "bus": 30,
+     "truck": 4,
+     "bicycle": 441,
+     "motorcycle": 27
+    },
+    "inside": {
+     "P3": {
+      "r_e": 0.924,
+      "rgb_norm": 399.68,
+      "evt_term_norm": 369.3
+     },
+     "P4": {
+      "r_e": 0.8541,
+      "rgb_norm": 238.91,
+      "evt_term_norm": 204.08
+     },
+     "P5": {
+      "r_e": 0.8865,
+      "rgb_norm": 117.92,
+      "evt_term_norm": 104.52
+     }
+    },
+    "gate": 0.1752,
+    "terms": {
+     "P3_evt_share_mean": 0.1017,
+     "P3_evt_share_min": 0.0834,
+     "P3_evt_share_max": 0.1232,
+     "P4_evt_share_mean": 0.1871,
+     "P4_evt_share_min": 0.1473,
+     "P4_evt_share_max": 0.2343,
+     "P5_evt_share_mean": 0.2371,
+     "P5_evt_share_min": 0.2198,
+     "P5_evt_share_max": 0.2559
+    }
+   }
+  },
+  "seconds": 71
+ }
+}
