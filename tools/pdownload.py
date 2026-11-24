@@ -39,10 +39,18 @@ def head_size(url):
     raise IOError(f'could not get a file size for {url}')
 
 
+class QuotaError(IOError):
+    """The server answered a range request with a full page instead of the bytes (e.g. Google Drive's
+    'Quota exceeded' page). Retrying soon does not help, so the whole download stops with exit code 3."""
+
+
 def fetch_chunk(url, f, lock, start, end):
     req = urllib.request.Request(url, headers={'Range': f'bytes={start}-{end - 1}'})
     pos = start
     with urllib.request.urlopen(req, timeout=60) as r:
+        whole = r.status == 200 and start == 0 and int(r.headers.get('Content-Length') or -1) == end
+        if (r.status != 206 and not whole) or 'text/html' in (r.headers.get('Content-Type') or ''):
+            raise QuotaError(f'HTTP {r.status} {r.headers.get("Content-Type")} instead of a byte range')
         while pos < end:
             b = r.read(min(1 << 20, end - pos))
             if not b:
@@ -85,8 +93,10 @@ def main():
         with open(prog_file, 'w') as pf:
             json.dump({'size': size, 'done': sorted(done)}, pf)
 
+    quota = []
+
     def worker():
-        while True:
+        while not quota:
             try:
                 i = todo.get_nowait()
             except queue.Empty:
@@ -96,7 +106,12 @@ def main():
                 try:
                     fetch_chunk(a.url, f, lock, start, end)
                     break
+                except QuotaError as e:
+                    print(f'  chunk {i}: {e}; stopping', flush=True)
+                    quota.append(i)
+                    return
                 except Exception as e:  # network hiccup: retry this chunk
+                    print(f'  chunk {i} attempt {attempt + 1}: {type(e).__name__}: {str(e)[:120]}', flush=True)
                     time.sleep(min(60, 5 * (attempt + 1)))
             else:
                 errors.append(i)
@@ -115,6 +130,9 @@ def main():
     [t.start() for t in threads]
     [t.join() for t in threads]
     f.close()
+    if quota:
+        print('QUOTA: server refused byte ranges; progress kept, retry later', flush=True)
+        sys.exit(3)
     if errors:
         print(f'FAILED chunks: {errors}', flush=True)
         sys.exit(1)

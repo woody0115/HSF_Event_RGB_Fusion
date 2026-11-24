@@ -37,15 +37,16 @@ for entry in "${FILES[@]}"; do
   out=$ARC/$name
   if [ -f "$out.done" ]; then log "skip (done): $name"; continue; fi
   log "download: $name"
-  ok=0
-  for try in 1 2 3 4 5; do
-    if "$PYTHON" "$HERE/pdownload.py" "$URL$id" "$out" --workers 4; then ok=1; break; fi
-    log "  pdownload failed, retry $try"; sleep 60
+  ok=0 fails=0
+  while [ $fails -lt 5 ]; do
+    "$PYTHON" "$HERE/pdownload.py" "$URL$id" "$out" --workers 4
+    rc=$?
+    if [ $rc -eq 0 ]; then ok=1; break; fi
+    if [ $rc -eq 3 ]; then          # Drive download quota of the shared file; it resets within ~24 h
+      log "  Google Drive quota exceeded; retry in 1 h (progress kept)"; sleep 3600; continue
+    fi
+    fails=$((fails + 1)); log "  pdownload failed ($rc), retry $fails"; sleep 60
   done
-  if [ $ok -ne 1 ]; then
-    log "  falling back to curl -C -"
-    curl -sSL -C - --retry 20 -o "$out" "$URL$id" && ok=1
-  fi
   [ $ok -eq 1 ] || { log "FAILED download: $name"; exit 1; }
   # Drive returns a small HTML page instead of the file when its quota is exceeded
   if head -c 15 "$out" | grep -qi '<!doctype\|<html'; then log "FAILED: $name is an HTML page (Drive quota?)"; exit 1; fi
@@ -65,8 +66,17 @@ x() {
 x annotations unzip -q -n "$ARC/annotations.zip" -d "$DIR"
 x timestamp   unzip -q -n "$ARC/timestamp.zip" -d "$DIR"
 x seq024_5    unzip -q -n "$ARC/sequence_024-5.zip" -d "$DIR/_sequence_024-5"
-x rgb         tar -xzf "$ARC/rgb.tar.gz" -C "$DIR"
-x event       sh -c "cat '$ARC'/Event.tar.gz.part-00? | tar -xz -C '$DIR'"
+mkdir -p "$DIR/rgb" "$DIR/event"     # rgb.tar.gz paths start with ./train, ./test (no rgb/ prefix)
+x rgb         tar -xzf "$ARC/rgb.tar.gz" -C "$DIR/rgb"
+x event       sh -c "cat '$ARC'/Event.tar.gz.part-00? | tar -xz -C '$DIR/event'"
 log "top level: $(ls "$DIR" | tr '\n' ' ')"
 log "png: $(find "$DIR" -name '*.png' | wc -l), dat: $(find "$DIR" -name '*.dat' | wc -l), free: $(df -h "$ROOT" | awk 'NR==2 {print $4}')"
 log 'ALL DONE'
+
+# then convert to the training layout (tools/preprocess_peod.py); CONVERT=0 skips this
+if [ "${CONVERT:-1}" = 1 ]; then
+  log "preprocess -> $ROOT/PEOD_train (log: $DIR/preprocess.log)"
+  ( source "$HOME/work/hsf_env.sh" && cd "$HERE/.." && \
+    python -u tools/preprocess_peod.py --root "$DIR" --out "$ROOT/PEOD_train" --workers 12 ) >> "$DIR/preprocess.log" 2>&1
+  log "preprocess exit $? ($(grep -c FAILED "$DIR/preprocess.log") FAILED lines)"
+fi
