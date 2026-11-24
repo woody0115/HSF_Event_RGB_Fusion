@@ -22,9 +22,21 @@ CHUNK = 64 << 20
 
 
 def head_size(url):
-    req = urllib.request.Request(url, method='HEAD')
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return int(r.headers['Content-Length'])
+    """File size from HEAD; falls back to a 1-byte range GET (Content-Range) when HEAD gives no usable length,
+    as Google Drive sometimes does. Raises instead of returning 0, which would mark an empty file complete."""
+    for attempt in range(5):
+        req = urllib.request.Request(url, method='HEAD')
+        with urllib.request.urlopen(req, timeout=60) as r:
+            size = int(r.headers.get('Content-Length') or 0)
+        if size > 0:
+            return size
+        req = urllib.request.Request(url, headers={'Range': 'bytes=0-0'})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            cr = r.headers.get('Content-Range') or ''
+        if '/' in cr and cr.rsplit('/', 1)[1].isdigit() and int(cr.rsplit('/', 1)[1]) > 0:
+            return int(cr.rsplit('/', 1)[1])
+        time.sleep(10 * (attempt + 1))
+    raise IOError(f'could not get a file size for {url}')
 
 
 def fetch_chunk(url, f, lock, start, end):
