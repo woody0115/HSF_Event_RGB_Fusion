@@ -21,7 +21,10 @@ mkdir -p "$ARC"
 log() { echo "$(date '+%Y-%m-%d %H:%M:%S')  $*" | tee -a "$LOG"; }
 log start
 
-# name id, small to large
+# name, then file ids to try in order, small to large. First id: a copy of the same files in the Drive folder
+# (a copy of the files; folder and file ids kept out of the public repo) (given by the user 2026-11-25; sizes
+# and sampled bytes match the original). Second id: the authors' original folder (above). Each copy has its own
+# download quota, and both serve identical bytes, so a partial file can resume from either.
 FILES=(
   "annotations.zip 15J7fLoA9a0mHrWc1dWsAXHT65Fl9mCPl"
   "timestamp.zip 1CE-g67-hBwueWKX3QgKWxDhHX4BL_tQk"
@@ -38,16 +41,20 @@ pending=("${FILES[@]}")
 while [ ${#pending[@]} -gt 0 ]; do
   left=() progress=0
   for entry in "${pending[@]}"; do
-    read -r name id <<< "$entry"
+    read -r name ids <<< "$entry"
     out=$ARC/$name
     if [ -f "$out.done" ]; then log "skip (done): $name"; continue; fi
-    log "download: $name"
-    rc=1 fails=0
-    while [ $fails -lt 5 ]; do
-      "$PYTHON" "$HERE/pdownload.py" "$URL$id" "$out" --workers 4
-      rc=$?
-      if [ $rc -eq 0 ] || [ $rc -eq 3 ]; then break; fi
-      fails=$((fails + 1)); log "  pdownload failed ($rc), retry $fails"; sleep 60
+    rc=1
+    for id in $ids; do               # next copy only when this one is over quota
+      log "download: $name (id $id)"
+      fails=0
+      while [ $fails -lt 5 ]; do
+        "$PYTHON" "$HERE/pdownload.py" "$URL$id" "$out" --workers 4
+        rc=$?
+        if [ $rc -eq 0 ] || [ $rc -eq 3 ]; then break; fi
+        fails=$((fails + 1)); log "  pdownload failed ($rc), retry $fails"; sleep 60
+      done
+      [ $rc -eq 3 ] || break
     done
     if [ $rc -eq 3 ]; then          # Drive download quota of this shared file (progress kept)
       log "  Google Drive quota exceeded for $name; set aside, trying the other files"
