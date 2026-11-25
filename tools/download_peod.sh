@@ -64,6 +64,10 @@ while [ ${#pending[@]} -gt 0 ]; do
     # Drive returns a small HTML page instead of the file when its quota is exceeded
     if head -c 15 "$out" | grep -qi '<!doctype\|<html'; then log "FAILED: $name is an HTML page (Drive quota?)"; exit 1; fi
     if [ ! -s "$out" ]; then log "FAILED: $name is empty"; exit 1; fi
+    # a sparse file (truncated to full size but never written) passes -s; require the bytes to be on disk
+    if [ $(( $(stat -c %b "$out") * 512 )) -lt $(( $(stat -c %s "$out") * 99 / 100 )) ]; then
+      log "FAILED: $name is mostly unwritten (sparse)"; exit 1
+    fi
     touch "$out.done"
     log "  size $(du -h "$out" | cut -f1)"
     progress=1

@@ -75,11 +75,16 @@ def main():
     if os.path.exists(prog_file):
         done = set(json.load(open(prog_file))['done'])
     elif os.path.exists(a.out):
-        prefix = os.path.getsize(a.out)
+        # Count only bytes actually on disk: a run that stopped before finishing any chunk leaves a sparse file
+        # already truncated to the full size, which must not look complete (st_blocks: allocated 512 B blocks).
+        st = os.stat(a.out)
+        prefix = min(st.st_size, getattr(st, 'st_blocks', st.st_size // 512 + 1) * 512)
         done = {i for i in range(n_chunks) if min((i + 1) * CHUNK, size) <= prefix}
     mode = 'r+b' if os.path.exists(a.out) else 'w+b'
     f = open(a.out, mode)
     f.truncate(size)
+    with open(prog_file, 'w') as pf:   # written before any chunk, so the truncated file always has a progress file
+        json.dump({'size': size, 'done': sorted(done)}, pf)
 
     todo = queue.Queue()
     for i in range(n_chunks):
