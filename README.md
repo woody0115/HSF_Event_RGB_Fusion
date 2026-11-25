@@ -6,6 +6,7 @@
 - **資料集**：DSEC-Detection。標註共 8 類（pedestrian, rider, car, bus, truck, bicycle, motorcycle, train），train 類沒有任何框，實際評估 7 類。
 - **基礎模型**：雙流 YOLOv8s。使用 Ultralytics 8.3.158 的元件、loss 與評估函式，不修改 Ultralytics 原始碼。
 - **論文目標**：完整 HSF 達到 mAP50 **67.2** ／ mAP50-95 **45.6**。
+- **實驗總覽**：10 個實驗各有一個 branch（`exp/01-paper-schedule` … `exp/10-peod-data`），目的、結果與對應關係見 [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md)。
 - **來源**：從 [woody0115/HSF_fusion](https://github.com/woody0115/HSF_fusion) 的 commit `e54ec54` 拆出。開放世界（DSEC-OWOD）的程式、結果與診斷都留在原 repo，原 repo 完整保留。
 
 ## 目前結果（DSEC-Det test，13 個序列、13,893 張）

@@ -21,10 +21,12 @@ mkdir -p "$ARC"
 log() { echo "$(date '+%Y-%m-%d %H:%M:%S')  $*" | tee -a "$LOG"; }
 log start
 
-# name, then file ids to try in order, small to large. First id: a copy of the same files in the Drive folder
-# (a copy of the files; folder and file ids kept out of the public repo) (given by the user 2026-11-25; sizes
-# and sampled bytes match the original). Second id: the authors' original folder (above). Each copy has its own
-# download quota, and both serve identical bytes, so a partial file can resume from either.
+# name, then file ids to try in order, small to large: the authors' original folder (above).
+# Optional copies of the same files (each Drive copy has its own download quota) are listed in $DIR/mirror_ids.txt,
+# one "<name> <id>" per line, kept on the server only so their ids stay out of this public repo; their ids are tried
+# first. Every copy serves identical bytes (sizes and sampled bytes checked 2026-11-25), so a partial file can
+# resume from any of them.
+MIRROR=$DIR/mirror_ids.txt
 FILES=(
   "annotations.zip 15J7fLoA9a0mHrWc1dWsAXHT65Fl9mCPl"
   "timestamp.zip 1CE-g67-hBwueWKX3QgKWxDhHX4BL_tQk"
@@ -42,6 +44,9 @@ while [ ${#pending[@]} -gt 0 ]; do
   left=() progress=0
   for entry in "${pending[@]}"; do
     read -r name ids <<< "$entry"
+    if [ -f "$MIRROR" ]; then
+      ids="$(awk -v n="$name" '$1 == n {printf "%s ", $2}' "$MIRROR")$ids"
+    fi
     out=$ARC/$name
     if [ -f "$out.done" ]; then log "skip (done): $name"; continue; fi
     rc=1
