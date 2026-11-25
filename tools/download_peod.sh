@@ -32,27 +32,39 @@ FILES=(
   "Event.tar.gz.part-002 1KlhyrUC1FzTHSVZ0pzmXNndG-eO3yIzl"
 )
 
-for entry in "${FILES[@]}"; do
-  read -r name id <<< "$entry"
-  out=$ARC/$name
-  if [ -f "$out.done" ]; then log "skip (done): $name"; continue; fi
-  log "download: $name"
-  ok=0 fails=0
-  while [ $fails -lt 5 ]; do
-    "$PYTHON" "$HERE/pdownload.py" "$URL$id" "$out" --workers 4
-    rc=$?
-    if [ $rc -eq 0 ]; then ok=1; break; fi
-    if [ $rc -eq 3 ]; then          # Drive download quota of the shared file; it resets within ~24 h
-      log "  Google Drive quota exceeded; retry in 1 h (progress kept)"; sleep 3600; continue
+# Each Drive file has its own download quota, so a file whose quota is exceeded is set aside and the others are
+# tried; set-aside files are retried in the next pass (immediately if the pass finished a file, else after 1 h).
+pending=("${FILES[@]}")
+while [ ${#pending[@]} -gt 0 ]; do
+  left=() progress=0
+  for entry in "${pending[@]}"; do
+    read -r name id <<< "$entry"
+    out=$ARC/$name
+    if [ -f "$out.done" ]; then log "skip (done): $name"; continue; fi
+    log "download: $name"
+    rc=1 fails=0
+    while [ $fails -lt 5 ]; do
+      "$PYTHON" "$HERE/pdownload.py" "$URL$id" "$out" --workers 4
+      rc=$?
+      if [ $rc -eq 0 ] || [ $rc -eq 3 ]; then break; fi
+      fails=$((fails + 1)); log "  pdownload failed ($rc), retry $fails"; sleep 60
+    done
+    if [ $rc -eq 3 ]; then          # Drive download quota of this shared file (progress kept)
+      log "  Google Drive quota exceeded for $name; set aside, trying the other files"
+      left+=("$entry"); continue
     fi
-    fails=$((fails + 1)); log "  pdownload failed ($rc), retry $fails"; sleep 60
+    [ $rc -eq 0 ] || { log "FAILED download: $name"; exit 1; }
+    # Drive returns a small HTML page instead of the file when its quota is exceeded
+    if head -c 15 "$out" | grep -qi '<!doctype\|<html'; then log "FAILED: $name is an HTML page (Drive quota?)"; exit 1; fi
+    if [ ! -s "$out" ]; then log "FAILED: $name is empty"; exit 1; fi
+    touch "$out.done"
+    log "  size $(du -h "$out" | cut -f1)"
+    progress=1
   done
-  [ $ok -eq 1 ] || { log "FAILED download: $name"; exit 1; }
-  # Drive returns a small HTML page instead of the file when its quota is exceeded
-  if head -c 15 "$out" | grep -qi '<!doctype\|<html'; then log "FAILED: $name is an HTML page (Drive quota?)"; exit 1; fi
-  if [ ! -s "$out" ]; then log "FAILED: $name is empty"; exit 1; fi
-  touch "$out.done"
-  log "  size $(du -h "$out" | cut -f1)"
+  pending=("${left[@]+"${left[@]}"}")
+  if [ ${#pending[@]} -gt 0 ] && [ $progress -eq 0 ]; then
+    log "  all remaining files are over quota; retry in 1 h"; sleep 3600
+  fi
 done
 
 # extract (archives kept)
