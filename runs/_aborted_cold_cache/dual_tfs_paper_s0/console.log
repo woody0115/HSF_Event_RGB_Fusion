@@ -1,0 +1,4 @@
+config: {'fusion': 'tfs', 'epochs': 40, 'batch': 8, 'lr': 0.005, 'workers': 8, 'rgb_init': '/home/jovyan/work/HSF_Event_RGB_Fusion/runs/step3/rgb_yolov8s/weights/best.pt', 'evt_init': '/home/jovyan/work/HSF_Event_RGB_Fusion/runs/step3/event_yolov8s/weights/best.pt', 'name': 'dual_tfs_paper_s0', 'warmup': 3, 'clips': 4, 'clip_len': 4, 'modality_drop': 0.15, 'split': 'val', 'resume': False, 'seed': 0, 'smoke': False}
+train clips 12787 x 4 frames, val frames 5533 (streamed), params 19.0 M
+epoch 1/40  0/3196  box 0.792 cls 0.401 dfl 0.883  lr 0.00000  0.1 min  mem 6.0 GB
+epoch 1/40  100/3196  box 0.935 cls 0.508 dfl 0.891  lr 0.00005  2.2 min  mem 6.1 GB

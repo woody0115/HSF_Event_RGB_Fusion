@@ -1,0 +1,10 @@
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5: all 51.66  day 51.83  dim 60.58  night 39.11  night-ped 34.20  val-mPC 19.45 (51.40 clean-sub)  rgb_zero 0.00  (526 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed1: all 51.04  day 51.07  dim 60.32  night 36.86  night-ped 34.05  val-mPC 20.90 (50.84 clean-sub)  rgb_zero 0.00  (513 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/dual_sw2_add_s5_seed2: all 51.62  day 51.75  dim 61.00  night 38.45  night-ped 36.55  val-mPC 20.40 (51.58 clean-sub)  rgb_zero 0.00  (513 s)
+step3/event_yolov8s_val/weights/best.pt: all 29.93  day 29.65  dim 39.14  night 22.95  night-ped 8.90  (60 s)

@@ -1,0 +1,412 @@
+config: {'fusion': 'relp2_add', 'epochs': 5, 'batch': 8, 'lr': 0.001, 'workers': 8, 'rgb_init': 'runs/step3/rgb_yolov8s_val/weights/best.pt', 'evt_init': 'runs/step3/event_yolov8s_val/weights/best.pt', 'name': 'dual_relp2_add_aux_v3', 'warmup': 1.0, 'clips': 4, 'clip_len': 4, 'modality_drop': 0.15, 'split': 'val', 'resume': False, 'seed': 0, 'eval_every': 1, 'aux': 0.5, 'aux_branches': 'rgb,evt', 'smoke': False}
+train frames 49862, val frames 6624, params 16.6 M
+aux weight 0.500 (rgb, evt)
+epoch 1/5  0/6232  box 1.018 cls 0.582 dfl 0.861  lr 0.00000  0.0 min  mem 4.3 GB
+epoch 1/5  100/6232  box 0.901 cls 0.508 dfl 0.882  lr 0.00002  0.3 min  mem 4.4 GB
+epoch 1/5  200/6232  box 0.874 cls 0.497 dfl 0.876  lr 0.00003  0.6 min  mem 4.4 GB
+epoch 1/5  300/6232  box 0.870 cls 0.495 dfl 0.876  lr 0.00005  0.9 min  mem 4.4 GB
+epoch 1/5  400/6232  box 0.863 cls 0.491 dfl 0.875  lr 0.00006  1.2 min  mem 4.4 GB
+epoch 1/5  500/6232  box 0.858 cls 0.488 dfl 0.874  lr 0.00008  1.5 min  mem 4.4 GB
+epoch 1/5  600/6232  box 0.854 cls 0.485 dfl 0.873  lr 0.00010  1.8 min  mem 4.4 GB
+epoch 1/5  700/6232  box 0.851 cls 0.484 dfl 0.873  lr 0.00011  2.1 min  mem 4.4 GB
+epoch 1/5  800/6232  box 0.847 cls 0.482 dfl 0.872  lr 0.00013  2.4 min  mem 4.4 GB
+epoch 1/5  900/6232  box 0.844 cls 0.479 dfl 0.871  lr 0.00014  2.7 min  mem 4.4 GB
+epoch 1/5  1000/6232  box 0.844 cls 0.478 dfl 0.871  lr 0.00016  2.9 min  mem 4.4 GB
+epoch 1/5  1100/6232  box 0.842 cls 0.477 dfl 0.871  lr 0.00018  3.2 min  mem 4.4 GB
+epoch 1/5  1200/6232  box 0.839 cls 0.475 dfl 0.870  lr 0.00019  3.5 min  mem 4.4 GB
+epoch 1/5  1300/6232  box 0.838 cls 0.475 dfl 0.870  lr 0.00021  3.8 min  mem 4.4 GB
+epoch 1/5  1400/6232  box 0.837 cls 0.475 dfl 0.870  lr 0.00022  4.1 min  mem 4.5 GB
+epoch 1/5  1500/6232  box 0.836 cls 0.475 dfl 0.869  lr 0.00024  4.4 min  mem 4.5 GB
+epoch 1/5  1600/6232  box 0.836 cls 0.474 dfl 0.869  lr 0.00026  4.7 min  mem 4.5 GB
+epoch 1/5  1700/6232  box 0.835 cls 0.473 dfl 0.869  lr 0.00027  4.9 min  mem 4.5 GB
+epoch 1/5  1800/6232  box 0.834 cls 0.473 dfl 0.869  lr 0.00029  5.2 min  mem 4.5 GB
+epoch 1/5  1900/6232  box 0.832 cls 0.472 dfl 0.868  lr 0.00030  5.5 min  mem 4.5 GB
+epoch 1/5  2000/6232  box 0.831 cls 0.471 dfl 0.868  lr 0.00032  5.8 min  mem 4.5 GB
+epoch 1/5  2100/6232  box 0.830 cls 0.470 dfl 0.868  lr 0.00034  6.1 min  mem 4.5 GB
+epoch 1/5  2200/6232  box 0.830 cls 0.470 dfl 0.868  lr 0.00035  6.4 min  mem 4.5 GB
+epoch 1/5  2300/6232  box 0.830 cls 0.469 dfl 0.868  lr 0.00037  6.7 min  mem 4.5 GB
+epoch 1/5  2400/6232  box 0.830 cls 0.469 dfl 0.868  lr 0.00039  6.9 min  mem 4.5 GB
+epoch 1/5  2500/6232  box 0.829 cls 0.468 dfl 0.868  lr 0.00040  7.2 min  mem 4.5 GB
+epoch 1/5  2600/6232  box 0.828 cls 0.468 dfl 0.868  lr 0.00042  7.5 min  mem 4.5 GB
+epoch 1/5  2700/6232  box 0.828 cls 0.468 dfl 0.868  lr 0.00043  7.8 min  mem 4.5 GB
+epoch 1/5  2800/6232  box 0.827 cls 0.467 dfl 0.867  lr 0.00045  8.1 min  mem 4.5 GB
+epoch 1/5  2900/6232  box 0.826 cls 0.466 dfl 0.867  lr 0.00047  8.4 min  mem 4.5 GB
+epoch 1/5  3000/6232  box 0.826 cls 0.466 dfl 0.867  lr 0.00048  8.6 min  mem 4.5 GB
+epoch 1/5  3100/6232  box 0.825 cls 0.466 dfl 0.867  lr 0.00050  8.9 min  mem 4.5 GB
+epoch 1/5  3200/6232  box 0.825 cls 0.465 dfl 0.867  lr 0.00051  9.2 min  mem 4.5 GB
+epoch 1/5  3300/6232  box 0.825 cls 0.465 dfl 0.867  lr 0.00053  9.5 min  mem 4.5 GB
+epoch 1/5  3400/6232  box 0.824 cls 0.464 dfl 0.866  lr 0.00055  9.8 min  mem 4.5 GB
+epoch 1/5  3500/6232  box 0.824 cls 0.464 dfl 0.866  lr 0.00056  10.1 min  mem 4.5 GB
+epoch 1/5  3600/6232  box 0.823 cls 0.464 dfl 0.866  lr 0.00058  10.3 min  mem 4.5 GB
+epoch 1/5  3700/6232  box 0.823 cls 0.463 dfl 0.866  lr 0.00059  10.6 min  mem 4.5 GB
+epoch 1/5  3800/6232  box 0.823 cls 0.463 dfl 0.866  lr 0.00061  10.9 min  mem 4.5 GB
+epoch 1/5  3900/6232  box 0.823 cls 0.463 dfl 0.866  lr 0.00063  11.2 min  mem 4.5 GB
+epoch 1/5  4000/6232  box 0.822 cls 0.463 dfl 0.866  lr 0.00064  11.5 min  mem 4.5 GB
+epoch 1/5  4100/6232  box 0.822 cls 0.462 dfl 0.866  lr 0.00066  11.7 min  mem 4.5 GB
+epoch 1/5  4200/6232  box 0.822 cls 0.462 dfl 0.866  lr 0.00067  12.0 min  mem 4.5 GB
+epoch 1/5  4300/6232  box 0.822 cls 0.462 dfl 0.866  lr 0.00069  12.3 min  mem 4.5 GB
+epoch 1/5  4400/6232  box 0.821 cls 0.462 dfl 0.866  lr 0.00071  12.6 min  mem 4.5 GB
+epoch 1/5  4500/6232  box 0.820 cls 0.461 dfl 0.865  lr 0.00072  12.9 min  mem 4.5 GB
+epoch 1/5  4600/6232  box 0.820 cls 0.461 dfl 0.865  lr 0.00074  13.2 min  mem 4.5 GB
+epoch 1/5  4700/6232  box 0.820 cls 0.461 dfl 0.865  lr 0.00075  13.4 min  mem 4.5 GB
+epoch 1/5  4800/6232  box 0.819 cls 0.460 dfl 0.865  lr 0.00077  13.7 min  mem 4.5 GB
+epoch 1/5  4900/6232  box 0.819 cls 0.460 dfl 0.865  lr 0.00079  14.0 min  mem 4.5 GB
+epoch 1/5  5000/6232  box 0.819 cls 0.460 dfl 0.865  lr 0.00080  14.3 min  mem 4.5 GB
+epoch 1/5  5100/6232  box 0.819 cls 0.460 dfl 0.865  lr 0.00082  14.6 min  mem 4.5 GB
+epoch 1/5  5200/6232  box 0.818 cls 0.459 dfl 0.865  lr 0.00083  14.8 min  mem 4.5 GB
+epoch 1/5  5300/6232  box 0.818 cls 0.459 dfl 0.865  lr 0.00085  15.1 min  mem 4.5 GB
+epoch 1/5  5400/6232  box 0.818 cls 0.459 dfl 0.865  lr 0.00087  15.4 min  mem 4.5 GB
+epoch 1/5  5500/6232  box 0.817 cls 0.459 dfl 0.865  lr 0.00088  15.7 min  mem 4.5 GB
+epoch 1/5  5600/6232  box 0.817 cls 0.459 dfl 0.865  lr 0.00090  16.0 min  mem 4.5 GB
+epoch 1/5  5700/6232  box 0.817 cls 0.458 dfl 0.865  lr 0.00091  16.2 min  mem 4.5 GB
+epoch 1/5  5800/6232  box 0.817 cls 0.458 dfl 0.865  lr 0.00093  16.5 min  mem 4.5 GB
+epoch 1/5  5900/6232  box 0.816 cls 0.458 dfl 0.865  lr 0.00095  16.8 min  mem 4.5 GB
+epoch 1/5  6000/6232  box 0.816 cls 0.458 dfl 0.865  lr 0.00096  17.1 min  mem 4.5 GB
+epoch 1/5  6100/6232  box 0.816 cls 0.458 dfl 0.865  lr 0.00098  17.4 min  mem 4.5 GB
+epoch 1/5  6200/6232  box 0.816 cls 0.458 dfl 0.865  lr 0.00099  17.7 min  mem 4.5 GB
+  val e1 1/414  (2 s)
+  val e1 51/414  (7 s)
+  val e1 101/414  (11 s)
+  val e1 151/414  (15 s)
+  val e1 201/414  (19 s)
+  val e1 251/414  (24 s)
+  val e1 301/414  (28 s)
+  val e1 351/414  (32 s)
+  val e1 401/414  (37 s)
+== epoch 1: mAP50 0.5977  mAP50-95 0.3859  P 0.622 R 0.558
+   per-class AP50-95: pedestrian 0.361, rider 0.439, car 0.625, bus 0.236, truck 0.241, bicycle 0.323, motorcycle 0.477
+   gate s8: a 1.93 b 1.10 c 0.99 d_r 0.04 d_e 0.15  g_r_mean 0.9490  g_r_lt50 0.0467  g_e_mean 0.9386  g_e_lt50 0.0000
+   gate s16: a 1.93 b 1.59 c 0.99 d_r 0.03 d_e 0.10  g_r_mean 0.9795  g_r_lt50 0.0333  g_e_mean 0.9566  g_e_lt50 0.0000
+   gate s32: a 1.99 b 1.83 c 1.00 d_r 0.00 d_e 0.05  g_r_mean 0.9832  g_r_lt50 0.0000  g_e_mean 0.9809  g_e_lt50 0.0000
+aux weight 0.400 (rgb, evt)
+epoch 2/5  0/6232  box 0.726 cls 0.403 dfl 0.876  lr 0.00080  0.0 min  mem 4.9 GB
+epoch 2/5  100/6232  box 0.792 cls 0.439 dfl 0.858  lr 0.00080  0.3 min  mem 4.9 GB
+epoch 2/5  200/6232  box 0.797 cls 0.442 dfl 0.858  lr 0.00080  0.6 min  mem 4.9 GB
+epoch 2/5  300/6232  box 0.802 cls 0.445 dfl 0.860  lr 0.00080  0.8 min  mem 4.9 GB
+epoch 2/5  400/6232  box 0.803 cls 0.444 dfl 0.862  lr 0.00080  1.1 min  mem 4.9 GB
+epoch 2/5  500/6232  box 0.804 cls 0.444 dfl 0.863  lr 0.00080  1.4 min  mem 4.9 GB
+epoch 2/5  600/6232  box 0.802 cls 0.444 dfl 0.862  lr 0.00080  1.7 min  mem 4.9 GB
+epoch 2/5  700/6232  box 0.798 cls 0.441 dfl 0.862  lr 0.00080  2.0 min  mem 4.9 GB
+epoch 2/5  800/6232  box 0.798 cls 0.442 dfl 0.862  lr 0.00080  2.2 min  mem 4.9 GB
+epoch 2/5  900/6232  box 0.796 cls 0.442 dfl 0.861  lr 0.00080  2.5 min  mem 4.9 GB
+epoch 2/5  1000/6232  box 0.796 cls 0.442 dfl 0.861  lr 0.00080  2.8 min  mem 4.9 GB
+epoch 2/5  1100/6232  box 0.797 cls 0.442 dfl 0.862  lr 0.00080  3.1 min  mem 4.9 GB
+epoch 2/5  1200/6232  box 0.798 cls 0.443 dfl 0.861  lr 0.00080  3.4 min  mem 4.9 GB
+epoch 2/5  1300/6232  box 0.799 cls 0.443 dfl 0.861  lr 0.00080  3.6 min  mem 4.9 GB
+epoch 2/5  1400/6232  box 0.799 cls 0.443 dfl 0.861  lr 0.00080  3.9 min  mem 4.9 GB
+epoch 2/5  1500/6232  box 0.798 cls 0.443 dfl 0.861  lr 0.00080  4.2 min  mem 4.9 GB
+epoch 2/5  1600/6232  box 0.799 cls 0.443 dfl 0.861  lr 0.00080  4.5 min  mem 4.9 GB
+epoch 2/5  1700/6232  box 0.799 cls 0.443 dfl 0.861  lr 0.00080  4.8 min  mem 4.9 GB
+epoch 2/5  1800/6232  box 0.800 cls 0.443 dfl 0.861  lr 0.00080  5.0 min  mem 4.9 GB
+epoch 2/5  1900/6232  box 0.799 cls 0.443 dfl 0.861  lr 0.00080  5.3 min  mem 4.9 GB
+epoch 2/5  2000/6232  box 0.799 cls 0.443 dfl 0.861  lr 0.00080  5.6 min  mem 4.9 GB
+epoch 2/5  2100/6232  box 0.799 cls 0.442 dfl 0.861  lr 0.00080  5.9 min  mem 4.9 GB
+epoch 2/5  2200/6232  box 0.799 cls 0.442 dfl 0.861  lr 0.00080  6.2 min  mem 4.9 GB
+epoch 2/5  2300/6232  box 0.799 cls 0.442 dfl 0.861  lr 0.00080  6.4 min  mem 4.9 GB
+epoch 2/5  2400/6232  box 0.798 cls 0.441 dfl 0.860  lr 0.00080  6.7 min  mem 4.9 GB
+epoch 2/5  2500/6232  box 0.798 cls 0.441 dfl 0.860  lr 0.00080  7.0 min  mem 4.9 GB
+epoch 2/5  2600/6232  box 0.798 cls 0.441 dfl 0.860  lr 0.00080  7.3 min  mem 4.9 GB
+epoch 2/5  2700/6232  box 0.798 cls 0.441 dfl 0.860  lr 0.00080  7.6 min  mem 4.9 GB
+epoch 2/5  2800/6232  box 0.798 cls 0.441 dfl 0.860  lr 0.00080  7.8 min  mem 4.9 GB
+epoch 2/5  2900/6232  box 0.797 cls 0.440 dfl 0.860  lr 0.00080  8.1 min  mem 4.9 GB
+epoch 2/5  3000/6232  box 0.797 cls 0.441 dfl 0.860  lr 0.00080  8.4 min  mem 4.9 GB
+epoch 2/5  3100/6232  box 0.797 cls 0.441 dfl 0.860  lr 0.00080  8.7 min  mem 4.9 GB
+epoch 2/5  3200/6232  box 0.797 cls 0.441 dfl 0.859  lr 0.00080  9.0 min  mem 4.9 GB
+epoch 2/5  3300/6232  box 0.797 cls 0.441 dfl 0.859  lr 0.00080  9.2 min  mem 4.9 GB
+epoch 2/5  3400/6232  box 0.797 cls 0.441 dfl 0.859  lr 0.00080  9.5 min  mem 4.9 GB
+epoch 2/5  3500/6232  box 0.797 cls 0.440 dfl 0.859  lr 0.00080  9.8 min  mem 4.9 GB
+epoch 2/5  3600/6232  box 0.796 cls 0.440 dfl 0.859  lr 0.00080  10.1 min  mem 4.9 GB
+epoch 2/5  3700/6232  box 0.796 cls 0.440 dfl 0.859  lr 0.00080  10.4 min  mem 4.9 GB
+epoch 2/5  3800/6232  box 0.796 cls 0.440 dfl 0.859  lr 0.00080  10.6 min  mem 4.9 GB
+epoch 2/5  3900/6232  box 0.796 cls 0.440 dfl 0.859  lr 0.00080  10.9 min  mem 4.9 GB
+epoch 2/5  4000/6232  box 0.796 cls 0.440 dfl 0.859  lr 0.00080  11.2 min  mem 4.9 GB
+epoch 2/5  4100/6232  box 0.795 cls 0.440 dfl 0.859  lr 0.00080  11.5 min  mem 4.9 GB
+epoch 2/5  4200/6232  box 0.796 cls 0.440 dfl 0.859  lr 0.00080  11.7 min  mem 4.9 GB
+epoch 2/5  4300/6232  box 0.796 cls 0.440 dfl 0.859  lr 0.00080  12.0 min  mem 4.9 GB
+epoch 2/5  4400/6232  box 0.796 cls 0.440 dfl 0.859  lr 0.00080  12.3 min  mem 4.9 GB
+epoch 2/5  4500/6232  box 0.795 cls 0.440 dfl 0.859  lr 0.00080  12.6 min  mem 4.9 GB
+epoch 2/5  4600/6232  box 0.795 cls 0.439 dfl 0.859  lr 0.00080  12.9 min  mem 4.9 GB
+epoch 2/5  4700/6232  box 0.795 cls 0.440 dfl 0.859  lr 0.00080  13.1 min  mem 4.9 GB
+epoch 2/5  4800/6232  box 0.794 cls 0.439 dfl 0.858  lr 0.00080  13.4 min  mem 4.9 GB
+epoch 2/5  4900/6232  box 0.794 cls 0.439 dfl 0.858  lr 0.00080  13.7 min  mem 4.9 GB
+epoch 2/5  5000/6232  box 0.794 cls 0.439 dfl 0.858  lr 0.00080  14.0 min  mem 4.9 GB
+epoch 2/5  5100/6232  box 0.794 cls 0.439 dfl 0.858  lr 0.00080  14.3 min  mem 4.9 GB
+epoch 2/5  5200/6232  box 0.794 cls 0.439 dfl 0.858  lr 0.00080  14.5 min  mem 4.9 GB
+epoch 2/5  5300/6232  box 0.794 cls 0.439 dfl 0.858  lr 0.00080  14.8 min  mem 4.9 GB
+epoch 2/5  5400/6232  box 0.794 cls 0.439 dfl 0.858  lr 0.00080  15.1 min  mem 4.9 GB
+epoch 2/5  5500/6232  box 0.795 cls 0.439 dfl 0.858  lr 0.00080  15.4 min  mem 4.9 GB
+epoch 2/5  5600/6232  box 0.795 cls 0.439 dfl 0.858  lr 0.00080  15.7 min  mem 4.9 GB
+epoch 2/5  5700/6232  box 0.794 cls 0.439 dfl 0.858  lr 0.00080  16.0 min  mem 4.9 GB
+epoch 2/5  5800/6232  box 0.794 cls 0.439 dfl 0.858  lr 0.00080  16.2 min  mem 4.9 GB
+epoch 2/5  5900/6232  box 0.794 cls 0.438 dfl 0.858  lr 0.00080  16.5 min  mem 4.9 GB
+epoch 2/5  6000/6232  box 0.794 cls 0.438 dfl 0.858  lr 0.00080  16.8 min  mem 4.9 GB
+epoch 2/5  6100/6232  box 0.794 cls 0.438 dfl 0.858  lr 0.00080  17.1 min  mem 4.9 GB
+epoch 2/5  6200/6232  box 0.794 cls 0.438 dfl 0.858  lr 0.00080  17.4 min  mem 4.9 GB
+  val e2 1/414  (1 s)
+  val e2 51/414  (5 s)
+  val e2 101/414  (10 s)
+  val e2 151/414  (14 s)
+  val e2 201/414  (18 s)
+  val e2 251/414  (22 s)
+  val e2 301/414  (27 s)
+  val e2 351/414  (31 s)
+  val e2 401/414  (35 s)
+== epoch 2: mAP50 0.5808  mAP50-95 0.3793  P 0.624 R 0.540
+   per-class AP50-95: pedestrian 0.374, rider 0.449, car 0.629, bus 0.204, truck 0.232, bicycle 0.311, motorcycle 0.456
+   gate s8: a 1.82 b 0.94 c 0.96 d_r 0.10 d_e -0.01  g_r_mean 0.9530  g_r_lt50 0.0466  g_e_mean 0.9464  g_e_lt50 0.0000
+   gate s16: a 1.85 b 1.48 c 0.99 d_r 0.05 d_e 0.10  g_r_mean 0.9817  g_r_lt50 0.0000  g_e_mean 0.9656  g_e_lt50 0.0000
+   gate s32: a 1.97 b 1.72 c 1.00 d_r 0.01 d_e 0.09  g_r_mean 0.9838  g_r_lt50 0.0000  g_e_mean 0.9855  g_e_lt50 0.0000
+aux weight 0.300 (rgb, evt)
+epoch 3/5  0/6232  box 0.728 cls 0.387 dfl 0.868  lr 0.00060  0.0 min  mem 4.9 GB
+epoch 3/5  100/6232  box 0.781 cls 0.429 dfl 0.858  lr 0.00060  0.3 min  mem 4.9 GB
+epoch 3/5  200/6232  box 0.777 cls 0.428 dfl 0.856  lr 0.00060  0.6 min  mem 4.9 GB
+epoch 3/5  300/6232  box 0.776 cls 0.427 dfl 0.856  lr 0.00060  0.8 min  mem 4.9 GB
+epoch 3/5  400/6232  box 0.775 cls 0.426 dfl 0.857  lr 0.00060  1.1 min  mem 4.9 GB
+epoch 3/5  500/6232  box 0.778 cls 0.428 dfl 0.857  lr 0.00060  1.4 min  mem 4.9 GB
+epoch 3/5  600/6232  box 0.779 cls 0.427 dfl 0.857  lr 0.00060  1.7 min  mem 4.9 GB
+epoch 3/5  700/6232  box 0.780 cls 0.428 dfl 0.856  lr 0.00060  2.0 min  mem 4.9 GB
+epoch 3/5  800/6232  box 0.781 cls 0.428 dfl 0.856  lr 0.00060  2.2 min  mem 4.9 GB
+epoch 3/5  900/6232  box 0.782 cls 0.430 dfl 0.856  lr 0.00060  2.5 min  mem 4.9 GB
+epoch 3/5  1000/6232  box 0.783 cls 0.430 dfl 0.856  lr 0.00060  2.8 min  mem 4.9 GB
+epoch 3/5  1100/6232  box 0.783 cls 0.431 dfl 0.856  lr 0.00060  3.1 min  mem 4.9 GB
+epoch 3/5  1200/6232  box 0.783 cls 0.430 dfl 0.855  lr 0.00060  3.4 min  mem 4.9 GB
+epoch 3/5  1300/6232  box 0.783 cls 0.430 dfl 0.855  lr 0.00060  3.6 min  mem 4.9 GB
+epoch 3/5  1400/6232  box 0.783 cls 0.430 dfl 0.856  lr 0.00060  3.9 min  mem 4.9 GB
+epoch 3/5  1500/6232  box 0.784 cls 0.430 dfl 0.856  lr 0.00060  4.2 min  mem 4.9 GB
+epoch 3/5  1600/6232  box 0.783 cls 0.430 dfl 0.855  lr 0.00060  4.5 min  mem 4.9 GB
+epoch 3/5  1700/6232  box 0.783 cls 0.430 dfl 0.855  lr 0.00060  4.8 min  mem 4.9 GB
+epoch 3/5  1800/6232  box 0.782 cls 0.429 dfl 0.855  lr 0.00060  5.0 min  mem 4.9 GB
+epoch 3/5  1900/6232  box 0.781 cls 0.428 dfl 0.855  lr 0.00060  5.3 min  mem 4.9 GB
+epoch 3/5  2000/6232  box 0.782 cls 0.428 dfl 0.855  lr 0.00060  5.6 min  mem 4.9 GB
+epoch 3/5  2100/6232  box 0.782 cls 0.429 dfl 0.855  lr 0.00060  5.9 min  mem 4.9 GB
+epoch 3/5  2200/6232  box 0.782 cls 0.429 dfl 0.855  lr 0.00060  6.2 min  mem 4.9 GB
+epoch 3/5  2300/6232  box 0.782 cls 0.429 dfl 0.855  lr 0.00060  6.4 min  mem 4.9 GB
+epoch 3/5  2400/6232  box 0.782 cls 0.429 dfl 0.855  lr 0.00060  6.7 min  mem 4.9 GB
+epoch 3/5  2500/6232  box 0.782 cls 0.429 dfl 0.855  lr 0.00060  7.0 min  mem 4.9 GB
+epoch 3/5  2600/6232  box 0.782 cls 0.428 dfl 0.855  lr 0.00060  7.3 min  mem 4.9 GB
+epoch 3/5  2700/6232  box 0.782 cls 0.428 dfl 0.855  lr 0.00060  7.6 min  mem 4.9 GB
+epoch 3/5  2800/6232  box 0.783 cls 0.429 dfl 0.855  lr 0.00060  7.8 min  mem 4.9 GB
+epoch 3/5  2900/6232  box 0.783 cls 0.429 dfl 0.855  lr 0.00060  8.1 min  mem 4.9 GB
+epoch 3/5  3000/6232  box 0.783 cls 0.429 dfl 0.855  lr 0.00060  8.4 min  mem 4.9 GB
+epoch 3/5  3100/6232  box 0.782 cls 0.428 dfl 0.855  lr 0.00060  8.7 min  mem 4.9 GB
+epoch 3/5  3200/6232  box 0.783 cls 0.428 dfl 0.855  lr 0.00060  9.0 min  mem 4.9 GB
+epoch 3/5  3300/6232  box 0.783 cls 0.428 dfl 0.855  lr 0.00060  9.2 min  mem 4.9 GB
+epoch 3/5  3400/6232  box 0.782 cls 0.428 dfl 0.855  lr 0.00060  9.5 min  mem 4.9 GB
+epoch 3/5  3500/6232  box 0.782 cls 0.428 dfl 0.855  lr 0.00060  9.8 min  mem 4.9 GB
+epoch 3/5  3600/6232  box 0.781 cls 0.428 dfl 0.855  lr 0.00060  10.1 min  mem 4.9 GB
+epoch 3/5  3700/6232  box 0.781 cls 0.428 dfl 0.855  lr 0.00060  10.4 min  mem 4.9 GB
+epoch 3/5  3800/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  10.6 min  mem 4.9 GB
+epoch 3/5  3900/6232  box 0.781 cls 0.427 dfl 0.855  lr 0.00060  10.9 min  mem 4.9 GB
+epoch 3/5  4000/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  11.2 min  mem 4.9 GB
+epoch 3/5  4100/6232  box 0.780 cls 0.427 dfl 0.856  lr 0.00060  11.5 min  mem 4.9 GB
+epoch 3/5  4200/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  11.7 min  mem 4.9 GB
+epoch 3/5  4300/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  12.0 min  mem 4.9 GB
+epoch 3/5  4400/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  12.3 min  mem 4.9 GB
+epoch 3/5  4500/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  12.6 min  mem 4.9 GB
+epoch 3/5  4600/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  12.9 min  mem 4.9 GB
+epoch 3/5  4700/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  13.1 min  mem 4.9 GB
+epoch 3/5  4800/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  13.4 min  mem 4.9 GB
+epoch 3/5  4900/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  13.7 min  mem 4.9 GB
+epoch 3/5  5000/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  14.0 min  mem 4.9 GB
+epoch 3/5  5100/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  14.3 min  mem 4.9 GB
+epoch 3/5  5200/6232  box 0.781 cls 0.428 dfl 0.856  lr 0.00060  14.6 min  mem 4.9 GB
+epoch 3/5  5300/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  14.9 min  mem 4.9 GB
+epoch 3/5  5400/6232  box 0.781 cls 0.427 dfl 0.856  lr 0.00060  15.1 min  mem 4.9 GB
+epoch 3/5  5500/6232  box 0.780 cls 0.427 dfl 0.856  lr 0.00060  15.4 min  mem 4.9 GB
+epoch 3/5  5600/6232  box 0.780 cls 0.427 dfl 0.856  lr 0.00060  15.7 min  mem 4.9 GB
+epoch 3/5  5700/6232  box 0.780 cls 0.427 dfl 0.856  lr 0.00060  16.0 min  mem 4.9 GB
+epoch 3/5  5800/6232  box 0.780 cls 0.427 dfl 0.856  lr 0.00060  16.2 min  mem 4.9 GB
+epoch 3/5  5900/6232  box 0.780 cls 0.427 dfl 0.856  lr 0.00060  16.5 min  mem 4.9 GB
+epoch 3/5  6000/6232  box 0.780 cls 0.427 dfl 0.856  lr 0.00060  16.8 min  mem 4.9 GB
+epoch 3/5  6100/6232  box 0.780 cls 0.427 dfl 0.856  lr 0.00060  17.1 min  mem 4.9 GB
+epoch 3/5  6200/6232  box 0.780 cls 0.427 dfl 0.856  lr 0.00060  17.4 min  mem 4.9 GB
+  val e3 1/414  (1 s)
+  val e3 51/414  (5 s)
+  val e3 101/414  (10 s)
+  val e3 151/414  (14 s)
+  val e3 201/414  (18 s)
+  val e3 251/414  (22 s)
+  val e3 301/414  (26 s)
+  val e3 351/414  (30 s)
+  val e3 401/414  (35 s)
+== epoch 3: mAP50 0.5789  mAP50-95 0.3809  P 0.657 R 0.513
+   per-class AP50-95: pedestrian 0.359, rider 0.433, car 0.630, bus 0.231, truck 0.227, bicycle 0.341, motorcycle 0.446
+   gate s8: a 1.74 b 0.85 c 0.95 d_r 0.14 d_e -0.12  g_r_mean 0.9559  g_r_lt50 0.0465  g_e_mean 0.9493  g_e_lt50 0.0000
+   gate s16: a 1.82 b 1.42 c 0.98 d_r 0.07 d_e 0.10  g_r_mean 0.9827  g_r_lt50 0.0000  g_e_mean 0.9693  g_e_lt50 0.0000
+   gate s32: a 1.96 b 1.69 c 0.99 d_r 0.01 d_e 0.10  g_r_mean 0.9841  g_r_lt50 0.0000  g_e_mean 0.9868  g_e_lt50 0.0000
+aux weight 0.200 (rgb, evt)
+epoch 4/5  0/6232  box 0.861 cls 0.501 dfl 0.920  lr 0.00041  0.0 min  mem 4.9 GB
+epoch 4/5  100/6232  box 0.781 cls 0.425 dfl 0.857  lr 0.00041  0.3 min  mem 4.9 GB
+epoch 4/5  200/6232  box 0.773 cls 0.420 dfl 0.856  lr 0.00041  0.6 min  mem 4.9 GB
+epoch 4/5  300/6232  box 0.772 cls 0.419 dfl 0.853  lr 0.00041  0.8 min  mem 4.9 GB
+epoch 4/5  400/6232  box 0.770 cls 0.418 dfl 0.854  lr 0.00041  1.1 min  mem 4.9 GB
+epoch 4/5  500/6232  box 0.771 cls 0.419 dfl 0.853  lr 0.00041  1.4 min  mem 4.9 GB
+epoch 4/5  600/6232  box 0.772 cls 0.419 dfl 0.854  lr 0.00041  1.7 min  mem 4.9 GB
+epoch 4/5  700/6232  box 0.772 cls 0.419 dfl 0.854  lr 0.00041  2.0 min  mem 4.9 GB
+epoch 4/5  800/6232  box 0.771 cls 0.418 dfl 0.854  lr 0.00041  2.2 min  mem 4.9 GB
+epoch 4/5  900/6232  box 0.771 cls 0.418 dfl 0.853  lr 0.00041  2.5 min  mem 4.9 GB
+epoch 4/5  1000/6232  box 0.771 cls 0.418 dfl 0.854  lr 0.00041  2.8 min  mem 4.9 GB
+epoch 4/5  1100/6232  box 0.769 cls 0.416 dfl 0.853  lr 0.00041  3.1 min  mem 4.9 GB
+epoch 4/5  1200/6232  box 0.770 cls 0.417 dfl 0.853  lr 0.00041  3.4 min  mem 4.9 GB
+epoch 4/5  1300/6232  box 0.770 cls 0.416 dfl 0.854  lr 0.00041  3.6 min  mem 4.9 GB
+epoch 4/5  1400/6232  box 0.770 cls 0.417 dfl 0.854  lr 0.00041  3.9 min  mem 4.9 GB
+epoch 4/5  1500/6232  box 0.769 cls 0.417 dfl 0.854  lr 0.00041  4.2 min  mem 4.9 GB
+epoch 4/5  1600/6232  box 0.770 cls 0.417 dfl 0.854  lr 0.00041  4.5 min  mem 4.9 GB
+epoch 4/5  1700/6232  box 0.770 cls 0.417 dfl 0.853  lr 0.00041  4.8 min  mem 4.9 GB
+epoch 4/5  1800/6232  box 0.771 cls 0.417 dfl 0.853  lr 0.00041  5.0 min  mem 4.9 GB
+epoch 4/5  1900/6232  box 0.770 cls 0.417 dfl 0.853  lr 0.00041  5.3 min  mem 4.9 GB
+epoch 4/5  2000/6232  box 0.770 cls 0.417 dfl 0.853  lr 0.00041  5.6 min  mem 4.9 GB
+epoch 4/5  2100/6232  box 0.770 cls 0.417 dfl 0.853  lr 0.00041  5.9 min  mem 4.9 GB
+epoch 4/5  2200/6232  box 0.770 cls 0.418 dfl 0.853  lr 0.00041  6.1 min  mem 4.9 GB
+epoch 4/5  2300/6232  box 0.771 cls 0.418 dfl 0.853  lr 0.00041  6.4 min  mem 4.9 GB
+epoch 4/5  2400/6232  box 0.771 cls 0.418 dfl 0.853  lr 0.00041  6.7 min  mem 4.9 GB
+epoch 4/5  2500/6232  box 0.771 cls 0.418 dfl 0.853  lr 0.00041  7.0 min  mem 4.9 GB
+epoch 4/5  2600/6232  box 0.771 cls 0.418 dfl 0.853  lr 0.00041  7.3 min  mem 4.9 GB
+epoch 4/5  2700/6232  box 0.770 cls 0.418 dfl 0.853  lr 0.00041  7.5 min  mem 4.9 GB
+epoch 4/5  2800/6232  box 0.770 cls 0.418 dfl 0.853  lr 0.00041  7.8 min  mem 4.9 GB
+epoch 4/5  2900/6232  box 0.771 cls 0.418 dfl 0.853  lr 0.00041  8.1 min  mem 4.9 GB
+epoch 4/5  3000/6232  box 0.771 cls 0.418 dfl 0.853  lr 0.00041  8.4 min  mem 4.9 GB
+epoch 4/5  3100/6232  box 0.770 cls 0.418 dfl 0.853  lr 0.00041  8.7 min  mem 4.9 GB
+epoch 4/5  3200/6232  box 0.770 cls 0.418 dfl 0.853  lr 0.00041  8.9 min  mem 4.9 GB
+epoch 4/5  3300/6232  box 0.770 cls 0.418 dfl 0.853  lr 0.00041  9.2 min  mem 4.9 GB
+epoch 4/5  3400/6232  box 0.770 cls 0.418 dfl 0.853  lr 0.00041  9.5 min  mem 4.9 GB
+epoch 4/5  3500/6232  box 0.770 cls 0.418 dfl 0.852  lr 0.00041  9.8 min  mem 4.9 GB
+epoch 4/5  3600/6232  box 0.770 cls 0.418 dfl 0.853  lr 0.00041  10.1 min  mem 4.9 GB
+epoch 4/5  3700/6232  box 0.770 cls 0.417 dfl 0.852  lr 0.00041  10.3 min  mem 4.9 GB
+epoch 4/5  3800/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  10.6 min  mem 4.9 GB
+epoch 4/5  3900/6232  box 0.770 cls 0.417 dfl 0.852  lr 0.00041  10.9 min  mem 4.9 GB
+epoch 4/5  4000/6232  box 0.770 cls 0.417 dfl 0.852  lr 0.00041  11.2 min  mem 4.9 GB
+epoch 4/5  4100/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  11.5 min  mem 4.9 GB
+epoch 4/5  4200/6232  box 0.770 cls 0.417 dfl 0.852  lr 0.00041  11.7 min  mem 4.9 GB
+epoch 4/5  4300/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  12.0 min  mem 4.9 GB
+epoch 4/5  4400/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  12.3 min  mem 4.9 GB
+epoch 4/5  4500/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  12.6 min  mem 4.9 GB
+epoch 4/5  4600/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  12.9 min  mem 4.9 GB
+epoch 4/5  4700/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  13.2 min  mem 4.9 GB
+epoch 4/5  4800/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  13.4 min  mem 4.9 GB
+epoch 4/5  4900/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  13.7 min  mem 4.9 GB
+epoch 4/5  5000/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  14.0 min  mem 4.9 GB
+epoch 4/5  5100/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  14.3 min  mem 4.9 GB
+epoch 4/5  5200/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  14.5 min  mem 4.9 GB
+epoch 4/5  5300/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  14.8 min  mem 4.9 GB
+epoch 4/5  5400/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  15.1 min  mem 4.9 GB
+epoch 4/5  5500/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  15.4 min  mem 4.9 GB
+epoch 4/5  5600/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  15.7 min  mem 4.9 GB
+epoch 4/5  5700/6232  box 0.770 cls 0.417 dfl 0.852  lr 0.00041  15.9 min  mem 4.9 GB
+epoch 4/5  5800/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  16.2 min  mem 4.9 GB
+epoch 4/5  5900/6232  box 0.769 cls 0.417 dfl 0.852  lr 0.00041  16.5 min  mem 4.9 GB
+epoch 4/5  6000/6232  box 0.770 cls 0.417 dfl 0.852  lr 0.00041  16.8 min  mem 4.9 GB
+epoch 4/5  6100/6232  box 0.770 cls 0.417 dfl 0.852  lr 0.00041  17.1 min  mem 4.9 GB
+epoch 4/5  6200/6232  box 0.770 cls 0.417 dfl 0.852  lr 0.00041  17.3 min  mem 4.9 GB
+  val e4 1/414  (1 s)
+  val e4 51/414  (6 s)
+  val e4 101/414  (10 s)
+  val e4 151/414  (14 s)
+  val e4 201/414  (18 s)
+  val e4 251/414  (22 s)
+  val e4 301/414  (27 s)
+  val e4 351/414  (31 s)
+  val e4 401/414  (35 s)
+== epoch 4: mAP50 0.5763  mAP50-95 0.3832  P 0.658 R 0.512
+   per-class AP50-95: pedestrian 0.356, rider 0.456, car 0.629, bus 0.245, truck 0.229, bicycle 0.330, motorcycle 0.437
+   gate s8: a 1.70 b 0.82 c 0.93 d_r 0.17 d_e -0.19  g_r_mean 0.9576  g_r_lt50 0.0465  g_e_mean 0.9487  g_e_lt50 0.0000
+   gate s16: a 1.80 b 1.36 c 0.97 d_r 0.07 d_e 0.11  g_r_mean 0.9832  g_r_lt50 0.0000  g_e_mean 0.9731  g_e_lt50 0.0000
+   gate s32: a 1.96 b 1.66 c 0.99 d_r 0.01 d_e 0.11  g_r_mean 0.9842  g_r_lt50 0.0000  g_e_mean 0.9877  g_e_lt50 0.0000
+aux weight 0.100 (rgb, evt)
+epoch 5/5  0/6232  box 0.795 cls 0.406 dfl 0.856  lr 0.00021  0.0 min  mem 5.1 GB
+epoch 5/5  100/6232  box 0.775 cls 0.417 dfl 0.851  lr 0.00021  0.3 min  mem 5.1 GB
+epoch 5/5  200/6232  box 0.766 cls 0.410 dfl 0.848  lr 0.00021  0.6 min  mem 5.1 GB
+epoch 5/5  300/6232  box 0.761 cls 0.411 dfl 0.848  lr 0.00021  0.8 min  mem 5.1 GB
+epoch 5/5  400/6232  box 0.758 cls 0.410 dfl 0.848  lr 0.00021  1.1 min  mem 5.1 GB
+epoch 5/5  500/6232  box 0.758 cls 0.408 dfl 0.849  lr 0.00021  1.4 min  mem 5.1 GB
+epoch 5/5  600/6232  box 0.761 cls 0.409 dfl 0.850  lr 0.00021  1.7 min  mem 5.1 GB
+epoch 5/5  700/6232  box 0.761 cls 0.410 dfl 0.850  lr 0.00021  2.0 min  mem 5.1 GB
+epoch 5/5  800/6232  box 0.760 cls 0.409 dfl 0.849  lr 0.00021  2.2 min  mem 5.1 GB
+epoch 5/5  900/6232  box 0.760 cls 0.409 dfl 0.850  lr 0.00021  2.5 min  mem 5.1 GB
+epoch 5/5  1000/6232  box 0.760 cls 0.409 dfl 0.851  lr 0.00021  2.8 min  mem 5.1 GB
+epoch 5/5  1100/6232  box 0.761 cls 0.409 dfl 0.851  lr 0.00021  3.1 min  mem 5.1 GB
+epoch 5/5  1200/6232  box 0.762 cls 0.410 dfl 0.851  lr 0.00021  3.4 min  mem 5.1 GB
+epoch 5/5  1300/6232  box 0.761 cls 0.410 dfl 0.851  lr 0.00021  3.6 min  mem 5.1 GB
+epoch 5/5  1400/6232  box 0.761 cls 0.409 dfl 0.850  lr 0.00021  3.9 min  mem 5.1 GB
+epoch 5/5  1500/6232  box 0.761 cls 0.410 dfl 0.850  lr 0.00021  4.2 min  mem 5.1 GB
+epoch 5/5  1600/6232  box 0.761 cls 0.410 dfl 0.850  lr 0.00021  4.5 min  mem 5.1 GB
+epoch 5/5  1700/6232  box 0.761 cls 0.410 dfl 0.850  lr 0.00021  4.8 min  mem 5.1 GB
+epoch 5/5  1800/6232  box 0.761 cls 0.409 dfl 0.850  lr 0.00021  5.0 min  mem 5.1 GB
+epoch 5/5  1900/6232  box 0.761 cls 0.410 dfl 0.850  lr 0.00021  5.3 min  mem 5.1 GB
+epoch 5/5  2000/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  5.6 min  mem 5.1 GB
+epoch 5/5  2100/6232  box 0.761 cls 0.410 dfl 0.850  lr 0.00021  5.9 min  mem 5.1 GB
+epoch 5/5  2200/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  6.2 min  mem 5.1 GB
+epoch 5/5  2300/6232  box 0.763 cls 0.410 dfl 0.851  lr 0.00021  6.4 min  mem 5.1 GB
+epoch 5/5  2400/6232  box 0.763 cls 0.410 dfl 0.850  lr 0.00021  6.7 min  mem 5.1 GB
+epoch 5/5  2500/6232  box 0.764 cls 0.411 dfl 0.851  lr 0.00021  7.0 min  mem 5.1 GB
+epoch 5/5  2600/6232  box 0.763 cls 0.411 dfl 0.850  lr 0.00021  7.3 min  mem 5.1 GB
+epoch 5/5  2700/6232  box 0.764 cls 0.411 dfl 0.850  lr 0.00021  7.6 min  mem 5.1 GB
+epoch 5/5  2800/6232  box 0.763 cls 0.411 dfl 0.850  lr 0.00021  7.8 min  mem 5.1 GB
+epoch 5/5  2900/6232  box 0.763 cls 0.411 dfl 0.850  lr 0.00021  8.1 min  mem 5.1 GB
+epoch 5/5  3000/6232  box 0.763 cls 0.411 dfl 0.850  lr 0.00021  8.4 min  mem 5.1 GB
+epoch 5/5  3100/6232  box 0.764 cls 0.411 dfl 0.850  lr 0.00021  8.7 min  mem 5.1 GB
+epoch 5/5  3200/6232  box 0.763 cls 0.411 dfl 0.850  lr 0.00021  8.9 min  mem 5.1 GB
+epoch 5/5  3300/6232  box 0.763 cls 0.411 dfl 0.850  lr 0.00021  9.2 min  mem 5.1 GB
+epoch 5/5  3400/6232  box 0.763 cls 0.411 dfl 0.850  lr 0.00021  9.5 min  mem 5.1 GB
+epoch 5/5  3500/6232  box 0.763 cls 0.410 dfl 0.850  lr 0.00021  9.8 min  mem 5.1 GB
+epoch 5/5  3600/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  10.1 min  mem 5.1 GB
+epoch 5/5  3700/6232  box 0.763 cls 0.410 dfl 0.850  lr 0.00021  10.3 min  mem 5.1 GB
+epoch 5/5  3800/6232  box 0.763 cls 0.410 dfl 0.850  lr 0.00021  10.6 min  mem 5.1 GB
+epoch 5/5  3900/6232  box 0.763 cls 0.410 dfl 0.850  lr 0.00021  10.9 min  mem 5.1 GB
+epoch 5/5  4000/6232  box 0.763 cls 0.411 dfl 0.850  lr 0.00021  11.2 min  mem 5.1 GB
+epoch 5/5  4100/6232  box 0.763 cls 0.411 dfl 0.850  lr 0.00021  11.5 min  mem 5.1 GB
+epoch 5/5  4200/6232  box 0.763 cls 0.410 dfl 0.850  lr 0.00021  11.8 min  mem 5.1 GB
+epoch 5/5  4300/6232  box 0.763 cls 0.410 dfl 0.850  lr 0.00021  12.1 min  mem 5.1 GB
+epoch 5/5  4400/6232  box 0.763 cls 0.410 dfl 0.850  lr 0.00021  12.4 min  mem 5.1 GB
+epoch 5/5  4500/6232  box 0.763 cls 0.410 dfl 0.850  lr 0.00021  12.7 min  mem 5.1 GB
+epoch 5/5  4600/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  13.0 min  mem 5.1 GB
+epoch 5/5  4700/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  13.2 min  mem 5.1 GB
+epoch 5/5  4800/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  13.5 min  mem 5.1 GB
+epoch 5/5  4900/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  13.8 min  mem 5.1 GB
+epoch 5/5  5000/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  14.1 min  mem 5.1 GB
+epoch 5/5  5100/6232  box 0.763 cls 0.410 dfl 0.851  lr 0.00021  14.4 min  mem 5.1 GB
+epoch 5/5  5200/6232  box 0.763 cls 0.410 dfl 0.851  lr 0.00021  14.6 min  mem 5.1 GB
+epoch 5/5  5300/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  14.9 min  mem 5.1 GB
+epoch 5/5  5400/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  15.2 min  mem 5.1 GB
+epoch 5/5  5500/6232  box 0.762 cls 0.410 dfl 0.850  lr 0.00021  15.5 min  mem 5.1 GB
+epoch 5/5  5600/6232  box 0.762 cls 0.411 dfl 0.850  lr 0.00021  15.8 min  mem 5.1 GB
+epoch 5/5  5700/6232  box 0.762 cls 0.411 dfl 0.850  lr 0.00021  16.0 min  mem 5.1 GB
+epoch 5/5  5800/6232  box 0.762 cls 0.411 dfl 0.850  lr 0.00021  16.3 min  mem 5.1 GB
+epoch 5/5  5900/6232  box 0.762 cls 0.411 dfl 0.850  lr 0.00021  16.6 min  mem 5.1 GB
+epoch 5/5  6000/6232  box 0.762 cls 0.411 dfl 0.850  lr 0.00021  16.9 min  mem 5.1 GB
+epoch 5/5  6100/6232  box 0.762 cls 0.411 dfl 0.850  lr 0.00021  17.2 min  mem 5.1 GB
+epoch 5/5  6200/6232  box 0.762 cls 0.411 dfl 0.850  lr 0.00021  17.4 min  mem 5.1 GB
+  val e5 1/414  (1 s)
+  val e5 51/414  (5 s)
+  val e5 101/414  (9 s)
+  val e5 151/414  (13 s)
+  val e5 201/414  (17 s)
+  val e5 251/414  (21 s)
+  val e5 301/414  (25 s)
+  val e5 351/414  (29 s)
+  val e5 401/414  (33 s)
+== epoch 5: mAP50 0.5805  mAP50-95 0.3855  P 0.635 R 0.526
+   per-class AP50-95: pedestrian 0.362, rider 0.473, car 0.634, bus 0.234, truck 0.222, bicycle 0.336, motorcycle 0.437
+   gate s8: a 1.68 b 0.84 c 0.92 d_r 0.18 d_e -0.24  g_r_mean 0.9588  g_r_lt50 0.0465  g_e_mean 0.9454  g_e_lt50 0.0000
+   gate s16: a 1.79 b 1.35 c 0.97 d_r 0.08 d_e 0.11  g_r_mean 0.9835  g_r_lt50 0.0000  g_e_mean 0.9734  g_e_lt50 0.0000
+   gate s32: a 1.96 b 1.66 c 0.99 d_r 0.02 d_e 0.11  g_r_mean 0.9843  g_r_lt50 0.0000  g_e_mean 0.9878  g_e_lt50 0.0000
+done. best mAP50-95 0.3859 on val  -> /home/jovyan/work/HSF_Event_RGB_Fusion/runs/step11_rel/dual_relp2_add_aux_v3
+  test (best on val) 1/869  (1 s)
+  test (best on val) 51/869  (5 s)
+  test (best on val) 101/869  (9 s)
+  test (best on val) 151/869  (13 s)
+  test (best on val) 201/869  (17 s)
+  test (best on val) 251/869  (21 s)
+  test (best on val) 301/869  (25 s)
+  test (best on val) 351/869  (29 s)
+  test (best on val) 401/869  (34 s)
+  test (best on val) 451/869  (38 s)
+  test (best on val) 501/869  (42 s)
+  test (best on val) 551/869  (46 s)
+  test (best on val) 601/869  (50 s)
+  test (best on val) 651/869  (54 s)
+  test (best on val) 701/869  (58 s)
+  test (best on val) 751/869  (62 s)
+  test (best on val) 801/869  (66 s)
+  test (best on val) 851/869  (70 s)
+== test (checkpoint chosen on val): mAP50 0.7017  mAP50-95 0.4811

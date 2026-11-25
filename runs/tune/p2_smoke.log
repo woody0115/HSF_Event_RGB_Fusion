@@ -1,0 +1,13 @@
+[2026-11-18 23:15:20] start
+epoch 1/2  0/150  box 0.887 cls 0.692 dfl 0.946 kd 1.7682  lr 0.00000  0.0 min  mem 1.2 GB
+epoch 1/2  100/150  box 0.804 cls 0.559 dfl 0.872 kd 1.2823  lr 0.00050  0.2 min  mem 1.3 GB
+== epoch 1: mAP50 0.7629  mAP50-95 0.5402  P 0.838 R 0.693
+epoch 2/2  0/150  box 0.544 cls 0.364 dfl 0.835 kd 0.1194  lr 0.00025  0.0 min  mem 2.1 GB
+epoch 2/2  100/150  box 0.821 cls 0.534 dfl 0.870 kd 0.6317  lr 0.00025  0.1 min  mem 2.1 GB
+== epoch 2: mAP50 0.7522  mAP50-95 0.5250  P 0.831 R 0.669
+done. best mAP50-95 0.5402 on test  -> /home/jovyan/work/HSF_Event_RGB_Fusion/runs/step12_sw/p2_smoke
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+step12_sw/ft5c_sw2_add_s0: all 43.00  day 46.27  dim 27.24  night 30.84  night-ped 36.25  (57 s)
+wbf pooled C s0: all 43.0 night ped 36.25 seconds 57
+[2026-11-18 23:17:32] done

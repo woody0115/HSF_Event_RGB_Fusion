@@ -1,0 +1,3 @@
+config: {'fusion': 'hsf', 'epochs': 40, 'batch': 8, 'lr': 0.005, 'workers': 8, 'rgb_init': '/home/jovyan/work/HSF_Event_RGB_Fusion/runs/step3/rgb_yolov8s/weights/best.pt', 'evt_init': '/home/jovyan/work/HSF_Event_RGB_Fusion/runs/step3/event_yolov8s/weights/best.pt', 'name': 'dual_hsf_paper_s0', 'warmup': 3, 'clips': 4, 'clip_len': 4, 'modality_drop': 0.15, 'split': 'val', 'resume': False, 'seed': 0, 'smoke': False}
+train clips 12787 x 4 frames, val frames 5533 (streamed), params 23.9 M
+epoch 1/40  0/3196  box 0.712 cls 0.406 dfl 0.832  lr 0.00000  0.2 min  mem 6.8 GB

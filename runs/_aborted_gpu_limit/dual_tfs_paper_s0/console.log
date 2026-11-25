@@ -1,0 +1,31 @@
+config: {'fusion': 'tfs', 'epochs': 40, 'batch': 8, 'lr': 0.005, 'workers': 8, 'rgb_init': '/home/jovyan/work/HSF_Event_RGB_Fusion/runs/step3/rgb_yolov8s/weights/best.pt', 'evt_init': '/home/jovyan/work/HSF_Event_RGB_Fusion/runs/step3/event_yolov8s/weights/best.pt', 'name': 'dual_tfs_paper_s0', 'warmup': 3, 'clips': 4, 'clip_len': 4, 'modality_drop': 0.15, 'split': 'val', 'resume': False, 'seed': 0, 'smoke': False}
+train clips 12787 x 4 frames, val frames 5533 (streamed), params 19.0 M
+epoch 1/40  0/3196  box 0.792 cls 0.401 dfl 0.883  lr 0.00000  0.1 min  mem 6.0 GB
+epoch 1/40  100/3196  box 0.935 cls 0.508 dfl 0.891  lr 0.00005  1.5 min  mem 6.1 GB
+epoch 1/40  200/3196  box 0.894 cls 0.489 dfl 0.883  lr 0.00010  3.0 min  mem 6.1 GB
+epoch 1/40  300/3196  box 0.881 cls 0.486 dfl 0.882  lr 0.00016  4.1 min  mem 6.1 GB
+epoch 1/40  400/3196  box 0.870 cls 0.481 dfl 0.880  lr 0.00021  5.1 min  mem 6.1 GB
+epoch 1/40  500/3196  box 0.862 cls 0.478 dfl 0.880  lr 0.00026  6.1 min  mem 6.1 GB
+epoch 1/40  600/3196  box 0.855 cls 0.476 dfl 0.877  lr 0.00031  6.9 min  mem 6.1 GB
+epoch 1/40  700/3196  box 0.852 cls 0.475 dfl 0.876  lr 0.00037  7.9 min  mem 6.1 GB
+epoch 1/40  800/3196  box 0.848 cls 0.473 dfl 0.875  lr 0.00042  8.9 min  mem 6.1 GB
+epoch 1/40  900/3196  box 0.844 cls 0.472 dfl 0.873  lr 0.00047  9.6 min  mem 6.1 GB
+epoch 1/40  1000/3196  box 0.841 cls 0.471 dfl 0.872  lr 0.00052  10.3 min  mem 6.1 GB
+epoch 1/40  1100/3196  box 0.839 cls 0.470 dfl 0.871  lr 0.00057  10.9 min  mem 6.1 GB
+epoch 1/40  1200/3196  box 0.839 cls 0.471 dfl 0.871  lr 0.00063  11.5 min  mem 6.1 GB
+epoch 1/40  1300/3196  box 0.839 cls 0.472 dfl 0.871  lr 0.00068  12.1 min  mem 6.1 GB
+epoch 1/40  1400/3196  box 0.837 cls 0.472 dfl 0.871  lr 0.00073  12.7 min  mem 6.1 GB
+epoch 1/40  1500/3196  box 0.835 cls 0.471 dfl 0.870  lr 0.00078  13.2 min  mem 6.1 GB
+epoch 1/40  1600/3196  box 0.833 cls 0.470 dfl 0.870  lr 0.00083  13.7 min  mem 6.2 GB
+epoch 1/40  1700/3196  box 0.832 cls 0.470 dfl 0.869  lr 0.00089  14.2 min  mem 6.2 GB
+epoch 1/40  1800/3196  box 0.831 cls 0.469 dfl 0.869  lr 0.00094  14.7 min  mem 6.2 GB
+epoch 1/40  1900/3196  box 0.831 cls 0.468 dfl 0.869  lr 0.00099  15.2 min  mem 6.2 GB
+epoch 1/40  2000/3196  box 0.829 cls 0.467 dfl 0.869  lr 0.00104  15.7 min  mem 6.2 GB
+epoch 1/40  2100/3196  box 0.828 cls 0.467 dfl 0.868  lr 0.00110  16.2 min  mem 6.2 GB
+epoch 1/40  2200/3196  box 0.827 cls 0.466 dfl 0.868  lr 0.00115  16.6 min  mem 6.2 GB
+epoch 1/40  2300/3196  box 0.827 cls 0.466 dfl 0.868  lr 0.00120  17.1 min  mem 6.2 GB
+epoch 1/40  2400/3196  box 0.827 cls 0.466 dfl 0.868  lr 0.00125  17.6 min  mem 6.2 GB
+epoch 1/40  2500/3196  box 0.827 cls 0.466 dfl 0.868  lr 0.00130  18.1 min  mem 6.2 GB
+epoch 1/40  2600/3196  box 0.826 cls 0.465 dfl 0.869  lr 0.00136  18.5 min  mem 6.2 GB
+epoch 1/40  2700/3196  box 0.826 cls 0.465 dfl 0.868  lr 0.00141  19.0 min  mem 6.2 GB
+epoch 1/40  2800/3196  box 0.826 cls 0.465 dfl 0.868  lr 0.00146  19.5 min  mem 6.2 GB

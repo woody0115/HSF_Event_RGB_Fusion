@@ -1,0 +1,266 @@
+{
+ "step4/dual_add_s5_cleaninit": {
+  "P3": {},
+  "P4": {},
+  "P5": {},
+  "rgb_backbone_rel_change": 0.02757,
+  "evt_backbone_rel_change": 0.01529
+ },
+ "step4/dual_add_s5_seed1": {
+  "P3": {},
+  "P4": {},
+  "P5": {},
+  "rgb_backbone_rel_change": 0.05278,
+  "evt_backbone_rel_change": 0.02859
+ },
+ "step4/dual_add_s5_seed2": {
+  "P3": {},
+  "P4": {},
+  "P5": {},
+  "rgb_backbone_rel_change": 0.02733,
+  "evt_backbone_rel_change": 0.0153
+ },
+ "step11_rel/dual_relp2_add_v2": {
+  "P3": {
+   "a": 1.9505,
+   "b": 2.0199,
+   "c": 0.9924,
+   "d_r": 0.0247,
+   "d_e": -0.2243,
+   "P_dev": 0.0122
+  },
+  "P4": {
+   "a": 1.9595,
+   "b": 1.8666,
+   "c": 0.9951,
+   "d_r": 0.0155,
+   "d_e": 0.0151,
+   "P_dev": 0.0064
+  },
+  "P5": {
+   "a": 1.9965,
+   "b": 1.903,
+   "c": 1.0002,
+   "d_r": 0.0015,
+   "d_e": 0.0292,
+   "P_dev": 0.0068
+  },
+  "rgb_backbone_rel_change": 0.02719,
+  "evt_backbone_rel_change": 0.01484
+ },
+ "step11_rel/dual_relp2_add_s5_seed1": {
+  "P3": {
+   "a": 1.7978,
+   "b": 1.6095,
+   "c": 0.9079,
+   "d_r": 0.1202,
+   "d_e": -0.4079,
+   "P_dev": 0.0328
+  },
+  "P4": {
+   "a": 1.8066,
+   "b": 1.6891,
+   "c": 0.984,
+   "d_r": 0.0679,
+   "d_e": 0.0262,
+   "P_dev": 0.0214
+  },
+  "P5": {
+   "a": 1.9792,
+   "b": 1.8056,
+   "c": 1.003,
+   "d_r": 0.0072,
+   "d_e": 0.0589,
+   "P_dev": 0.0218
+  },
+  "rgb_backbone_rel_change": 0.06829,
+  "evt_backbone_rel_change": 0.03824
+ },
+ "step11_rel/dual_relp2_add_s5_seed2": {
+  "P3": {
+   "a": 1.7653,
+   "b": 1.4644,
+   "c": 0.9035,
+   "d_r": 0.1272,
+   "d_e": -0.3848,
+   "P_dev": 0.0349
+  },
+  "P4": {
+   "a": 1.8439,
+   "b": 1.6061,
+   "c": 0.9797,
+   "d_r": 0.0571,
+   "d_e": 0.0533,
+   "P_dev": 0.0229
+  },
+  "P5": {
+   "a": 1.9744,
+   "b": 1.7392,
+   "c": 0.9998,
+   "d_r": 0.0094,
+   "d_e": 0.0807,
+   "P_dev": 0.023
+  },
+  "rgb_backbone_rel_change": 0.0703,
+  "evt_backbone_rel_change": 0.03991
+ },
+ "step12_sw/dual_sw2_add_s5": {
+  "P3": {
+   "mlp_bias": [
+    1.0008,
+    -1.0008
+   ],
+   "mlp_w_norm": [
+    0.0092,
+    0.0092
+   ],
+   "P_dev": 0.0044
+  },
+  "P4": {
+   "mlp_bias": [
+    0.6336,
+    -0.6336
+   ],
+   "mlp_w_norm": [
+    0.0085,
+    0.0085
+   ],
+   "P_dev": 0.0036
+  },
+  "P5": {
+   "mlp_bias": [
+    0.5919,
+    -0.5919
+   ],
+   "mlp_w_norm": [
+    0.0062,
+    0.0062
+   ],
+   "P_dev": 0.0039
+  },
+  "rgb_backbone_rel_change": 0.02888,
+  "evt_backbone_rel_change": 0.00657
+ },
+ "step12_sw/dual_sw2_add_s5_seed1": {
+  "P3": {
+   "mlp_bias": [
+    1.0261,
+    -1.0261
+   ],
+   "mlp_w_norm": [
+    0.0103,
+    0.0103
+   ],
+   "P_dev": 0.0044
+  },
+  "P4": {
+   "mlp_bias": [
+    0.6224,
+    -0.6224
+   ],
+   "mlp_w_norm": [
+    0.0184,
+    0.0184
+   ],
+   "P_dev": 0.0036
+  },
+  "P5": {
+   "mlp_bias": [
+    0.6038,
+    -0.6038
+   ],
+   "mlp_w_norm": [
+    0.0138,
+    0.0138
+   ],
+   "P_dev": 0.0038
+  },
+  "rgb_backbone_rel_change": 0.02918,
+  "evt_backbone_rel_change": 0.00646
+ },
+ "step12_sw/dual_sw2_add_s5_seed2": {
+  "P3": {
+   "mlp_bias": [
+    1.0158,
+    -1.0158
+   ],
+   "mlp_w_norm": [
+    0.0058,
+    0.0058
+   ],
+   "P_dev": 0.0044
+  },
+  "P4": {
+   "mlp_bias": [
+    0.6371,
+    -0.6371
+   ],
+   "mlp_w_norm": [
+    0.0183,
+    0.0183
+   ],
+   "P_dev": 0.0037
+  },
+  "P5": {
+   "mlp_bias": [
+    0.6213,
+    -0.6213
+   ],
+   "mlp_w_norm": [
+    0.0107,
+    0.0107
+   ],
+   "P_dev": 0.0038
+  },
+  "rgb_backbone_rel_change": 0.02902,
+  "evt_backbone_rel_change": 0.00642
+ },
+ "step13_cafr/dual_cafr_s5": {
+  "P3": {
+   "lambda_out": 0.00256,
+   "out_conv_norm": 6.441
+  },
+  "P4": {
+   "lambda_out": -0.0117,
+   "out_conv_norm": 9.11
+  },
+  "P5": {
+   "lambda_out": -0.01515,
+   "out_conv_norm": 12.881
+  },
+  "rgb_backbone_rel_change": 0.07061,
+  "evt_backbone_rel_change": 0.0408
+ },
+ "step13_cafr/dual_cafr_s5_seed1": {
+  "P3": {
+   "lambda_out": -0.01023,
+   "out_conv_norm": 6.403
+  },
+  "P4": {
+   "lambda_out": -0.00604,
+   "out_conv_norm": 9.098
+  },
+  "P5": {
+   "lambda_out": -0.00578,
+   "out_conv_norm": 12.858
+  },
+  "rgb_backbone_rel_change": 0.07081,
+  "evt_backbone_rel_change": 0.04067
+ },
+ "step13_cafr/dual_cafr_s5_seed2": {
+  "P3": {
+   "lambda_out": -0.00328,
+   "out_conv_norm": 6.429
+  },
+  "P4": {
+   "lambda_out": -0.01496,
+   "out_conv_norm": 9.124
+  },
+  "P5": {
+   "lambda_out": 0.00363,
+   "out_conv_norm": 12.867
+  },
+  "rgb_backbone_rel_change": 0.07063,
+  "evt_backbone_rel_change": 0.04074
+ }
+}

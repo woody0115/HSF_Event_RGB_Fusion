@@ -1,0 +1,45 @@
+  rgb_val batch 0/869
+  rgb_val batch 200/869
+  rgb_val batch 400/869
+  rgb_val batch 600/869
+  rgb_val batch 800/869
+rgb_val: dumped 13893 frames, variants [''] (84 s)
+  event_val batch 0/869
+  event_val batch 200/869
+  event_val batch 400/869
+  event_val batch 600/869
+  event_val batch 800/869
+event_val: dumped 13893 frames, variants [''] (81 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  add_s5 batch 0/869
+  add_s5 batch 200/869
+  add_s5 batch 400/869
+  add_s5 batch 600/869
+  add_s5 batch 800/869
+add_s5: dumped 13893 frames, variants ['', 'evt0'] (113 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  rel_add batch 0/869
+  rel_add batch 200/869
+  rel_add batch 400/869
+  rel_add batch 600/869
+  rel_add batch 800/869
+rel_add: dumped 13893 frames, variants ['', 'evt0'] (133 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  rel2_add batch 0/869
+  rel2_add batch 200/869
+  rel2_add batch 400/869
+  rel2_add batch 600/869
+  rel2_add batch 800/869
+rel2_add: dumped 13893 frames, variants ['', 'evt0'] (132 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  relp2_add batch 0/869
+  relp2_add batch 200/869
+  relp2_add batch 400/869
+  relp2_add batch 600/869
+  relp2_add batch 800/869
+relp2_add: dumped 13893 frames, variants ['', 'evt0'] (130 s)
+add_lr1e3: checkpoint not found, skipped

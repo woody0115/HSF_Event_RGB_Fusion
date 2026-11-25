@@ -1,0 +1,35 @@
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  sw_add batch 0/869
+  sw_add batch 200/869
+  sw_add batch 400/869
+  sw_add batch 600/869
+  sw_add batch 800/869
+sw_add: dumped 13893 frames, variants ['', 'evt0'] (138 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  sw2_add batch 0/869
+  sw2_add batch 200/869
+  sw2_add batch 400/869
+  sw2_add batch 600/869
+  sw2_add batch 800/869
+sw2_add: dumped 13893 frames, variants ['', 'evt0'] (132 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  cafr batch 0/869
+  cafr batch 200/869
+  cafr batch 400/869
+  cafr batch 600/869
+  cafr batch 800/869
+cafr: dumped 13893 frames, variants ['', 'evt0'] (424 s)
+Overriding model.yaml nc=80 with nc=8
+Overriding model.yaml nc=80 with nc=8
+  cafrx batch 0/869
+  cafrx batch 200/869
+  cafrx batch 400/869
+  cafrx batch 600/869
+  cafrx batch 800/869
+cafrx: dumped 13893 frames, variants ['', 'evt0'] (424 s)
+af_lr1e3: checkpoint not found, skipped
+add: checkpoint not found, skipped
+af: checkpoint not found, skipped
